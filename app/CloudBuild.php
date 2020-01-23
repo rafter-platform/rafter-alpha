@@ -47,6 +47,13 @@ class CloudBuild
     public function steps()
     {
         return [
+            // Pull the image down so we can build from cache
+            [
+                'name' => 'gcr.io/cloud-builders/docker',
+                'entrypoint' => 'bash',
+                'args' => ['-c', '|', "docker pull {$this->imageLocation()}:latest || exit 0",
+            ],
+
             // Copy the Dockerfile we need
             [
                 'name' => 'gcr.io/cloud-builders/curl',
@@ -65,8 +72,7 @@ class CloudBuild
                 'args' => [
                     'build',
                     '-t', $this->imageLocation(),
-                    // TODO: Add caching
-                    // '--cache-from', "{$this->imageLocation()}:latest",
+                    '--cache-from', "{$this->imageLocation()}:latest",
                     '.'
                 ],
             ],
