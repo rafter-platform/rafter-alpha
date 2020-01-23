@@ -51,7 +51,7 @@ class CloudBuild
             [
                 'name' => 'gcr.io/cloud-builders/docker',
                 'entrypoint' => 'bash',
-                'args' => ['-c', '|', "docker pull {$this->imageLocation()}:latest || exit 0",
+                'args' => ['-c', '|', "docker pull {$this->imageLocation()}:latest || exit 0"],
             ],
 
             // Copy the Dockerfile we need
