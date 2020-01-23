@@ -4,8 +4,9 @@ namespace App\Services;
 
 use App\CloudBuild;
 use App\GoogleProject;
-use Google_Service_CloudResourceManager;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 
 class GoogleApi
 {
@@ -72,6 +73,18 @@ class GoogleApi
         );
     }
 
+    /**
+     * Create a Cloud Run service in a given region.
+     */
+    public function createCloudRunService($service, $region)
+    {
+        return $this->request(
+            "https://{$region}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$this->googleProject->project_id}/services",
+            "POST",
+            $service
+        );
+    }
+
     protected function request($endpoint, $method = 'GET', $data = [])
     {
         $options = [
@@ -84,8 +97,14 @@ class GoogleApi
             $options['json'] = $data;
         }
 
-        $response = (new Client())->request($method, $endpoint, $options);
+        try {
+            $response = (new Client())->request($method, $endpoint, $options);
 
-        return json_decode((string) $response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
+        } catch (ClientException $exception) {
+            dump($exception->getResponse()->getBody()->getContents());
+
+            throw $exception;
+        }
     }
 }

@@ -88,7 +88,7 @@ class CloudBuild
     public function imageLocation()
     {
         // TODO: Use better, sluggified version of project name
-        return "gcr.io/\$PROJECT_ID/{$this->project->name}";
+        return "gcr.io/\$PROJECT_ID/{$this->project->slug()}";
     }
 
     public function images()

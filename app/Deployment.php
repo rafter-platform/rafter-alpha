@@ -76,4 +76,32 @@ class Deployment extends Model
 
         $this->update(['image' => $image]);
     }
+
+    public function createCloudRunService()
+    {
+        $service = [
+            'apiVersion' => 'serving.knative.dev/v1',
+            'kind' => 'Service',
+            'metadata' => [
+                'name' => $this->project->slug(),
+                'namespace' => $this->project->googleProject->project_id,
+            ],
+            'spec' => [
+                'template' => [
+                    'spec' => [
+                        'containers' => [
+                            [
+                                'image' => $this->image,
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $region = $this->project->region;
+        $response = $this->project->googleProject->client()->createCloudRunService($service, $region);
+
+        dump($response);
+    }
 }

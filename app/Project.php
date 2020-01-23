@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\WaitForImageToBeBuilt;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -30,6 +32,16 @@ class Project extends Model
     }
 
     /**
+     * Get a slug version of the name.
+     *
+     * TODO: Delegate this responsibility to an Environment.
+     */
+    public function slug()
+    {
+        return Str::slug($this->name);
+    }
+
+    /**
      * Create an initial deployment on Cloud Run.
      *
      * TODO: Extract this out and make it the responsibilty of each environment.
@@ -41,6 +53,7 @@ class Project extends Model
 
         CreateImageForDeployment::withChain([
             new WaitForImageToBeBuilt($deployment),
+            new CreateCloudRunService($deployment),
         ])->dispatch($deployment);
     }
 }
