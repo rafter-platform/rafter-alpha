@@ -53,6 +53,16 @@ class GoogleApi
     }
 
     /**
+     * Get information about a build.
+     */
+    public function getBuild($buildId)
+    {
+        return $this->request(
+            "https://cloudbuild.googleapis.com/v1/projects/{$this->googleProject->project_id}/builds/{$buildId}"
+        );
+    }
+
+    /**
      * Get details about a Cloud Build operation.
      */
     public function getCloudBuildOperation($operationName)

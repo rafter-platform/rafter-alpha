@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Jobs\CreateImageForDeployment;
+use App\Jobs\WaitForImageToBeBuilt;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
@@ -22,6 +24,11 @@ class Project extends Model
         return $this->belongsTo('App\GoogleProject');
     }
 
+    public function deployments()
+    {
+        return $this->hasMany('App\Deployment');
+    }
+
     /**
      * Create an initial deployment on Cloud Run.
      *
@@ -29,16 +36,11 @@ class Project extends Model
      */
     public function createInitialDeployment()
     {
-        // Create an initial build
-        // TODO: Use either GitHub event or manual push payload URL
-        $build = (new CloudBuild($this))
-            ->forManualPush('rafter-demo-project-rafter-uploads', 'rafter-demo.tar.gz');
+        // TODO: Pass in an Artifact (Zip bucket location, or GitHub event payload);
+        $deployment = $this->deployments()->create();
 
-        $operation = $this->googleProject->client()->createImageForBuild($build);
-
-        // TODO: Delay until operation is complete
-        // $this->googleProject->client()->getOperation($operation['name']);
-
-        // dump($image);
+        CreateImageForDeployment::withChain([
+            new WaitForImageToBeBuilt($deployment),
+        ])->dispatch($deployment);
     }
 }
