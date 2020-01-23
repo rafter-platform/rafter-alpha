@@ -22,3 +22,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('google-projects', 'GoogleProjectController');
+Route::resource('projects', 'ProjectController');

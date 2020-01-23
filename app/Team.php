@@ -27,4 +27,9 @@ class Team extends Model
     {
         return $this->hasMany('App\GoogleProject');
     }
+
+    public function projects()
+    {
+        return $this->hasMany('App\Project');
+    }
 }

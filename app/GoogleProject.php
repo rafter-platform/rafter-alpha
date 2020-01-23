@@ -23,6 +23,10 @@ class GoogleProject extends Model
         'service_account_json' => 'array',
     ];
 
+    protected $hidden = [
+        'service_account_json',
+    ];
+
     public function team()
     {
         return $this->belongsTo('App\Team');
