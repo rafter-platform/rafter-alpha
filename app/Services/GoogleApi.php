@@ -40,12 +40,25 @@ class GoogleApi
         );
     }
 
+    /**
+     * Takes a CloudBuild configuration and sends it to Cloud Build to create an image.
+     */
     public function createImageForBuild(CloudBuild $cloudBuild)
     {
         return $this->request(
             "https://cloudbuild.googleapis.com/v1/projects/{$this->googleProject->project_id}/builds",
             "POST",
             $cloudBuild->instructions()
+        );
+    }
+
+    /**
+     * Get details about a Cloud Build operation.
+     */
+    public function getCloudBuildOperation($operationName)
+    {
+        return $this->request(
+            "https://cloudbuild.googleapis.com/v1/{$operationName}"
         );
     }
 
