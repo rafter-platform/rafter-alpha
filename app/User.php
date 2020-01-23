@@ -37,8 +37,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function ownedTeams()
+    {
+        return $this->hasMany('App\Team');
+    }
+
     public function teams()
     {
         return $this->belongsToMany('App\Team');
+    }
+
+    public function currentTeam()
+    {
+        return $this->belongsTo('App\Team', 'current_team_id');
+    }
+
+    public function setCurrentTeam(Team $team)
+    {
+        $this->current_team_id = $team->id;
+        $this->save();
     }
 }

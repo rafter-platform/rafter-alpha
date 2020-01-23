@@ -28,9 +28,11 @@ class CreatePersonalTeamForUser
     {
         $user = $event->user;
 
-        $user->teams()->create([
+        $team = $user->ownedTeams()->create([
             'name' => 'Personal',
-            'is_personal' => true,
+            'personal_team' => true,
         ]);
+
+        $user->setCurrentTeam($team);
     }
 }

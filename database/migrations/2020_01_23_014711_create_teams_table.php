@@ -15,9 +15,14 @@ class CreateTeamsTable extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->boolean('is_personal')->default(false);
+            $table->boolean('personal_team')->default(false);
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
         });
 
         Schema::create('team_user', function (Blueprint $table) {
