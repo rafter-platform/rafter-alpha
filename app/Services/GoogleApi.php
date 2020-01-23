@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\CloudBuild;
 use App\GoogleProject;
 use Google_Service_CloudResourceManager;
 use GuzzleHttp\Client;
@@ -36,6 +37,15 @@ class GoogleApi
             [
                 'serviceIds' => $apis,
             ]
+        );
+    }
+
+    public function createImageForBuild(CloudBuild $cloudBuild)
+    {
+        return $this->request(
+            "https://cloudbuild.googleapis.com/v1/projects/{$this->googleProject->project_id}/builds",
+            "POST",
+            $cloudBuild->instructions()
         );
     }
 

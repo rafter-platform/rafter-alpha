@@ -29,6 +29,16 @@ class Project extends Model
      */
     public function createInitialDeployment()
     {
-        # code...
+        // Create an initial build
+        // TODO: Use either GitHub event or manual push payload URL
+        $build = (new CloudBuild($this))
+            ->forManualPush('rafter-demo-project-rafter-uploads', 'rafter-demo.tar.gz');
+
+        $operation = $this->googleProject->client()->createImageForBuild($build);
+
+        // TODO: Delay until operation is complete
+        // $this->googleProject->client()->getOperation($operation['name']);
+
+        // dump($image);
     }
 }
