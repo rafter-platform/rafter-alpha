@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class GoogleProject extends Model
 {
+    const REQUIRED_APIS = [
+        'run.googleapis.com',
+        'cloudbuild.googleapis.com',
+    ];
+
     protected $fillable = [
         'name',
         'project_id',
@@ -26,7 +31,7 @@ class GoogleProject extends Model
     public function provision()
     {
         $this->getProjectNumber();
-        // $this->enableApis();
+        $this->enableApis();
     }
 
     public function getProjectNumber()
@@ -37,7 +42,7 @@ class GoogleProject extends Model
 
     public function enableApis()
     {
-        # code...
+        $this->client()->enableApis(static::REQUIRED_APIS);
     }
 
     public function client()

@@ -28,6 +28,17 @@ class GoogleApi
         return $this->request('https://cloudresourcemanager.googleapis.com/v1/projects/' . $this->googleProject->project_id);
     }
 
+    public function enableApis($apis = [])
+    {
+        return $this->request(
+            "https://serviceusage.googleapis.com/v1/projects/{$this->googleProject->project_number}/services:batchEnable",
+            "POST",
+            [
+                'serviceIds' => $apis,
+            ]
+        );
+    }
+
     protected function request($endpoint, $method = 'GET', $data = [])
     {
         $options = [
