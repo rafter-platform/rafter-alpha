@@ -18,7 +18,8 @@ class CreateGoogleProjectsTable extends Migration
             $table->unsignedBigInteger('team_id');
             $table->string('name');
             $table->string('project_id');
-            $table->text('service_account_json');
+            $table->string('project_number')->nullable();
+            $table->json('service_account_json');
             $table->timestamps();
         });
     }

@@ -43,14 +43,16 @@ class GoogleProjectController extends Controller
         $this->validate($request, [
             'name' => ['string', 'required'],
             'project_id' => ['string', 'required'],
-            'service_account_json' => ['string', 'required'],
+            'service_account_json' => ['json', 'required'],
         ]);
 
-        $request->user()->currentTeam->googleProjects()->create([
+        $googleProject = $request->user()->currentTeam->googleProjects()->create([
             'name' => $request->name,
             'project_id' => $request->project_id,
-            'service_account_json' => $request->service_account_json,
+            'service_account_json' => json_decode($request->service_account_json),
         ]);
+
+        $googleProject->provision();
 
         return redirect('/google-projects')->with('status', 'Project added');
     }
