@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\GoogleProject;
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
@@ -28,7 +31,10 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('projects.create', [
+            'googleProjects' => Auth::user()->currentTeam->googleProjects,
+            'regions' => GoogleProject::REGIONS,
+        ]);
     }
 
     /**
@@ -39,7 +45,27 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => ['string', 'required'],
+            'google_project_id' => [
+                'required',
+                Rule::in($request->user()->currentTeam->googleProjects()->pluck('id'))
+            ],
+            'region' => [
+                'required',
+                Rule::in(collect(GoogleProject::REGIONS)->keys()),
+            ],
+        ]);
+
+        $project = $request->user()->currentTeam->projects()->create([
+            'name' => $request->name,
+            'region' => $request->region,
+            'google_project_id' => $request->google_project_id,
+        ]);
+
+        $project->createInitialDeployment();
+
+        return redirect()->route('projects.show', [$project])->with('status', 'Project is being created');
     }
 
     /**
@@ -50,7 +76,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return view('projects.show', ['project' => $project]);
     }
 
     /**

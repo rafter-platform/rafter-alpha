@@ -12,6 +12,13 @@ class GoogleProject extends Model
         'cloudbuild.googleapis.com',
     ];
 
+    const REGIONS = [
+        'us-central1' => 'Iowa',
+        'us-east1' => 'South Carolina',
+        'europe-west1' => 'Belgium',
+        'asia-northeast1' => 'Tokyo',
+    ];
+
     protected $fillable = [
         'name',
         'project_id',
