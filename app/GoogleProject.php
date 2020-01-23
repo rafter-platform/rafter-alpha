@@ -28,18 +28,30 @@ class GoogleProject extends Model
         return $this->belongsTo('App\Team');
     }
 
+    /**
+     * Set up the Google Project with basic requirements
+     * for deploying with Rafter.
+     *
+     * TODO: Delegate to chained, queued jobs.
+     */
     public function provision()
     {
-        $this->getProjectNumber();
+        $this->determineProjectNumber();
         $this->enableApis();
     }
 
-    public function getProjectNumber()
+    /**
+     * Find Project Number for the given project, and save it to the database.
+     */
+    public function determineProjectNumber()
     {
         $project = $this->client()->getProject();
         $this->update(['project_number' => $project['projectNumber']]);
     }
 
+    /**
+     * Enable all required APIs for use by Rafter.
+     */
     public function enableApis()
     {
         $this->client()->enableApis(static::REQUIRED_APIS);
