@@ -4,6 +4,7 @@ namespace App;
 
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
+use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
 use Illuminate\Database\Eloquent\Model;
@@ -56,6 +57,7 @@ class Project extends Model
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
+            new EnsureAppIsPublic($deployment),
         ])->dispatch($deployment);
     }
 }

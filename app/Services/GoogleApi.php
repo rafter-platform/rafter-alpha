@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\CloudBuild;
 use App\GoogleProject;
+use App\Project;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 
 class GoogleApi
 {
@@ -92,6 +92,30 @@ class GoogleApi
     {
         return $this->request(
             "https://{$region}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$this->googleProject->project_id}/services/{$name}"
+        );
+    }
+
+    /**
+     * Get the IAM policy for a given Cloud Run service.
+     */
+    public function getIamPolicyForCloudRunService(Project $project)
+    {
+        return $this->request(
+            "https://{$project->region}-run.googleapis.com/v1/projects/{$project->googleProject->project_id}/locations/{$project->region}/services/{$project->slug()}:getIamPolicy"
+        );
+    }
+
+    /**
+     * Get the IAM policy for a given Cloud Run service.
+     */
+    public function setIamPolicyForCloudRunService(Project $project, $policy)
+    {
+        return $this->request(
+            "https://{$project->region}-run.googleapis.com/v1/projects/{$project->googleProject->project_id}/locations/{$project->region}/services/{$project->slug()}:setIamPolicy",
+            "POST",
+            [
+                'policy' => $policy,
+            ]
         );
     }
 
