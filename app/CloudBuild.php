@@ -10,10 +10,10 @@ class CloudBuild
 
     protected $attributes = [];
     protected $manual = false;
-    protected $project;
+    protected $environment;
 
-    public function __construct(Project $project) {
-        $this->project = $project;
+    public function __construct(Environment $environment) {
+        $this->environment = $environment;
     }
 
     public function forManualPush($bucket, $object)
@@ -87,8 +87,7 @@ class CloudBuild
 
     public function imageLocation()
     {
-        // TODO: Use better, sluggified version of project name
-        return "gcr.io/\$PROJECT_ID/{$this->project->slug()}";
+        return "gcr.io/\$environment_ID/{$this->environment->slug()}";
     }
 
     public function images()

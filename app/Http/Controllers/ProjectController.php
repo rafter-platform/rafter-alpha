@@ -63,7 +63,7 @@ class ProjectController extends Controller
             'google_project_id' => $request->google_project_id,
         ]);
 
-        $project->createInitialDeployment();
+        $project->createInitialEnvironments();
 
         return redirect()->route('projects.show', [$project])->with('status', 'Project is being created');
     }

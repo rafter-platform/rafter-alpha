@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\CloudBuild;
+use App\Environment;
 use App\GoogleProject;
-use App\Project;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -98,24 +98,36 @@ class GoogleApi
     /**
      * Get the IAM policy for a given Cloud Run service.
      */
-    public function getIamPolicyForCloudRunService(Project $project)
+    public function getIamPolicyForCloudRunService(Environment $environment)
     {
-        return $this->request(
-            "https://{$project->region}-run.googleapis.com/v1/projects/{$project->googleProject->project_id}/locations/{$project->region}/services/{$project->slug()}:getIamPolicy"
-        );
+        return $this->request($this->cloudRunIamPolicyUrl($environment) . ':getIamPolicy');
     }
 
     /**
      * Get the IAM policy for a given Cloud Run service.
      */
-    public function setIamPolicyForCloudRunService(Project $project, $policy)
+    public function setIamPolicyForCloudRunService(Environment $environment, $policy)
     {
         return $this->request(
-            "https://{$project->region}-run.googleapis.com/v1/projects/{$project->googleProject->project_id}/locations/{$project->region}/services/{$project->slug()}:setIamPolicy",
+            $this->cloudRunIamPolicyUrl($environment) . ':setIamPolicy',
             "POST",
             [
                 'policy' => $policy,
             ]
+        );
+    }
+
+    /**
+     * Get the URL to interact with an environment's Cloud Run IAM policy, which is... really long.
+     */
+    protected function cloudRunIamPolicyUrl(Environment $environment)
+    {
+        return sprintf(
+            "https://%s-run.googleapis.com/v1/projects/%s/locations/%s/services/%s",
+            $environment->project->region,
+            $environment->project->googleProject->project_id,
+            $environment->project->region,
+            $environment->slug()
         );
     }
 

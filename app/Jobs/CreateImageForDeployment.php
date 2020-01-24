@@ -34,7 +34,7 @@ class CreateImageForDeployment implements ShouldQueue
     public function handle()
     {
         // TODO: Use either GitHub event or manual push payload URL
-        $build = (new CloudBuild($this->deployment->project))
+        $build = (new CloudBuild($this->deployment->environment))
             ->forManualPush('rafter-demo-project-rafter-uploads', 'rafter-demo.tar.gz');
 
         $operation = $this->deployment->submitBuild($build);

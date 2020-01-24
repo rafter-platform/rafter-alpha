@@ -2,13 +2,7 @@
 
 namespace App;
 
-use App\Jobs\CreateCloudRunService;
-use App\Jobs\CreateImageForDeployment;
-use App\Jobs\EnsureAppIsPublic;
-use App\Jobs\WaitForCloudRunServiceToDeploy;
-use App\Jobs\WaitForImageToBeBuilt;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -28,36 +22,23 @@ class Project extends Model
         return $this->belongsTo('App\GoogleProject');
     }
 
-    public function deployments()
+    public function environments()
     {
-        return $this->hasMany('App\Deployment');
+        return $this->hasMany('App\Environment');
     }
 
     /**
-     * Get a slug version of the name.
-     *
-     * TODO: Delegate this responsibility to an Environment.
+     * Create the initial environments for the project
      */
-    public function slug()
+    public function createInitialEnvironments()
     {
-        return Str::slug($this->name);
-    }
-
-    /**
-     * Create an initial deployment on Cloud Run.
-     *
-     * TODO: Extract this out and make it the responsibilty of each environment.
-     */
-    public function createInitialDeployment()
-    {
-        // TODO: Pass in an Artifact (Zip bucket location, or GitHub event payload);
-        $deployment = $this->deployments()->create();
-
-        CreateImageForDeployment::withChain([
-            new WaitForImageToBeBuilt($deployment),
-            new CreateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-        ])->dispatch($deployment);
+        collect(Environment::INITIAL_ENVIRONMENTS)
+            ->map(function ($name) {
+                $this->environments()->create([
+                    'name' => $name
+                ]);
+            })
+            ->each
+            ->;
     }
 }

@@ -32,11 +32,10 @@ class EnsureAppIsPublic implements ShouldQueue
      */
     public function handle()
     {
-        $project = $this->deployment->project;
-        $client = $project->googleProject->client();
+        $environment = $this->deployment->environment;
 
         // Get the existing policies
-        $policy = $client->getIamPolicyForCloudRunService($project);
+        $policy = $environment->client()->getIamPolicyForCloudRunService($environment);
 
         // Add the invoker role to allUsers (public, anon)
         $policy['bindings'][] = [
@@ -47,7 +46,7 @@ class EnsureAppIsPublic implements ShouldQueue
         ];
 
         // Update the policy
-        $client->setIamPolicyForCloudRunService($project, $policy);
+        $environment->client()->setIamPolicyForCloudRunService($environment, $policy);
 
         // Assuming nothing went wrong, we are good.
     }

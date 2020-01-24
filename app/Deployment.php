@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 
 class Deployment extends Model
@@ -16,9 +17,9 @@ class Deployment extends Model
         'image',
     ];
 
-    public function project()
+    public function environment()
     {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo('App\Environment');
     }
 
     /**
@@ -50,7 +51,7 @@ class Deployment extends Model
      */
     public function submitBuild(CloudBuild $cloudBuild)
     {
-        return $this->project->googleProject->client()->createImageForBuild($cloudBuild);
+        return $this->client()->createImageForBuild($cloudBuild);
     }
 
     /**
@@ -58,7 +59,7 @@ class Deployment extends Model
      */
     public function getBuildOperation()
     {
-        return $this->project->googleProject->client()->getCloudBuildOperation($this->operation_name);
+        return $this->client()->getCloudBuildOperation($this->operation_name);
     }
 
     /**
@@ -66,7 +67,7 @@ class Deployment extends Model
      */
     public function getCloudRunService()
     {
-        return $this->project->googleProject->client()->getCloudRunService($this->project->slug(), $this->project->region);
+        return $this->client()->getCloudRunService($this->project->slug(), $this->project->region);
     }
 
     /**
@@ -74,7 +75,7 @@ class Deployment extends Model
      */
     public function recordBuiltImage($buildId)
     {
-        $build = $this->project->googleProject->client()->getBuild($buildId);
+        $build = $this->client()->getBuild($buildId);
 
         $image = sprintf(
             "%s@%s",
@@ -118,8 +119,13 @@ class Deployment extends Model
         ];
 
         $region = $this->project->region;
-        $response = $this->project->googleProject->client()->createCloudRunService($service, $region);
+        $response = $this->client()->createCloudRunService($service, $region);
 
         dump($response);
+    }
+
+    public function client(): GoogleApi
+    {
+        return $this->environment->client();
     }
 }

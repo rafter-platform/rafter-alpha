@@ -15,14 +15,14 @@ class CreateDeploymentsTable extends Migration
     {
         Schema::create('deployments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('environment_id');
             $table->string('status')->default('pending');
             $table->string('operation_name')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
 
-            $table->foreign('project_id')
-                ->references('id')->on('projects')
+            $table->foreign('environment_id')
+                ->references('id')->on('environments')
                 ->onDelete('cascade');
         });
     }
