@@ -62,6 +62,14 @@ class Deployment extends Model
     }
 
     /**
+     * Get Cloud Run service
+     */
+    public function getCloudRunService()
+    {
+        return $this->project->googleProject->client()->getCloudRunService($this->project->slug(), $this->project->region);
+    }
+
+    /**
      * Record the built image from CloudBuild.
      */
     public function recordBuiltImage($buildId)

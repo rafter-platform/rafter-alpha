@@ -4,6 +4,7 @@ namespace App;
 
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
+use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -54,6 +55,7 @@ class Project extends Model
         CreateImageForDeployment::withChain([
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
+            new WaitForCloudRunServiceToDeploy($deployment),
         ])->dispatch($deployment);
     }
 }
