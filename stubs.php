@@ -1,0 +1,84 @@
+<?php
+
+$cloudRun = [
+    "apiVersion" => "serving.knative.dev/v1",
+    "kind" => "Service",
+    "metadata" => [
+        "name" => "rafter-demo",
+        "namespace" => "1018375464568",
+        "selfLink" => "/apis/serving.knative.dev/v1/namespaces/1018375464568/services/rafter-demo",
+        "uid" => "296baf7b-ceaf-440f-909e-acda8fc3a1c4",
+        "resourceVersion" => "AAWc2BdL6Kg",
+        "generation" => 1,
+        "labels" => [
+            "cloud.googleapis.com/location" => "us-central1",
+        ],
+        "annotations" => [
+            "serving.knative.dev/creator" => "rafter@rafter-demo-project.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier" => "rafter@rafter-demo-project.iam.gserviceaccount.com",
+        ],
+        "creationTimestamp" => "2020-01-24T00:46:19.821999Z",
+        ],
+        "spec" => [
+        "template" => [
+            "metadata" => [],
+            "spec" => [
+            "containerConcurrency" => 0,
+            "containers" => [
+                [
+                "image" => "gcr.io/rafter-demo-project/rafter-demo@sha256:a4a8bf61a2e640630b975ad04187db0294e4d872dea09e2021dbf9f2d5a1e64e",
+                "env" => [
+                    [
+                    "name" => "DB_CONNECTION",
+                    "value" => "sqlite",
+                    ],
+                    [
+                    "name" => "DB_DATABASE",
+                    "value" => "/var/www/database/database.sqlite",
+                    ],
+                ],
+                ],
+            ],
+            ],
+        ],
+        "traffic" => [
+            [
+            "percent" => 100,
+            "latestRevision" => true,
+            ],
+        ],
+        ],
+        "status" => [
+        "observedGeneration" => 1,
+        "conditions" => [
+            [
+            "type" => "Ready",
+            "status" => "True",
+            "lastTransitionTime" => "2020-01-24T00:46:41.272Z",
+            ],
+            [
+            "type" => "ConfigurationsReady",
+            "status" => "True",
+            "lastTransitionTime" => "2020-01-24T00:46:41.053Z",
+            ],
+            [
+            "type" => "RoutesReady",
+            "status" => "True",
+            "lastTransitionTime" => "2020-01-24T00:46:41.272Z",
+            ],
+        ],
+        "latestReadyRevisionName" => "rafter-demo-9s5xq",
+        "latestCreatedRevisionName" => "rafter-demo-9s5xq",
+        "traffic" => [
+            [
+            "revisionName" => "rafter-demo-9s5xq",
+            "percent" => 100,
+            "latestRevision" => true,
+            ],
+        ],
+        "url" => "https://rafter-demo-nmyoncbzeq-uc.a.run.app",
+        "address" => [
+            "url" => "https://rafter-demo-nmyoncbzeq-uc.a.run.app",
+        ],
+    ],
+];
