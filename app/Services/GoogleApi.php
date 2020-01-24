@@ -85,6 +85,16 @@ class GoogleApi
         );
     }
 
+    /**
+     * Get information about a Cloud Run service.
+     */
+    public function getCloudRunService($name, $region)
+    {
+        return $this->request(
+            "https://{$region}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$this->googleProject->project_id}/services/{$name}"
+        );
+    }
+
     protected function request($endpoint, $method = 'GET', $data = [])
     {
         $options = [
