@@ -92,6 +92,16 @@ class Deployment extends Model
                         'containers' => [
                             [
                                 'image' => $this->image,
+                                'env' => [
+                                    [
+                                        'name' => 'DB_CONNECTION',
+                                        'value' => 'sqlite'
+                                    ],
+                                    [
+                                        'name' => 'DB_DATABASE',
+                                        'value' => '/var/www/database/database.sqlite'
+                                    ],
+                                ]
                             ]
                         ]
                     ]
