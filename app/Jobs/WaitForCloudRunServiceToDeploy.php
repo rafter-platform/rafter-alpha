@@ -46,7 +46,7 @@ class WaitForCloudRunServiceToDeploy implements ShouldQueue
         }
 
         // If it's still going
-        if (collect($service['status']['conditions'])->every(fn($item) => $item['status'] !== 'True')) {
+        if (collect($service['status']['conditions'])->every(function ($item) { return $item['status'] !== 'True'; })) {
             $this->release(10);
             return;
         }

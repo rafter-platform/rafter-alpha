@@ -19,7 +19,7 @@ class CreateEnvironmentsTable extends Migration
             $table->string('name');
             $table->string('url')->nullable();
             $table->string('web_service_name')->nullable();
-            $table->mediumText('environmental_variables');
+            $table->mediumText('environmental_variables')->nullable();
             $table->timestamps();
 
             $table->foreign('project_id')

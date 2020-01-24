@@ -67,7 +67,7 @@ class Deployment extends Model
      */
     public function getCloudRunService()
     {
-        return $this->client()->getCloudRunService($this->project->slug(), $this->project->region);
+        return $this->client()->getCloudRunService($this->environment->slug(), $this->environment->project->region);
     }
 
     /**
@@ -92,8 +92,8 @@ class Deployment extends Model
             'apiVersion' => 'serving.knative.dev/v1',
             'kind' => 'Service',
             'metadata' => [
-                'name' => $this->project->slug(),
-                'namespace' => $this->project->googleProject->project_id,
+                'name' => $this->environment->slug(),
+                'namespace' => $this->environment->project->googleProject->project_id,
             ],
             'spec' => [
                 'template' => [
@@ -118,7 +118,7 @@ class Deployment extends Model
             ]
         ];
 
-        $region = $this->project->region;
+        $region = $this->environment->project->region;
         $response = $this->client()->createCloudRunService($service, $region);
 
         dump($response);

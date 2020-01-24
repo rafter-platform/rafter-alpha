@@ -13,7 +13,7 @@ class EnsureAppIsPublic implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public Deployment $deployment;
+    public $deployment;
 
     /**
      * Create a new job instance.

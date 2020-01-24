@@ -26,6 +26,11 @@ class Environment extends Model
         return $this->belongsTo('App\Project');
     }
 
+    public function deployments()
+    {
+        return $this->hasMany('App\Deployment');
+    }
+
     /**
      * Get a slug version of the environment name.
      */

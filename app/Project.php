@@ -34,11 +34,11 @@ class Project extends Model
     {
         collect(Environment::INITIAL_ENVIRONMENTS)
             ->map(function ($name) {
-                $this->environments()->create([
+                return $this->environments()->create([
                     'name' => $name
                 ]);
             })
             ->each
-            ->;
+            ->createInitialDeployment();
     }
 }

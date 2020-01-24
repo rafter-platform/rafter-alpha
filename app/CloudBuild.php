@@ -87,7 +87,7 @@ class CloudBuild
 
     public function imageLocation()
     {
-        return "gcr.io/\$environment_ID/{$this->environment->slug()}";
+        return "gcr.io/\$PROJECT_ID/{$this->environment->slug()}";
     }
 
     public function images()
