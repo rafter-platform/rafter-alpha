@@ -3,6 +3,7 @@
 namespace App;
 
 use App\GoogleCloud\DatabaseConfig;
+use App\Jobs\MonitorDatabaseCreation;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,7 +50,7 @@ class Database extends Model
         $this->update(['operation_name' => $operation['name']]);
         $this->setCreating();
 
-        // TODO: Monitor the creation
+        MonitorDatabaseCreation::dispatch($this);
     }
 
     public function client(): GoogleApi
