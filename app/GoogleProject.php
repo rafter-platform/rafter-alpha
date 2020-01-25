@@ -72,7 +72,7 @@ class GoogleProject extends Model
         $this->client()->enableApis(static::REQUIRED_APIS);
     }
 
-    public function client()
+    public function client(): GoogleApi
     {
         return new GoogleApi($this);
     }

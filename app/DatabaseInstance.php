@@ -2,7 +2,11 @@
 
 namespace App;
 
+use App\GoogleCloud\DatabaseInstanceConfig;
+use App\Jobs\MonitorDatabaseInstanceCreation;
+use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class DatabaseInstance extends Model
 {
@@ -40,4 +44,89 @@ class DatabaseInstance extends Model
             // TKTK
         ]
     ];
+
+    const STATUS_PENDING = 'pending';
+    const STATUS_CREATING = 'creating';
+    const STATUS_ACTIVE = 'active';
+
+    protected $fillable = [
+        'name',
+        'type',
+        'version',
+        'tier',
+        'size',
+        'status',
+        'region',
+        'root_password',
+        'operation_name',
+    ];
+
+    public function googleProject()
+    {
+        return $this->belongsTo('App\GoogleProject');
+    }
+
+    /**
+     * Provision the Database Instance on Google Cloud, and then monitor it.
+     */
+    public function provision()
+    {
+        $this->assignRootPassword();
+
+        $databaseInstanceConfig = new DatabaseInstanceConfig($this);
+
+        $operation = $this->client()->createDatabaseInstance($databaseInstanceConfig);
+        $this->update(['operation_name' => $operation['name']]);
+
+        $this->setCreating();
+
+        MonitorDatabaseInstanceCreation::dispatch($this);
+    }
+
+    /**
+     * Assigns a random root password to the instance.
+     */
+    public function assignRootPassword()
+    {
+        $this->update(['root_password' => Str::random()]);
+    }
+
+    /**
+     * Set the status to creating.
+     */
+    public function setCreating()
+    {
+        $this->update(['status' => static::STATUS_CREATING]);
+    }
+
+    /**
+     * Set the status to active.
+     */
+    public function setActive()
+    {
+        $this->update(['status' => static::STATUS_ACTIVE]);
+    }
+
+    public function projectId()
+    {
+        return $this->googleProject->project_id;
+    }
+
+    /**
+     * Get the connection string to reference in Cloud Run.
+     */
+    public function connectionString()
+    {
+        return sprintf(
+            "%s:%s:%s",
+            $this->googleProject->project_id,
+            $this->region,
+            $this->name
+        );
+    }
+
+    public function client(): GoogleApi
+    {
+        return $this->googleProject->client();
+    }
 }

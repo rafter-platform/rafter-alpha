@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\CloudBuild;
 use App\Environment;
+use App\GoogleCloud\DatabaseInstanceConfig;
+use App\GoogleCloud\DatabaseOperation;
 use App\GoogleProject;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -129,6 +131,28 @@ class GoogleApi
             $environment->project->region,
             $environment->slug()
         );
+    }
+
+    /**
+     * Create a Database Instance on Google Cloud.
+     */
+    public function createDatabaseInstance(DatabaseInstanceConfig $databaseInstanceConfig)
+    {
+        return $this->request(
+            "https://www.googleapis.com/sql/v1beta4/projects/{$databaseInstanceConfig->projectId()}/instances",
+            "POST",
+            $databaseInstanceConfig->config()
+        );
+    }
+
+    /**
+     * Get a current database operation.
+     */
+    public function getDatabaseOperation($projectId, $operationName)
+    {
+        $response = $this->request("https://www.googleapis.com/sql/v1beta4/projects/{$projectId}/operations/{$operationName}");
+
+        return new DatabaseOperation($response);
     }
 
     protected function request($endpoint, $method = 'GET', $data = [])
