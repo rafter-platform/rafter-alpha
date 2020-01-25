@@ -18,8 +18,8 @@ $cloudRun = [
             "serving.knative.dev/lastModifier" => "rafter@rafter-demo-project.iam.gserviceaccount.com",
         ],
         "creationTimestamp" => "2020-01-24T00:46:19.821999Z",
-        ],
-        "spec" => [
+    ],
+    "spec" => [
         "template" => [
             "metadata" => [],
             "spec" => [
@@ -47,8 +47,8 @@ $cloudRun = [
             "latestRevision" => true,
             ],
         ],
-        ],
-        "status" => [
+    ],
+    "status" => [
         "observedGeneration" => 1,
         "conditions" => [
             [

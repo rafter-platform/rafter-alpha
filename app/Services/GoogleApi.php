@@ -158,7 +158,7 @@ class GoogleApi
 
     public function createDatabase(DatabaseConfig $databaseConfig)
     {
-        $this->request(
+        return $this->request(
             "https://www.googleapis.com/sql/v1beta4/projects/{$databaseConfig->projectId()}/instances/{$databaseConfig->instanceName()}/databases",
             "POST",
             $databaseConfig->config()

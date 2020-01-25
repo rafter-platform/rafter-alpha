@@ -60,6 +60,7 @@ class Environment extends Model
         ]);
 
         $this->database()->associate($database);
+        $this->save();
 
         $database->provision();
     }
