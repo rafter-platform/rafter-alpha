@@ -10,6 +10,10 @@ class GoogleProject extends Model
     const REQUIRED_APIS = [
         'run.googleapis.com',
         'cloudbuild.googleapis.com',
+        // for DB support
+        'sqladmin.googleapis.com',
+        // for Postgres DB support
+        'compute.googleapis.com',
     ];
 
     const REGIONS = [
