@@ -10,10 +10,6 @@ use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
-    public function __construct() {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +17,9 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        return view('projects.index', [
+            'projects' => Auth::user()->currentTeam->projects,
+        ]);
     }
 
     /**
@@ -76,7 +74,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return view('projects.show', ['project' => $project]);
+        return view('projects.show', ['project' => $project->loadMissing('environments')]);
     }
 
     /**

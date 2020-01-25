@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Environment;
+use App\Project;
 use Illuminate\Http\Request;
 
 class EnvironmentController extends Controller
@@ -44,7 +45,7 @@ class EnvironmentController extends Controller
      * @param  \App\Environment  $environment
      * @return \Illuminate\Http\Response
      */
-    public function show(Environment $environment)
+    public function show(Project $project, Environment $environment)
     {
         //
     }
@@ -55,7 +56,7 @@ class EnvironmentController extends Controller
      * @param  \App\Environment  $environment
      * @return \Illuminate\Http\Response
      */
-    public function edit(Environment $environment)
+    public function edit(Project $project, Environment $environment)
     {
         //
     }

@@ -22,6 +22,11 @@ class Environment extends Model
         'url',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
+
     public function project()
     {
         return $this->belongsTo('App\Project');

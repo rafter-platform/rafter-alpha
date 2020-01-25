@@ -20,6 +20,10 @@ Route::get('/', function () {
 });
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('google-projects', 'GoogleProjectController');
-Route::resource('projects', 'ProjectController');
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::resource('google-projects', 'GoogleProjectController');
+    Route::resource('projects', 'ProjectController');
+    Route::resource('projects.environments', 'EnvironmentController');
+    Route::resource('projects.environments.deployments', 'DeploymentController');
+});
