@@ -19,6 +19,7 @@ class Environment extends Model
 
     protected $fillable = [
         'name',
+        'url',
     ];
 
     public function project()
@@ -53,6 +54,15 @@ class Environment extends Model
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
         ])->dispatch($deployment);
+    }
+
+    /**
+     * Update the URL on the environment.
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        $this->save();
     }
 
     public function client(): GoogleApi

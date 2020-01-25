@@ -54,7 +54,7 @@ class WaitForCloudRunServiceToDeploy implements ShouldQueue
         // TODO: Check to see if any part of the service is failing
 
         // Else, everything went well.
-        // TODO: Set URL for environment now that we have it
+        $this->deployment->environment->setUrl($service['metadata']['url']);
     }
 
     public function failed(Throwable $exception)
