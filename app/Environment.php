@@ -37,6 +37,33 @@ class Environment extends Model
         return $this->hasMany('App\Deployment');
     }
 
+    public function database()
+    {
+        return $this->belongsTo('App\Database');
+    }
+
+    /**
+     * Whether the environment is using a database.
+     */
+    public function usesDatabase()
+    {
+        return $this->database()->exists();
+    }
+
+    /**
+     * Create a database for this environment on a given DatabaseInstance.
+     */
+    public function createDatabase(DatabaseInstance $databaseInstance)
+    {
+        $database = $databaseInstance->databases()->create([
+            'name' => $this->slug(),
+        ]);
+
+        $this->database()->associate($database);
+
+        $database->provision();
+    }
+
     /**
      * Get a slug version of the environment name.
      */

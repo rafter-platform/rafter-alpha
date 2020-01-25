@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\CloudBuild;
 use App\Environment;
+use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleProject;
@@ -153,6 +154,15 @@ class GoogleApi
         $response = $this->request("https://www.googleapis.com/sql/v1beta4/projects/{$projectId}/operations/{$operationName}");
 
         return new DatabaseOperation($response);
+    }
+
+    public function createDatabase(DatabaseConfig $databaseConfig)
+    {
+        $this->request(
+            "https://www.googleapis.com/sql/v1beta4/projects/{$databaseConfig->projectId()}/instances/{$databaseConfig->instanceName()}/databases",
+            "POST",
+            $databaseConfig->config()
+        );
     }
 
     protected function request($endpoint, $method = 'GET', $data = [])

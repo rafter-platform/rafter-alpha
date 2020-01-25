@@ -67,6 +67,11 @@ class DatabaseInstance extends Model
         return $this->belongsTo('App\GoogleProject');
     }
 
+    public function databases()
+    {
+        return $this->hasMany('App\Database');
+    }
+
     /**
      * Provision the Database Instance on Google Cloud, and then monitor it.
      */
