@@ -48,6 +48,7 @@ class DatabaseInstance extends Model
     const STATUS_PENDING = 'pending';
     const STATUS_CREATING = 'creating';
     const STATUS_ACTIVE = 'active';
+    const STATUS_FAILED = 'failed';
 
     protected $fillable = [
         'name',
@@ -105,6 +106,14 @@ class DatabaseInstance extends Model
     public function setActive()
     {
         $this->update(['status' => static::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Set the status to failed.
+     */
+    public function setFailed()
+    {
+        $this->update(['status' => static::STATUS_FAILED]);
     }
 
     public function projectId()

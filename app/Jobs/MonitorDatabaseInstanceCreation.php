@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class MonitorDatabaseInstanceCreation implements ShouldQueue
 {
@@ -15,8 +17,8 @@ class MonitorDatabaseInstanceCreation implements ShouldQueue
 
     public $databaseInstance;
 
-    // 4 minutes
-    public $tries = 16;
+    // 10 minutes
+    public $tries = 40;
 
     /**
      * Create a new job instance.
@@ -46,5 +48,11 @@ class MonitorDatabaseInstanceCreation implements ShouldQueue
         }
 
         $this->databaseInstance->setActive();
+    }
+
+    public function failed(Throwable $exception)
+    {
+        Log::error($exception->getMessage());
+        $this->databaseInstance->setFailed();
     }
 }
