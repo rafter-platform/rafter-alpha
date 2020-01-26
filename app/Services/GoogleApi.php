@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\CloudBuild;
 use App\Environment;
+use App\GoogleCloud\CloudRunConfig;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
@@ -79,12 +80,12 @@ class GoogleApi
     /**
      * Create a Cloud Run service in a given region.
      */
-    public function createCloudRunService($service, $region)
+    public function createCloudRunService(CloudRunConfig $cloudRunConfig)
     {
         return $this->request(
-            "https://{$region}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$this->googleProject->project_id}/services",
+            "https://{$cloudRunConfig->region()}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$cloudRunConfig->projectId()}/services",
             "POST",
-            $service
+            $cloudRunConfig->config()
         );
     }
 

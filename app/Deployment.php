@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\GoogleCloud\CloudRunConfig;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 
@@ -88,40 +89,9 @@ class Deployment extends Model
 
     public function createCloudRunService()
     {
-        $service = [
-            'apiVersion' => 'serving.knative.dev/v1',
-            'kind' => 'Service',
-            'metadata' => [
-                'name' => $this->environment->slug(),
-                'namespace' => $this->environment->project->googleProject->project_id,
-            ],
-            'spec' => [
-                'template' => [
-                    'spec' => [
-                        'containers' => [
-                            [
-                                'image' => $this->image,
-                                'env' => [
-                                    [
-                                        'name' => 'DB_CONNECTION',
-                                        'value' => 'sqlite'
-                                    ],
-                                    [
-                                        'name' => 'DB_DATABASE',
-                                        'value' => '/var/www/database/database.sqlite'
-                                    ],
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
+        $cloudRunConfig = new CloudRunConfig($this);
 
-        $region = $this->environment->project->region;
-        $response = $this->client()->createCloudRunService($service, $region);
-
-        dump($response);
+        $response = $this->client()->createCloudRunService($cloudRunConfig);
     }
 
     public function client(): GoogleApi
