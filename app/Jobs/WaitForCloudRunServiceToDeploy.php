@@ -54,6 +54,10 @@ class WaitForCloudRunServiceToDeploy implements ShouldQueue
         // TODO: Check to see if any part of the service is failing
 
         // Else, everything went well.
+
+        // TODO: Mark deployment as successful if this is NOT a new service
+
+        // Else, set the URL for the first time and move on.
         $this->deployment->environment->setUrl($service['status']['url']);
     }
 

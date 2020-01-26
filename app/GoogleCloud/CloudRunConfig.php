@@ -37,6 +37,24 @@ class CloudRunConfig
         ];
     }
 
+    /**
+     * @see https://cloud.google.com/run/docs/reference/rest/v1/RevisionTemplate
+     */
+    public function revisionMetadata()
+    {
+        if ($this->environment->usesDatabase()) {
+            $connectionString = $this->environment->database->databaseInstance->connectionString();
+
+            return [
+                'annotations' => [
+                    'run.googleapis.com/cloudsql-instances' => $connectionString,
+                ],
+            ];
+        }
+
+        return [];
+    }
+
     public function image()
     {
         return $this->deployment->image;
@@ -44,6 +62,8 @@ class CloudRunConfig
 
     public function env()
     {
+        // TODO: Inject system-provided env vars based on database, queue, etc setup
+        // TODO: Merge environment-specific env vars with system-provided vars
         return [
             [
                 'name' => 'DB_CONNECTION',
@@ -68,6 +88,7 @@ class CloudRunConfig
     {
         return [
             'template' => [
+                'metadata' => $this->revisionMetadata(),
                 'spec' => [
                     'containers' => [
                         $this->container(),

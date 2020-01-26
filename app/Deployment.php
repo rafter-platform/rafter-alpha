@@ -91,7 +91,14 @@ class Deployment extends Model
     {
         $cloudRunConfig = new CloudRunConfig($this);
 
-        $response = $this->client()->createCloudRunService($cloudRunConfig);
+        $this->client()->createCloudRunService($cloudRunConfig);
+    }
+
+    public function updateCloudRunService()
+    {
+        $cloudRunConfig = new CloudRunConfig($this);
+
+        $this->client()->replaceCloudRunService($cloudRunConfig);
     }
 
     public function client(): GoogleApi

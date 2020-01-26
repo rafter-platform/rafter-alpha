@@ -90,6 +90,18 @@ class GoogleApi
     }
 
     /**
+     * Replace a revision on a Cloud Run service (aka deploy a new image).
+     */
+    public function replaceCloudRunService(CloudRunConfig $cloudRunConfig)
+    {
+        return $this->request(
+            "https://{$cloudRunConfig->region()}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$cloudRunConfig->projectId()}/services/{$cloudRunConfig->name()}",
+            "PUT",
+            $cloudRunConfig->config()
+        );
+    }
+
+    /**
      * Get information about a Cloud Run service.
      */
     public function getCloudRunService($name, $region)

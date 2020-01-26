@@ -5,6 +5,7 @@ namespace App;
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
+use App\Jobs\UpdateCloudRunService;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
@@ -86,6 +87,21 @@ class Environment extends Model
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
+        ])->dispatch($deployment);
+    }
+
+    /**
+     * Create a new deployment on Cloud Run.
+     */
+    public function deploy()
+    {
+        // TODO: Pass in an Artifact (Zip bucket location, or GitHub event payload);
+        $deployment = $this->deployments()->create();
+
+        CreateImageForDeployment::withChain([
+            new WaitForImageToBeBuilt($deployment),
+            new UpdateCloudRunService($deployment),
+            new WaitForCloudRunServiceToDeploy($deployment),
         ])->dispatch($deployment);
     }
 
