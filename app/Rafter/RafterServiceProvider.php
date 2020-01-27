@@ -5,14 +5,18 @@ namespace App\Rafter;
 use App\Rafter\Queue\RafterConnector;
 use App\Rafter\Queue\RafterWorker;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class RafterServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        $this->ensureRoutesAreDefined();
+
         Queue::extend('rafter', function () {
             return new RafterConnector;
         });
@@ -21,6 +25,25 @@ class RafterServiceProvider extends ServiceProvider
     public function register()
     {
         $this->ensureQueueIsConfigured();
+    }
+
+    /**
+     * Define internal routes for Rafter
+     */
+    public function ensureRoutesAreDefined()
+    {
+        if ($this->app->routesAreCached()) {
+            return;
+        }
+
+        // Handle queue jobs
+        Route::post(Rafter::ROUTE, function () {
+            // TODO: Convert this to a controller?
+            Artisan::call('rafter:work', [
+                'message' => request()->getContent(),
+                'headers' => base64_encode(json_encode(request()->headers->all()))
+            ]);
+        });
     }
 
     /**
