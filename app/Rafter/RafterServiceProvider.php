@@ -4,15 +4,14 @@ namespace App\Rafter;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class RafterServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $manager = $this->app['queue'];
-
-        $manager->addConnector('rafter', function () {
+        Queue::extend('rafter', function () {
             return new RafterConnector;
         });
     }

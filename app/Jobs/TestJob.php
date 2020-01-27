@@ -35,8 +35,7 @@ class TestJob implements ShouldQueue
     public function handle()
     {
         Log::info("Hello, job! Attempts: {$this->attempts()}");
-        $this->delete();
 
-        // $this->release(10);
+        $this->release(5);
     }
 }
