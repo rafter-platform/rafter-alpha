@@ -2,11 +2,15 @@
 
 namespace App\Rafter;
 
-use Google\Cloud\Tasks\V2\CloudTasksClient;
-use Google\Cloud\Tasks\V2\HttpRequest;
-use Google\Cloud\Tasks\V2\Task;
+use Google\Cloud\Tasks\V2beta3\CloudTasksClient;
+use Google\Cloud\Tasks\V2beta3\HttpMethod;
+use Google\Cloud\Tasks\V2beta3\Task;
+use Google\Cloud\Tasks\V2beta3\HttpRequest;
+use Google\Protobuf\Timestamp;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 
 class RafterQueue extends Queue implements QueueContract
 {
@@ -37,6 +41,13 @@ class RafterQueue extends Queue implements QueueContract
      * @var string
      */
     protected $region;
+
+    /**
+	 * @var array
+	 */
+	protected $options = [
+		'scheduleTime',
+	];
 
     public function __construct(CloudTasksClient $tasks, $default, $projectId, $region)
     {
@@ -102,23 +113,29 @@ class RafterQueue extends Queue implements QueueContract
      */
     public function pushRaw($payload, $queue = null, array $options = [])
     {
-        ddd($payload);
         $queueName = $this->getQueue($queue);
-        $taskId = uniqid();
 
         $task = new Task();
-        $task->setName("{$queueName}/tasks/{$taskId}");
+
+        // Set options on the task
+		foreach ($this->options as $option) {
+			if (array_key_exists($option, $options)) {
+				$this->{'set' . ucfirst($option)}($task, $options[$option]);
+			}
+		}
 
         $url = Rafter::queueWorkerUrl();
         $httpRequest = new HttpRequest();
         $httpRequest->setUrl($url);
+        $httpRequest->setHttpMethod(HttpMethod::POST);
         $httpRequest->setBody($payload);
 
         $task->setHttpRequest($httpRequest);
 
-        $this->tasks->createTask($queueName, $task);
+        $response = $this->tasks->createTask($queueName, $task);
 
-        return $taskId;
+        // Return the task name
+        return Arr::last(explode('/', $response->getName()));
     }
 
     /**
@@ -143,6 +160,8 @@ class RafterQueue extends Queue implements QueueContract
 
     /**
 	 * Pop the next job off of the queue.
+     * Note: This is unused, as Cloud Tasks automatically pops and sends
+     * the payload for the next job.
 	 *
 	 * @param string $queue
 	 *
@@ -151,18 +170,15 @@ class RafterQueue extends Queue implements QueueContract
 	 */
 	public function pop($queue = null)
 	{
-        // lol idk what does this do for us???
+        return null;
+    }
 
-		// $payload = $this->container->make($this->currentJobContainerKey);
-
-		// // Return the previously bound in job content, provided by GCP Tasks
-		// return new RafterJob(
-		// 	$this->container,
-		// 	$this,
-		// 	$payload,
-		// 	$this->connectionName,
-		// 	$this->queue
-		// );
+    /**
+     * Get the Tasks client instance, for use by the rafter:work command.
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
     }
 
     /**
@@ -179,4 +195,24 @@ class RafterQueue extends Queue implements QueueContract
             'attempts' => 0,
         ]);
     }
+
+    /**
+     * Google Cloud Tasks requires that payload be send in base64 encoded strings.
+     */
+    protected function createPayload($job, $queue, $data = '')
+	{
+		return base64_encode(parent::createPayload($job, $queue, $data));
+    }
+
+    /**
+	 * @param \Google\Cloud\Tasks\V2\Task $task
+	 * @param                             $time
+	 */
+	protected function setScheduleTime(&$task, $time)
+	{
+		$time = Carbon::createFromTimestamp($this->availableAt($time));
+		$timestamp = new Timestamp();
+		$timestamp->fromDateTime($time);
+		$task->setScheduleTime($timestamp);
+	}
 }

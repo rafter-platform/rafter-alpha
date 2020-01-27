@@ -11,9 +11,24 @@
 |
 */
 
+use App\Jobs\TestJob;
+use App\Rafter\Rafter;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 Auth::loginUsingId(1);
+
+Route::get('/test', function () {
+    TestJob::dispatch(12);
+});
+
+Route::post(Rafter::ROUTE, function () {
+    $exitCode = Artisan::call('rafter:work', [
+        'message' => request()->getContent(),
+        'headers' => base64_encode(json_encode(request()->headers->all()))
+    ]);
+});
 
 Route::get('/', function () {
     return view('welcome');

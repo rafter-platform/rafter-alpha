@@ -2,6 +2,7 @@
 
 namespace App\Rafter;
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,5 +33,22 @@ class RafterServiceProvider extends ServiceProvider
             'project_id' => $_ENV['RAFTER_PROJECT_ID'],
             'region' => $_ENV['RAFTER_REGION'],
         ]);
+
+        if ($this->app->bound(RafterWorker::class)) {
+            return;
+        }
+
+        $this->app->singleton(RafterWorker::class, function () {
+            $isDownForMaintenance = function () {
+                return $this->app->isDownForMaintenance();
+            };
+
+            return new RafterWorker(
+                $this->app['queue'],
+                $this->app['events'],
+                $this->app[ExceptionHandler::class],
+                $isDownForMaintenance
+            );
+        });
     }
 }

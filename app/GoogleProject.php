@@ -14,6 +14,8 @@ class GoogleProject extends Model
         'sqladmin.googleapis.com',
         // for Postgres DB support
         'compute.googleapis.com',
+        // for queue support
+        'cloudtasks.googleapis.com',
     ];
 
     const REGIONS = [

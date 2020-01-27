@@ -8,6 +8,6 @@ class Rafter
 
     public static function queueWorkerUrl()
     {
-        return url(static::ROUTE);
+        return url(static::ROUTE, [], true);
     }
 }
