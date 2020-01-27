@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rafter;
+namespace App\Rafter\Queue;
 
 use Google\Cloud\Tasks\V2beta3\CloudTasksClient;
 use Illuminate\Queue\Connectors\ConnectorInterface;

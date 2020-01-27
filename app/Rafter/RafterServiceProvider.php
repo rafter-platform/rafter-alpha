@@ -2,6 +2,8 @@
 
 namespace App\Rafter;
 
+use App\Rafter\Queue\RafterConnector;
+use App\Rafter\Queue\RafterWorker;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;

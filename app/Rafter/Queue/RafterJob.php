@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rafter;
+namespace App\Rafter\Queue;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Queue\Job as JobContract;

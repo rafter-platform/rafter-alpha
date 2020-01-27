@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rafter;
+namespace App\Rafter\Queue;
 
 use Illuminate\Queue\Worker;
 use Illuminate\Queue\WorkerOptions;

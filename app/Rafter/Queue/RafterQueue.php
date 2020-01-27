@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Rafter;
+namespace App\Rafter\Queue;
 
+use App\Rafter\Rafter;
 use Google\Cloud\Tasks\V2beta3\CloudTasksClient;
 use Google\Cloud\Tasks\V2beta3\HttpMethod;
 use Google\Cloud\Tasks\V2beta3\Task;
