@@ -175,6 +175,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // Rafter. TODO: Remove and make a package
+        App\Rafter\RafterServiceProvider::class,
     ],
 
     /*
