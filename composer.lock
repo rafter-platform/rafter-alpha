@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb177cebf6055b35212b99a42fa6b3b2",
+    "content-hash": "e2490b60c65ab08bdc9b98af85edad09",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -379,6 +379,112 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "firevel/firestore-cache-driver",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/firevel/firestore-cache-driver.git",
+                "reference": "fc4452dfc91a34b491a3279dfb0ba8629b837590"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/firevel/firestore-cache-driver/zipball/fc4452dfc91a34b491a3279dfb0ba8629b837590",
+                "reference": "fc4452dfc91a34b491a3279dfb0ba8629b837590",
+                "shasum": ""
+            },
+            "require": {
+                "google/cloud-firestore": "^1.5",
+                "grpc/grpc": "^1.19"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Firevel\\FirestoreCacheDriver\\FirestoreCacheServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Firevel\\FirestoreCacheDriver\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Slowik",
+                    "email": "michael.slowik@firevel.com"
+                }
+            ],
+            "description": "Firestore cache driver for Laravel app running inside Google App Engine.",
+            "keywords": [
+                "app engine",
+                "cache",
+                "driver",
+                "firestore",
+                "firevel",
+                "google cloud",
+                "laravel"
+            ],
+            "time": "2019-06-26T16:27:25+00:00"
+        },
+        {
+            "name": "firevel/firestore-session-driver",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/firevel/firestore-session-driver.git",
+                "reference": "d89bb3b437bc0d94bd04d9c1193295e2d5ebf1f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/firevel/firestore-session-driver/zipball/d89bb3b437bc0d94bd04d9c1193295e2d5ebf1f9",
+                "reference": "d89bb3b437bc0d94bd04d9c1193295e2d5ebf1f9",
+                "shasum": ""
+            },
+            "require": {
+                "google/cloud-firestore": "^1.5",
+                "grpc/grpc": "^1.19"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Firevel\\FirestoreSessionDriver\\FirestoreSessionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Firevel\\FirestoreSessionDriver\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Slowik",
+                    "email": "michael.slowik@firevel.com"
+                }
+            ],
+            "description": "Firestore session driver for Laravel app running inside Google App Engine.",
+            "keywords": [
+                "app engine",
+                "driver",
+                "firestore",
+                "firevel",
+                "google cloud",
+                "laravel",
+                "session"
+            ],
+            "time": "2019-06-23T18:25:37+00:00"
         },
         {
             "name": "google/apiclient",

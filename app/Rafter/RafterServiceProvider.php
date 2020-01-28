@@ -25,12 +25,13 @@ class RafterServiceProvider extends ServiceProvider
     public function register()
     {
         $this->ensureQueueIsConfigured();
+        $this->ensureCacheIsConfigured();
     }
 
     /**
      * Define internal routes for Rafter
      */
-    public function ensureRoutesAreDefined()
+    protected function ensureRoutesAreDefined()
     {
         if ($this->app->routesAreCached()) {
             return;
@@ -49,7 +50,7 @@ class RafterServiceProvider extends ServiceProvider
     /**
      * Ensure Rafter queue is configured.
      */
-    public function ensureQueueIsConfigured()
+    protected function ensureQueueIsConfigured()
     {
         Config::set('queue.connections.rafter', [
             'driver' => 'rafter',
@@ -74,5 +75,16 @@ class RafterServiceProvider extends ServiceProvider
                 $isDownForMaintenance
             );
         });
+    }
+
+    /**
+     * Ensure Firestore cache is configured.
+     */
+    protected function ensureCacheIsConfigured()
+    {
+        Config::set('cache.stores.firestore', [
+            'driver' => 'firestore',
+            'collection' => 'cache', // Firestore collection name.
+        ]);
     }
 }
