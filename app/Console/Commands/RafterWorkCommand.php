@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Rafter\RafterJob;
-use App\Rafter\RafterWorker;
+use App\Rafter\Queue\RafterJob;
+use App\Rafter\Queue\RafterWorker;
 use Illuminate\Console\Command;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Facades\Log;
