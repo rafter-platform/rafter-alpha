@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Log;
 
 Auth::loginUsingId(1);
 
+Route::get('auth/github', 'SourceProviderController@store');
+
+// TODO: Handle webhooks
+Route::post('/hooks/github', function () {
+    Log::info(request()->all());
+});
+
 Route::get('/test', function () {
     TestJob::dispatch(12);
 });

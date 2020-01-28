@@ -47,6 +47,11 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Team');
     }
 
+    public function sourceProviders()
+    {
+        return $this->hasMany('App\SourceProvider');
+    }
+
     public function currentTeam()
     {
         return $this->belongsTo('App\Team', 'current_team_id');
