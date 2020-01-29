@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         // TODO: Make this part of Rafter service
-        '_rafter/*'
+        '_rafter/*',
+        'hooks/*'
     ];
 }
