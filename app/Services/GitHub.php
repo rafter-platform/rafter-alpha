@@ -25,7 +25,7 @@ class GitHub implements SourceProviderClient
     public function valid()
     {
         try {
-            $response = $this->request('https://api.github.com/user/repos');
+            $response = $this->request('user/repos');
 
             return true;
         } catch (Exception $e) {
@@ -47,7 +47,7 @@ class GitHub implements SourceProviderClient
         }
 
         try {
-            $response = $this->request("https://api.github.com/repos/{$repository}/branches");
+            $response = $this->request("repos/{$repository}/branches");
         } catch (ClientException $e) {
             return false;
         }
@@ -75,7 +75,7 @@ class GitHub implements SourceProviderClient
         }
 
         try {
-            $response = $this->request("https://api.github.com/repos/{$repository}/commits/{$hash}");
+            $response = $this->request("repos/{$repository}/commits/{$hash}");
         } catch (ClientException $e) {
             return false;
         }
@@ -92,8 +92,7 @@ class GitHub implements SourceProviderClient
      */
     public function latestHashFor($repository, $branch)
     {
-        return $this->request("https://api.github.com/repos/{$repository}/commits?sha={$branch}&per_page=1"
-        )[0]['sha'];
+        return $this->request("https://api.github.com/repos/{$repository}/commits?sha={$branch}&per_page=1")[0]['sha'];
     }
 
     /**
@@ -129,14 +128,15 @@ class GitHub implements SourceProviderClient
     public function exchangeCodeForAccessToken($code)
     {
         $response = $this->request(
-            "https://github.com/login/oauth/access_token",
+            "login/oauth/access_token",
             "POST",
             [
                 "client_id" => config('services.github.client_id'),
                 "client_secret" => config('services.github.client_secret'),
                 "code" => $code,
             ],
-            true
+            true,
+            "https://github.com/"
         );
 
         $result = [];
@@ -148,7 +148,7 @@ class GitHub implements SourceProviderClient
         return $result;
     }
 
-    protected function request($url, $method = 'GET', $data = [], $isLogin = false)
+    protected function request($endpoint, $method = 'get', $data = [], $isLogin = false, $base = 'https://api.github.com/')
     {
         $options = [
             'timeout' => 15,
@@ -164,7 +164,7 @@ class GitHub implements SourceProviderClient
             $options['json'] = $data;
         }
 
-        $response = (new Client)->request($method, $url, $options);
+        $response = (new Client)->request($method, $base . $endpoint, $options);
 
         if ($isLogin) {
             return $response->getBody()->getContents();

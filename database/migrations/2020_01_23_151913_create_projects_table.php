@@ -16,9 +16,11 @@ class CreateProjectsTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('type');
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('google_project_id');
             $table->string('region');
+            $table->string('repository')->nullable();
             $table->timestamps();
 
             $table->foreign('team_id')

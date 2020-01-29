@@ -8,28 +8,36 @@
 
     <form action="{{ route('projects.store') }}" method="POST">
         @csrf
-        <div>
-            <label for="name">Project Name</label>
-            <input type="text" id="name" name="name" required>
-        </div>
-        <div>
-            <label for="google_project_id">Google Project</label>
-            <select name="google_project_id" id="google_project_id" required>
-                @foreach ($googleProjects as $googleProject)
-                <option value="{{ $googleProject->id }}">{{ $googleProject->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label for="region">Region</label>
-            <select name="region" id="region" required>
-                @foreach ($regions as $region => $regionName)
-                <option value="{{ $region }}">{{ $regionName }} ({{ $region }})</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <button type="submit">Create Project</button>
+        @include('components.form.input', [
+            'name' => 'name',
+            'label' => 'Project Name',
+            'required' => true,
+        ])
+        @include('components.form.select', [
+            'name' => 'google_project_id',
+            'label' => 'Google Project',
+            'required' => true,
+            'options' => $googleProjects->reduce(function ($memo, $p) {
+                $memo[$p->id] = $p->name;
+                return $memo;
+            }, [])
+        ])
+        @include('components.form.select', [
+            'name' => 'type',
+            'label' => 'Project Type',
+            'required' => true,
+            'options' => $types
+        ])
+        @include('components.form.select', [
+            'name' => 'region',
+            'label' => 'Region',
+            'required' => true,
+            'options' => $regions,
+        ])
+        <div class="text-right">
+            @component('components.button')
+            Create Project
+            @endcomponent
         </div>
     </form>
 @endcomponent

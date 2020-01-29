@@ -32,6 +32,7 @@ class ProjectController extends Controller
         return view('projects.create', [
             'googleProjects' => Auth::user()->currentTeam->googleProjects,
             'regions' => GoogleProject::REGIONS,
+            'types' => Project::TYPES,
         ]);
     }
 
@@ -53,12 +54,17 @@ class ProjectController extends Controller
                 'required',
                 Rule::in(collect(GoogleProject::REGIONS)->keys()),
             ],
+            'type' => [
+                'required',
+                Rule::in(collect(Project::TYPES)->keys()),
+            ],
         ]);
 
         $project = $request->user()->currentTeam->projects()->create([
             'name' => $request->name,
             'region' => $request->region,
             'google_project_id' => $request->google_project_id,
+            'type' => $request->type,
         ]);
 
         $project->createInitialEnvironments();

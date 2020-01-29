@@ -6,10 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    /**
+     * Possible Project types
+     */
+    const TYPES = [
+        'laravel' => "Laravel",
+    ];
+
     protected $fillable = [
         'name',
         'region',
         'google_project_id',
+        'type',
+        'repository'
     ];
 
     public function team()
