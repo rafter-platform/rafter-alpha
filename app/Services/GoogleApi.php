@@ -8,6 +8,7 @@ use App\GoogleCloud\CloudRunConfig;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
+use App\GoogleCloud\EnableApisOperation;
 use App\GoogleProject;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -24,16 +25,22 @@ class GoogleApi
         $this->googleClient->addScope('https://www.googleapis.com/auth/cloud-platform');
     }
 
-    public function token()
-    {
-        return $this->googleClient->fetchAccessTokenWithAssertion()['access_token'];
-    }
-
+    /**
+     * Get a Google Cloud Project
+     *
+     * @return array
+     */
     public function getProject()
     {
         return $this->request('https://cloudresourcemanager.googleapis.com/v1/projects/' . $this->googleProject->project_id);
     }
 
+    /**
+     * Enable a given set of APIs
+     *
+     * @param array $apis
+     * @return array
+     */
     public function enableApis($apis = [])
     {
         return $this->request(
@@ -43,6 +50,13 @@ class GoogleApi
                 'serviceIds' => $apis,
             ]
         );
+    }
+
+    public function getEnableApisOperation($operationName)
+    {
+        $response = $this->request("https://serviceusage.googleapis.com/v1/{$operationName}");
+
+        return new EnableApisOperation($response);
     }
 
     /**
@@ -161,6 +175,8 @@ class GoogleApi
 
     /**
      * Get a current database operation.
+     *
+     * @return \App\GoogleCloud\DatabaseOperation
      */
     public function getDatabaseOperation($projectId, $operationName)
     {
@@ -169,6 +185,12 @@ class GoogleApi
         return new DatabaseOperation($response);
     }
 
+    /**
+     * Create a database.
+     *
+     * @param DatabaseConfig $databaseConfig
+     * @return array
+     */
     public function createDatabase(DatabaseConfig $databaseConfig)
     {
         return $this->request(
@@ -178,6 +200,14 @@ class GoogleApi
         );
     }
 
+    /**
+     * Request data from the Google Cloud API.
+     *
+     * @param string $endpoint
+     * @param string $method
+     * @param array $data
+     * @return array
+     */
     protected function request($endpoint, $method = 'GET', $data = [])
     {
         $options = [
@@ -199,5 +229,15 @@ class GoogleApi
 
             throw $exception;
         }
+    }
+
+    /**
+     * Get an access token for the given service account.
+     *
+     * @return string
+     */
+    protected function token()
+    {
+        return $this->googleClient->fetchAccessTokenWithAssertion()['access_token'];
     }
 }

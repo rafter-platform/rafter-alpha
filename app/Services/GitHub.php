@@ -169,7 +169,7 @@ class GitHub implements SourceProviderClient
         if ($isLogin) {
             return $response->getBody()->getContents();
         } else {
-            return (array) json_decode($response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         }
     }
 

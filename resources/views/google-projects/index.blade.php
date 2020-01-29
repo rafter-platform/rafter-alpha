@@ -13,7 +13,7 @@
     @endslot
 
     @foreach ($googleProjects as $project)
-        <h2>{{ $project->name }}</h2>
+        <h2>{{ $project->name }}: {{ $project->status }}</h2>
     @endforeach
 
     @unless (count($googleProjects) > 0)

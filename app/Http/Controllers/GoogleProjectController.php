@@ -50,7 +50,7 @@ class GoogleProjectController extends Controller
 
         $googleProject->provision();
 
-        return redirect('/google-projects')->with('status', 'Project added');
+        return redirect('/google-projects')->with('status', 'Project added and is being activated for use by Rafter.');
     }
 
     /**

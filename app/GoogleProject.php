@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\Jobs\DetermineProjectNumber;
+use App\Jobs\EnableProjectApis;
+use App\Jobs\WaitForProjectApisToBeEnabled;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,11 +28,18 @@ class GoogleProject extends Model
         'asia-northeast1' => 'Tokyo',
     ];
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_ACTIVATING = 'activating';
+    const STATUS_READY = 'ready';
+    const STATUS_FAILED = 'failed';
+
     protected $fillable = [
         'name',
         'project_id',
         'project_number',
         'service_account_json',
+        'status',
+        'operation_name',
     ];
 
     protected $casts = [
@@ -48,13 +58,13 @@ class GoogleProject extends Model
     /**
      * Set up the Google Project with basic requirements
      * for deploying with Rafter.
-     *
-     * TODO: Delegate to chained, queued jobs.
      */
     public function provision()
     {
-        $this->determineProjectNumber();
-        $this->enableApis();
+        DetermineProjectNumber::withChain([
+            new EnableProjectApis($this),
+            new WaitForProjectApisToBeEnabled($this)
+        ])->dispatch($this);
     }
 
     /**
@@ -67,11 +77,33 @@ class GoogleProject extends Model
     }
 
     /**
-     * Enable all required APIs for use by Rafter.
+     * Set status to activating
+     *
+     * @return void
      */
-    public function enableApis()
+    public function setActivating()
     {
-        $this->client()->enableApis(static::REQUIRED_APIS);
+        $this->update(['status' => static::STATUS_ACTIVATING]);
+    }
+
+    /**
+     * Set status to ready
+     *
+     * @return void
+     */
+    public function setReady()
+    {
+        $this->update(['status' => static::STATUS_READY]);
+    }
+
+    /**
+     * Set status to failed
+     *
+     * @return void
+     */
+    public function setFailed()
+    {
+        $this->update(['status' => static::STATUS_FAILED]);
     }
 
     public function client(): GoogleApi
