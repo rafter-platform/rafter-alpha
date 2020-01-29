@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\GoogleProject;
+use App\Http\Requests\CreateProjectRequest;
 use App\Project;
 use App\Rules\ValidRepository;
 use App\SourceProvider;
@@ -42,38 +43,11 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\CreateProjectRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateProjectRequest $request)
     {
-        $this->validate($request, [
-            'name' => ['string', 'required'],
-            'google_project_id' => [
-                'required',
-                Rule::in($request->user()->currentTeam->googleProjects()->pluck('id'))
-            ],
-            'source_provider_id' => [
-                'required',
-                Rule::exists('source_providers', 'id')->where(function ($query) {
-                    $query->where('user_id', $this->user()->id);
-                })
-            ],
-            'region' => [
-                'required',
-                Rule::in(collect(GoogleProject::REGIONS)->keys()),
-            ],
-            'type' => [
-                'required',
-                Rule::in(collect(Project::TYPES)->keys()),
-            ],
-            'repository' => [
-                'required',
-                'string',
-                new ValidRepository(SourceProvider::find($this->source_provider_id))
-            ],
-        ]);
-
         $project = $request->user()->currentTeam->projects()->create([
             'name' => $request->name,
             'region' => $request->region,

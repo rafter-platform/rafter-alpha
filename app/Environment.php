@@ -43,6 +43,11 @@ class Environment extends Model
         return $this->belongsTo('App\Database');
     }
 
+    public function sourceProvider()
+    {
+        return $this->project->sourceProvider;
+    }
+
     /**
      * Whether the environment is using a database.
      */
@@ -81,7 +86,7 @@ class Environment extends Model
     {
         // TODO: Make more flexible (support manual pushes, etc)
         $deployment = $this->deployments()->create([
-            'commit_hash' => $this->project->sourceProvider->client()->latestHashFor($this->project->repository)
+            'commit_hash' => $this->sourceProvider()->client()->latestHashFor($this->project->repository, $this->branch)
         ]);
 
         CreateImageForDeployment::withChain([

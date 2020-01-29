@@ -17,11 +17,42 @@ class Deployment extends Model
         'operation_name',
         'status',
         'image',
+        'commit_hash',
     ];
 
     public function environment()
     {
         return $this->belongsTo('App\Environment');
+    }
+
+    public function project()
+    {
+        return $this->environment->project;
+    }
+
+    public function sourceProvider()
+    {
+        return $this->project()->sourceProvider;
+    }
+
+    /**
+     * The git repo for this deployment
+     *
+     * @return string
+     */
+    public function repository(): string
+    {
+        return $this->project()->repository;
+    }
+
+    /**
+     * Get the tarball URL for the deployment.
+     *
+     * @return string
+     */
+    public function tarballUrl()
+    {
+        return $this->sourceProvider()->client()->tarballUrl($this);
     }
 
     /**

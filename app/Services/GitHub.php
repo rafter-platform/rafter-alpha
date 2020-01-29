@@ -92,7 +92,7 @@ class GitHub implements SourceProviderClient
      */
     public function latestHashFor($repository, $branch)
     {
-        return $this->request("https://api.github.com/repos/{$repository}/commits?sha={$branch}&per_page=1")[0]['sha'];
+        return $this->request("repos/{$repository}/commits?sha={$branch}&per_page=1")[0]['sha'];
     }
 
     /**

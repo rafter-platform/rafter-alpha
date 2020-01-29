@@ -46,6 +46,41 @@ class CloudBuildConfig
         return $this->manual;
     }
 
+    /**
+     * Whether it's a git-based project
+     *
+     * @return boolean
+     */
+    public function isGitBased()
+    {
+        return ! $this->isManual();
+    }
+
+    /**
+     * Get the name of the blank (public) bucket hosting the blank ZIP for Git builds.
+     *
+     * @return string
+     */
+    protected function blankBucket()
+    {
+        return 'rafter-dockerfiles';
+    }
+
+    /**
+     * Get the name of the blank ZIP file to be used to start Git builds.
+     *
+     * @return string
+     */
+    protected function blankZip()
+    {
+        return 'blank.tar.gz';
+    }
+
+    /**
+     * Get the source spec for the Build.
+     *
+     * @return array
+     */
     public function source()
     {
         if ($this->isManual()) {
@@ -56,19 +91,53 @@ class CloudBuildConfig
                 ],
             ];
         } else {
-            // TODO: Handle GitHub/blank source
+            return [
+                'storageSource' => [
+                    'bucket' => $this->blankBucket(),
+                    'object' => $this->blankZip(),
+                ]
+            ];
         }
     }
 
-    public function steps()
+    /**
+     * The step to download the Git repository
+     *
+     * @return array
+     */
+    protected function downloadGitRepoStep()
     {
         return [
+            'name' => 'gcr.io/cloud-builders/curl',
+            'args' => [$this->deployment->tarballUrl(), '--output', 'repo.tar.gz'],
+        ];
+    }
+
+    protected function extractGitRepoStep()
+    {
+        return [
+            'name' => 'ubuntu',
+            'args' => ['tar', 'xzvf', 'repo.tar.gz', '&&', 'mv', 'repo/*', ''],
+        ];
+    }
+
+    /**
+     * The steps required to build this image
+     *
+     * @return array
+     */
+    public function steps()
+    {
+        $steps = [
             // Pull the image down so we can build from cache
             [
                 'name' => 'gcr.io/cloud-builders/docker',
                 'entrypoint' => 'bash',
                 'args' => ['-c', "docker pull {$this->imageLocation()}:latest || exit 0"],
             ],
+
+            $this->isGitBased() ? $this->downloadGitRepoStep() : [],
+            $this->isGitBased() ? $this->extractGitRepoStep() : [],
 
             // Copy the Dockerfile we need
             [
@@ -99,6 +168,8 @@ class CloudBuildConfig
                 'args' => ['push', $this->imageLocation()],
             ],
         ];
+
+        return collect($steps)->filter();
     }
 
     public function imageLocation()
