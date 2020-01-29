@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\GoogleProject;
 use App\Project;
+use App\Rules\ValidRepository;
+use App\SourceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -33,6 +35,7 @@ class ProjectController extends Controller
             'googleProjects' => Auth::user()->currentTeam->googleProjects,
             'regions' => GoogleProject::REGIONS,
             'types' => Project::TYPES,
+            'sourceProviders' => Auth::user()->sourceProviders,
         ]);
     }
 
@@ -50,6 +53,12 @@ class ProjectController extends Controller
                 'required',
                 Rule::in($request->user()->currentTeam->googleProjects()->pluck('id'))
             ],
+            'source_provider_id' => [
+                'required',
+                Rule::exists('source_providers', 'id')->where(function ($query) {
+                    $query->where('user_id', $this->user()->id);
+                })
+            ],
             'region' => [
                 'required',
                 Rule::in(collect(GoogleProject::REGIONS)->keys()),
@@ -57,6 +66,11 @@ class ProjectController extends Controller
             'type' => [
                 'required',
                 Rule::in(collect(Project::TYPES)->keys()),
+            ],
+            'repository' => [
+                'required',
+                'string',
+                new ValidRepository(SourceProvider::find($this->source_provider_id))
             ],
         ]);
 

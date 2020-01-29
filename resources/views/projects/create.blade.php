@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- TODO: Conditionally show form based on whether user has connected GitHub -->
 @component('components.card')
     @slot('title')
         <h1>Create a Project</h1>
@@ -33,6 +34,20 @@
             'label' => 'Region',
             'required' => true,
             'options' => $regions,
+        ])
+        @include('components.form.select', [
+            'name' => 'source_provider_id',
+            'label' => 'Deployment Source',
+            'required' => true,
+            'options' => $sourceProviders->reduce(function ($memo, $p) {
+                $memo[$p->id] = $p->name;
+                return $memo;
+            }, []),
+        ])
+        @include('components.form.input', [
+            'name' => 'repository',
+            'label' => 'GitHub Repository',
+            'required' => true,
         ])
         <div class="text-right">
             @component('components.button')
