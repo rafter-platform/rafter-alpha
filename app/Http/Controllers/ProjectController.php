@@ -79,6 +79,8 @@ class ProjectController extends Controller
             'region' => $request->region,
             'google_project_id' => $request->google_project_id,
             'type' => $request->type,
+            'source_provider_id' => $request->source_provider_id,
+            'repository' => $request->repository,
         ]);
 
         $project->createInitialEnvironments();

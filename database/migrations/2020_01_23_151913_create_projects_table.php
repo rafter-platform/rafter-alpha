@@ -17,8 +17,9 @@ class CreateProjectsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('type');
-            $table->unsignedBigInteger('team_id');
-            $table->unsignedBigInteger('google_project_id');
+            $table->unsignedBigInteger('team_id')->index();
+            $table->unsignedBigInteger('google_project_id')->index();
+            $table->unsignedBigInteger('source_provider_id')->index();
             $table->string('region');
             $table->string('repository')->nullable();
             $table->timestamps();

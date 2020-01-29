@@ -18,7 +18,8 @@ class Project extends Model
         'region',
         'google_project_id',
         'type',
-        'repository'
+        'repository',
+        'source_provider_id',
     ];
 
     public function team()
