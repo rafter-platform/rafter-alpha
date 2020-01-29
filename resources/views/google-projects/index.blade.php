@@ -29,20 +29,25 @@
     <form action="{{ route('google-projects.store') }}" method="POST">
         @csrf
 
-        <div>
-            <label for="name">Project Name</label>
-            <input type="text" id="name" name="name">
-        </div>
-        <div>
-            <label for="project_id">Project ID</label>
-            <input type="text" id="project_id" name="project_id">
-        </div>
-        <div>
-            <label for="service_account_json">Service Account JSON</label>
-            <textarea id="service_account_json" name="service_account_json"></textarea>
-        </div>
-        <div>
-            <button type="submit">Add Project</button>
+        @include('components.form.input', [
+            'name' => 'name',
+            'label' => 'Project Name',
+            'required' => true,
+        ])
+        @include('components.form.input', [
+            'name' => 'project_id',
+            'label' => 'Project ID',
+            'required' => true,
+        ])
+        @include('components.form.textarea', [
+            'name' => 'service_account_json',
+            'label' => 'Service Account JSON',
+            'required' => true,
+        ])
+        <div class="text-right">
+            @component('components.button')
+                Add Project
+            @endcomponent
         </div>
     </form>
 @endcomponent
