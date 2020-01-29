@@ -1,8 +1,10 @@
 <?php
 
-namespace App;
+namespace App\GoogleCloud;
 
-class CloudBuild
+use App\Deployment;
+
+class CloudBuildConfig
 {
     const DOCKERFILES = [
         'laravel' => 'https://storage.googleapis.com/rafter-dockerfiles/Dockerfile-laravel',
@@ -10,12 +12,21 @@ class CloudBuild
 
     protected $attributes = [];
     protected $manual = false;
+    protected $deployment;
     protected $environment;
 
-    public function __construct(Environment $environment) {
-        $this->environment = $environment;
+    public function __construct(Deployment $deployment) {
+        $this->deployment = $deployment;
+        $this->environment = $deployment->environment;
     }
 
+    /**
+     * Mark a manual deployment (i.e. not Git-based)
+     *
+     * @param string $bucket
+     * @param string $object
+     * @return self
+     */
     public function forManualPush($bucket, $object)
     {
         $this->manual = true;
@@ -25,6 +36,11 @@ class CloudBuild
         return $this;
     }
 
+    /**
+     * Whether it's a manual deployment
+     *
+     * @return boolean
+     */
     public function isManual()
     {
         return $this->manual;

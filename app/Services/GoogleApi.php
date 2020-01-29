@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\CloudBuild;
 use App\Environment;
+use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudRunConfig;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
@@ -62,7 +62,7 @@ class GoogleApi
     /**
      * Takes a CloudBuild configuration and sends it to Cloud Build to create an image.
      */
-    public function createImageForBuild(CloudBuild $cloudBuild)
+    public function createImageForBuild(CloudBuildConfig $cloudBuild)
     {
         return $this->request(
             "https://cloudbuild.googleapis.com/v1/projects/{$this->googleProject->project_id}/builds",

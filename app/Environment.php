@@ -79,8 +79,10 @@ class Environment extends Model
      */
     public function createInitialDeployment()
     {
-        // TODO: Pass in an Artifact (Zip bucket location, or GitHub event payload);
-        $deployment = $this->deployments()->create();
+        // TODO: Make more flexible (support manual pushes, etc)
+        $deployment = $this->deployments()->create([
+            'commit_hash' => $this->project->sourceProvider->client()->latestHashFor($this->project->repository)
+        ]);
 
         CreateImageForDeployment::withChain([
             new WaitForImageToBeBuilt($deployment),

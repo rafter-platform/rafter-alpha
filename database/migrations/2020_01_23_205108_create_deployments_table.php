@@ -19,6 +19,7 @@ class CreateDeploymentsTable extends Migration
             $table->string('status')->default('pending');
             $table->string('operation_name')->nullable();
             $table->string('image')->nullable();
+            $table->string('commit_hash')->nullable();
             $table->timestamps();
 
             $table->foreign('environment_id')

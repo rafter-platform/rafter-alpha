@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudRunConfig;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +51,7 @@ class Deployment extends Model
     /**
      * Create a CloudBuild using a configuration.
      */
-    public function submitBuild(CloudBuild $cloudBuild)
+    public function submitBuild(CloudBuildConfig $cloudBuild)
     {
         return $this->client()->createImageForBuild($cloudBuild);
     }

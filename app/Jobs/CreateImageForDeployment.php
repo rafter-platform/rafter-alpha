@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\CloudBuild;
 use App\Deployment;
+use App\GoogleCloud\CloudBuildConfig;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,9 +33,7 @@ class CreateImageForDeployment implements ShouldQueue
      */
     public function handle()
     {
-        // TODO: Use either GitHub event or manual push payload URL
-        $build = (new CloudBuild($this->deployment->environment))
-            ->forManualPush('rafter-demo-project-rafter-uploads', 'rafter-demo.tar.gz');
+        $build = new CloudBuildConfig($this->deployment);
 
         $operation = $this->deployment->submitBuild($build);
 

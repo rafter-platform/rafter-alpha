@@ -37,6 +37,11 @@ class Project extends Model
         return $this->hasMany('App\Environment');
     }
 
+    public function sourceProvider()
+    {
+        return $this->belongsTo('App\SourceProvider');
+    }
+
     /**
      * Create the initial environments for the project
      */
