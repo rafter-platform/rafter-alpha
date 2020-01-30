@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use App\Rafter\Queue\RafterJob;
 use App\Rafter\Queue\RafterWorker;
 use Illuminate\Console\Command;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
@@ -42,6 +45,13 @@ class RafterWorkCommand extends Command
     protected $worker;
 
     /**
+     * Indicates if the worker is already listening for events.
+     *
+     * @var bool
+     */
+    protected static $listeningForEvents = false;
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -60,6 +70,12 @@ class RafterWorkCommand extends Command
      */
     public function handle()
     {
+        if (! static::$listeningForEvents) {
+            $this->listenForEvents();
+
+            static::$listeningForEvents = true;
+        }
+
         $this->worker->setCache($this->laravel['cache']->driver());
 
         return $this->worker->runRafterJob(
@@ -106,6 +122,42 @@ class RafterWorkCommand extends Command
             $timeout = 0, $sleep = 0,
             $this->option('tries'), $this->option('force'),
             $stopWhenEmpty = false
+        );
+    }
+
+    /**
+     * Listen for the queue events in order to update the console output.
+     *
+     * @return void
+     */
+    protected function listenForEvents()
+    {
+        $this->laravel['events']->listen(JobProcessing::class, function ($event) {
+            Log::info("Job starting: {$event->job->resolveName()}");
+        });
+
+        $this->laravel['events']->listen(JobProcessed::class, function ($event) {
+            Log::info("Job success: {$event->job->resolveName()}");
+        });
+
+        $this->laravel['events']->listen(JobFailed::class, function ($event) {
+            Log::error("Job failed: {$event->job->resolveName()}");
+
+            $this->logFailedJob($event);
+        });
+    }
+
+    /**
+     * Store a failed job event.
+     *
+     * @param  \Illuminate\Queue\Events\JobFailed  $event
+     * @return void
+     */
+    protected function logFailedJob(JobFailed $event)
+    {
+        $this->laravel['queue.failer']->log(
+            $event->connectionName, $event->job->getQueue(),
+            $event->job->getRawBody(), $event->exception
         );
     }
 

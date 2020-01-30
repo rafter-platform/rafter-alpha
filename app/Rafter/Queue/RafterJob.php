@@ -17,9 +17,9 @@ class RafterJob extends Job implements JobContract
     protected $tasks;
 
     /**
-     * The RafterQueue
+     * The name of the queue
      *
-     * @var \Rafter\RafterQueue
+     * @var string
      */
     protected $queue;
 
@@ -43,13 +43,14 @@ class RafterJob extends Job implements JobContract
      */
     protected $job;
 
-    public function __construct(Application $container, RafterQueue $queue, array $job, array $headers, string $queueName)
+    protected $rafterQueue;
+
+    public function __construct(Application $container, $rafterQueue, array $job, array $headers, $queue)
     {
+        $this->rafterQueue = $rafterQueue;
         $this->queue = $queue;
-        $this->tasks = $queue->getTasks();
         $this->job = $job;
         $this->headers = $headers;
-        $this->queueName = $queueName;
         $this->container = $container;
     }
 
@@ -69,7 +70,7 @@ class RafterJob extends Job implements JobContract
 
         $this->job['attempts'] += 1;
 
-		$this->queue->pushRaw(base64_encode(json_encode($this->job)), $this->queueName, $options);
+		$this->rafterQueue->pushRaw(base64_encode(json_encode($this->job)), $this->queue, $options);
 		$this->delete();
 
 		parent::release($delay);
