@@ -6,6 +6,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Arr;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 class RafterJob extends Job implements JobContract
 {
@@ -22,6 +23,13 @@ class RafterJob extends Job implements JobContract
      * @var string
      */
     protected $queue;
+
+    /**
+     * The raw, string version of the JSON.
+     *
+     * @var string
+     */
+    protected $rawJob;
 
     /**
      * The job payload.
@@ -45,13 +53,15 @@ class RafterJob extends Job implements JobContract
 
     protected $rafterQueue;
 
-    public function __construct(Application $container, $rafterQueue, array $job, array $headers, $queue)
+    public function __construct(Application $container, $rafterQueue, string $job, HeaderBag $headers, $queue)
     {
         $this->rafterQueue = $rafterQueue;
         $this->queue = $queue;
-        $this->job = $job;
+        $this->rawJob = $job;
+        $this->job = $this->payload();
         $this->headers = $headers;
         $this->container = $container;
+        $this->connectionName = 'rafter';
     }
 
     /**
@@ -70,7 +80,7 @@ class RafterJob extends Job implements JobContract
 
         $this->job['attempts'] += 1;
 
-		$this->rafterQueue->pushRaw(base64_encode(json_encode($this->job)), $this->queue, $options);
+		$this->rafterQueue->pushRaw(json_encode($this->job), $this->queue, $options);
 		$this->delete();
 
 		parent::release($delay);
@@ -93,15 +103,7 @@ class RafterJob extends Job implements JobContract
      */
     public function getJobId()
     {
-        return Arr::last(explode('/', $this->headers['x-cloudtasks-taskname'][0]));
-    }
-
-    /**
-     * By this step, the payload is already an array and doesn't need to be decoded.
-     */
-    public function payload()
-    {
-        return $this->getRawBody();
+        return Arr::last(explode('/', $this->headers['X-CloudTasks-TaskName']));
     }
 
     /**
@@ -111,6 +113,6 @@ class RafterJob extends Job implements JobContract
      */
     public function getRawBody()
     {
-        return $this->job;
+        return $this->rawJob;
     }
 }

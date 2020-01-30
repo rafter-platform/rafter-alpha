@@ -38,13 +38,7 @@ class RafterServiceProvider extends ServiceProvider
         }
 
         // Handle queue jobs
-        Route::post(Rafter::ROUTE, function () {
-            // TODO: Convert this to a controller?
-            Artisan::call('rafter:work', [
-                'message' => request()->getContent(),
-                'headers' => base64_encode(json_encode(request()->headers->all()))
-            ]);
-        });
+        Route::post(Rafter::ROUTE, 'App\Rafter\Http\Controllers\RafterQueueWorkerController@handle');
     }
 
     /**

@@ -129,7 +129,7 @@ class RafterQueue extends Queue implements QueueContract
         $httpRequest = new HttpRequest();
         $httpRequest->setUrl($url);
         $httpRequest->setHttpMethod(HttpMethod::POST);
-        $httpRequest->setBody($payload);
+        $httpRequest->setBody(base64_encode($payload));
 
         $task->setHttpRequest($httpRequest);
 
@@ -195,14 +195,6 @@ class RafterQueue extends Queue implements QueueContract
         return array_merge(parent::createPayloadArray($job, $queue, $data), [
             'attempts' => 0,
         ]);
-    }
-
-    /**
-     * Google Cloud Tasks requires that payload be send in base64 encoded strings.
-     */
-    protected function createPayload($job, $queue, $data = '')
-	{
-		return base64_encode(parent::createPayload($job, $queue, $data));
     }
 
     /**
