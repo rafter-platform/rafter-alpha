@@ -39,22 +39,19 @@ class WaitForImageToBeBuilt implements ShouldQueue
     public function handle()
     {
         $operation = $this->deployment->getBuildOperation();
-        $status = $operation['metadata']['build']['status'];
 
-        if (collect(['FAILURE', 'INTERNAL_ERROR', 'TIMEOUT', 'CANCELLED'])->contains($status)) {
-            $this->fail(new Exception($operation['metadata']['error']['message']));
+        if ($operation->isDone() && $operation->hasError()) {
+            $this->fail(new Exception($operation->errorMessage()));
             return;
         }
 
         // If it's working, check again in 15 seconds
-        if (collect(['QUEUED', 'WORKING'])->contains($status)) {
+        if (! $operation->isDone()) {
             $this->release(15);
             return;
         }
 
-        if ($status === 'SUCCESS') {
-            $this->deployment->recordBuiltImage($operation['metadata']['build']['id']);
-        }
+        $this->deployment->recordBuiltImage($operation->builtImage());
     }
 
     public function failed(Throwable $exception)

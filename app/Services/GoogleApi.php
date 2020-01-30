@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Environment;
 use App\GoogleCloud\CloudBuildConfig;
+use App\GoogleCloud\CloudBuildOperation;
 use App\GoogleCloud\CloudRunConfig;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
@@ -86,9 +87,11 @@ class GoogleApi
      */
     public function getCloudBuildOperation($operationName)
     {
-        return $this->request(
+        $response = $this->request(
             "https://cloudbuild.googleapis.com/v1/{$operationName}"
         );
+
+        return new CloudBuildOperation($response);
     }
 
     /**

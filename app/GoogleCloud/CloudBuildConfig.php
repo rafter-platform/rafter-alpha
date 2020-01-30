@@ -108,17 +108,25 @@ class CloudBuildConfig
     protected function downloadGitRepoStep()
     {
         return [
-            'name' => 'gcr.io/cloud-builders/curl',
-            'args' => [$this->deployment->tarballUrl(), '--output', 'repo.tar.gz'],
+            'name' => 'gcr.io/cloud-builders/git',
+            'args' => ['clone', '--depth=1', "https://x-access-token:{$this->deployment->sourceProvider()->client()->token()}@github.com/{$this->deployment->repository()}.git"],
         ];
+
+        // TODO: Get tarball working, as it will be much smaller
+        // return [
+        //     'name' => 'gcr.io/cloud-builders/curl',
+        //     'args' => [$this->deployment->tarballUrl(), '-L', '--output', 'repo.tar.gz'],
+        // ];
     }
 
-    protected function extractGitRepoStep()
+    /**
+     * Get the name of the repo's project
+     *
+     * @return string
+     */
+    protected function repoName()
     {
-        return [
-            'name' => 'ubuntu',
-            'args' => ['tar', 'xzvf', 'repo.tar.gz', '&&', 'mv', 'repo/*', ''],
-        ];
+        return explode('/', $this->deployment->repository())[1];
     }
 
     /**
@@ -137,18 +145,19 @@ class CloudBuildConfig
             ],
 
             $this->isGitBased() ? $this->downloadGitRepoStep() : [],
-            $this->isGitBased() ? $this->extractGitRepoStep() : [],
 
             // Copy the Dockerfile we need
             [
                 'name' => 'gcr.io/cloud-builders/curl',
                 'args' => [static::DOCKERFILES['laravel'], '--output', 'Dockerfile'],
+                'dir' => $this->isGitBased() ? $this->repoName() : '',
             ],
 
             // TEST: Show the dir
             [
                 'name' => 'ubuntu',
                 'args' => ['ls', '-la', './'],
+                'dir' => $this->isGitBased() ? $this->repoName() : '',
             ],
 
             // Build the image
@@ -160,23 +169,35 @@ class CloudBuildConfig
                     '--cache-from', "{$this->imageLocation()}:latest",
                     '.'
                 ],
+                'dir' => $this->isGitBased() ? $this->repoName() : '',
             ],
 
             // Upload it to GCR
             [
                 'name' => 'gcr.io/cloud-builders/docker',
                 'args' => ['push', $this->imageLocation()],
+                'dir' => $this->isGitBased() ? $this->repoName() : '',
             ],
         ];
 
         return collect($steps)->filter();
     }
 
+    /**
+     * The location of the image on GCR
+     *
+     * @return string
+     */
     public function imageLocation()
     {
         return "gcr.io/\$PROJECT_ID/{$this->environment->slug()}";
     }
 
+    /**
+     * The images that will be built.
+     *
+     * @return array
+     */
     public function images()
     {
         return [
@@ -184,6 +205,11 @@ class CloudBuildConfig
         ];
     }
 
+    /**
+     * The instructions to send to the Cloud Build API
+     *
+     * @return array
+     */
     public function instructions()
     {
         return [
