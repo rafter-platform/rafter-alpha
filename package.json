@@ -13,7 +13,7 @@
         "@tailwindcss/custom-forms": "^0.2.1",
         "axios": "^0.19",
         "cross-env": "^5.1",
-        "laravel-mix": "^4.0.14",
+        "laravel-mix": "^4.1.4",
         "laravel-mix-purgecss": "^4.1",
         "laravel-mix-tailwind": "^0.1.0",
         "lodash": "^4.17.13",
