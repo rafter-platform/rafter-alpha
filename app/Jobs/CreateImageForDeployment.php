@@ -4,11 +4,13 @@ namespace App\Jobs;
 
 use App\Deployment;
 use App\GoogleCloud\CloudBuildConfig;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class CreateImageForDeployment implements ShouldQueue
 {
@@ -33,11 +35,20 @@ class CreateImageForDeployment implements ShouldQueue
      */
     public function handle()
     {
-        $build = new CloudBuildConfig($this->deployment);
+        try {
+            $build = new CloudBuildConfig($this->deployment);
 
-        $operation = $this->deployment->submitBuild($build);
+            $operation = $this->deployment->submitBuild($build);
 
-        $this->deployment->markAsInProgress();
-        $this->deployment->update(['operation_name' => $operation['name']]);
+            $this->deployment->markAsInProgress();
+            $this->deployment->update(['operation_name' => $operation['name']]);
+        } catch (Exception $e) {
+            $this->fail($e);
+        }
+    }
+
+    public function failed(Throwable $e)
+    {
+        $this->deployment->markAsFailed();
     }
 }

@@ -176,7 +176,7 @@ class GitHub implements SourceProviderClient
     /**
      * Get the access token for the given SourceProvider.
      */
-    protected function token() {
+    public function token() {
         return $this->source->meta['token'];
     }
 }

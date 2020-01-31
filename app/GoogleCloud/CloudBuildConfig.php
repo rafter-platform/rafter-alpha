@@ -6,10 +6,6 @@ use App\Deployment;
 
 class CloudBuildConfig
 {
-    const DOCKERFILES = [
-        'laravel' => 'https://storage.googleapis.com/rafter-dockerfiles/Dockerfile-laravel',
-    ];
-
     protected $attributes = [];
     protected $manual = false;
     protected $deployment;
@@ -90,14 +86,9 @@ class CloudBuildConfig
                     'object' => $this->attributes['object'],
                 ],
             ];
-        } else {
-            return [
-                'storageSource' => [
-                    'bucket' => $this->blankBucket(),
-                    'object' => $this->blankZip(),
-                ]
-            ];
         }
+
+        return [];
     }
 
     /**
@@ -130,6 +121,30 @@ class CloudBuildConfig
     }
 
     /**
+     * Get the project type.
+     *
+     * @return string
+     */
+    protected function projectType()
+    {
+        return $this->deployment->project()->type;
+    }
+
+    /**
+     * Get the Build instructions URL
+     *
+     * @param string $file
+     * @return string
+     */
+    protected function buildInstructions($file)
+    {
+        return route('build-instructions', [
+            'type' => $this->projectType(),
+            'file' => $file
+        ]);
+    }
+
+    /**
      * The steps required to build this image
      *
      * @return array
@@ -149,7 +164,14 @@ class CloudBuildConfig
             // Copy the Dockerfile we need
             [
                 'name' => 'gcr.io/cloud-builders/curl',
-                'args' => [static::DOCKERFILES['laravel'], '--output', 'Dockerfile'],
+                'args' => [$this->buildInstructions('Dockerfile'), '--output', 'Dockerfile'],
+                'dir' => $this->isGitBased() ? $this->repoName() : '',
+            ],
+
+            // Copy the entrypoint we need
+            [
+                'name' => 'gcr.io/cloud-builders/curl',
+                'args' => [$this->buildInstructions('docker-entrypoint'), '--output', 'docker-entrypoint.sh'],
                 'dir' => $this->isGitBased() ? $this->repoName() : '',
             ],
 
@@ -212,10 +234,10 @@ class CloudBuildConfig
      */
     public function instructions()
     {
-        return [
+        return array_filter([
             'source' => $this->source(),
             'steps' => $this->steps(),
             'images' => $this->images(),
-        ];
+        ]);
     }
 }

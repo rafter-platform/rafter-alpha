@@ -1,0 +1,16 @@
+FROM php:7.4-apache
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    zip \
+    unzip \
+    git \
+    libpng-dev
+
+# Install PECL and PEAR extensions
+RUN pecl install \
+    grpc
+
+# Enable PECL and PEAR extensions
+RUN docker-php-ext-enable \
+    grpc

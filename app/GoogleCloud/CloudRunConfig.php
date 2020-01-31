@@ -87,14 +87,14 @@ class CloudRunConfig
     public function spec()
     {
         return [
-            'template' => [
+            'template' => array_filter([
                 'metadata' => $this->revisionMetadata(),
                 'spec' => [
                     'containers' => [
                         $this->container(),
                     ]
                 ]
-            ]
+            ]),
         ];
     }
 
