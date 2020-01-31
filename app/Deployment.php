@@ -147,6 +147,10 @@ class Deployment extends Model
                 'RAFTER_QUEUE' => $this->environment->queueName(),
                 'RAFTER_PROJECT_ID' => $this->environment->projectId(),
                 'RAFTER_REGION' => $this->project()->region,
+                'CACHE_DRIVER' => 'firestore',
+                'QUEUE_CONNECTION' => 'rafter',
+                'SESSION_DRIVER' => 'firestore',
+                'LOG_CHANNEL' => 'syslog',
             ]);
 
             if ($this->environment->usesDatabase()) {

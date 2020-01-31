@@ -160,7 +160,9 @@ class Environment extends Model
     public function deploy()
     {
         // TODO: Pass in an Artifact (Zip bucket location, or GitHub event payload);
-        $deployment = $this->deployments()->create();
+        $deployment = $this->deployments()->create([
+            'commit_hash' => $this->sourceProvider()->client()->latestHashFor($this->project->repository, $this->branch)
+        ]);
 
         CreateImageForDeployment::withChain([
             new WaitForImageToBeBuilt($deployment),
