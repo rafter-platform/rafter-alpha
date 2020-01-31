@@ -24,6 +24,36 @@ class Database extends Model
         return $this->belongsTo('App\DatabaseInstance');
     }
 
+    /**
+     * Get the user for the database.
+     *
+     * @return string
+     */
+    public function databaseUser()
+    {
+        return 'root';
+    }
+
+    /**
+     * Get the password for the database
+     *
+     * @return string
+     */
+    public function databasePassword()
+    {
+        return $this->databaseInstance->root_password;
+    }
+
+    /**
+     * Get the connection string to the database instance.
+     *
+     * @return string
+     */
+    public function connectionString()
+    {
+        return $this->databaseInstance->connectionString();
+    }
+
     public function setCreating()
     {
         $this->update(['status' => static::STATUS_CREATING]);

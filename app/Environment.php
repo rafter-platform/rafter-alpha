@@ -10,6 +10,7 @@ use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Str;
 
 class Environment extends Model
@@ -77,6 +78,61 @@ class Environment extends Model
     public function slug()
     {
         return Str::slug($this->project->name . '-' . $this->name);
+    }
+
+    /**
+     * The queue name is the slug.
+     *
+     * @return string
+     */
+    public function queueName()
+    {
+        return $this->slug();
+    }
+
+    /**
+     * Get the GooglE Project ID
+     *
+     * @return string
+     */
+    public function projectId()
+    {
+        return $this->project->googleProject->project_id;
+    }
+
+    public function provision()
+    {
+        $this->setInitialEnvironmentVariables();
+        $this->createInitialDeployment();
+    }
+
+    /**
+     * Set the initial environment variables for this project.
+     *
+     * While Rafter also injects "hidden" variables at runtime, these variables are
+     * set once and not changed by Rafter. This also allows the user to modify them, e.g.
+     * if they'd like to rotate the keys or change the name of their app.
+     *
+     * @return void
+     */
+    public function setInitialEnvironmentVariables()
+    {
+        $vars = new EnvVars([
+            'IS_RAFTER' => 'true',
+        ]);
+
+        if ($this->project->isLaravel()) {
+            $appKey = 'base64:' . base64_encode(Encrypter::generateKey(config('app.cipher')));
+
+            $vars->inject([
+                'APP_NAME' => $this->project->name,
+                'APP_ENV' => $this->name,
+                'APP_KEY' => $appKey,
+            ]);
+        }
+
+        $this->environmental_variables = $vars->toString();
+        $this->save();
     }
 
     /**

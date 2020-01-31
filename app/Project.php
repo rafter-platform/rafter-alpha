@@ -48,12 +48,22 @@ class Project extends Model
     public function createInitialEnvironments()
     {
         collect(Environment::INITIAL_ENVIRONMENTS)
-            ->map(function ($name) {
-                return $this->environments()->create([
+            ->each(function ($name) {
+                tap($this->environments()->create([
                     'name' => $name
-                ]);
-            })
-            ->each
-            ->createInitialDeployment();
+                ]), function ($environment) {
+                    $environment->provision();
+                });
+            });
+    }
+
+    /**
+     * Whether this project is a Laravel project
+     *
+     * @return boolean
+     */
+    public function isLaravel()
+    {
+        return $this->type === 'laravel';
     }
 }

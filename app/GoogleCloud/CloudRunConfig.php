@@ -3,6 +3,7 @@
 namespace App\GoogleCloud;
 
 use App\Deployment;
+use App\EnvVars;
 
 class CloudRunConfig
 {
@@ -60,20 +61,14 @@ class CloudRunConfig
         return $this->deployment->image;
     }
 
+    /**
+     * Get environmental variables to set.
+     *
+     * @return array
+     */
     public function env()
     {
-        // TODO: Inject system-provided env vars based on database, queue, etc setup
-        // TODO: Merge environment-specific env vars with system-provided vars
-        return [
-            [
-                'name' => 'DB_CONNECTION',
-                'value' => 'sqlite'
-            ],
-            [
-                'name' => 'DB_DATABASE',
-                'value' => '/var/www/database/database.sqlite'
-            ],
-        ];
+        return $this->deployment->envVars()->all();
     }
 
     public function container()

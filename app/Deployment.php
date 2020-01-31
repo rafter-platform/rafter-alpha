@@ -133,6 +133,37 @@ class Deployment extends Model
         $this->client()->replaceCloudRunService($cloudRunConfig);
     }
 
+    /**
+     * Get the environment variables for this deployment.
+     *
+     * @return EnvVars
+     */
+    public function envVars(): EnvVars
+    {
+        $vars = EnvVars::fromString($this->environment->environmental_variables);
+
+        if ($this->project()->isLaravel()) {
+            $vars->inject([
+                'RAFTER_QUEUE' => $this->environment->queueName(),
+                'RAFTER_PROJECT_ID' => $this->environment->projectId(),
+                'RAFTER_REGION' => $this->project()->region,
+            ]);
+
+            if ($this->environment->usesDatabase()) {
+                $database = $this->environment->database;
+
+                $vars->inject([
+                    'DB_DATABASE' => $database->name,
+                    'DB_USER' => $database->databaseUser(),
+                    'DB_PASSWORD' => $database->databasePassword(),
+                    'DB_SOCKET' => "/cloudsql/{$database->connectionString()}"
+                ]);
+            }
+        }
+
+        return $vars;
+    }
+
     public function client(): GoogleApi
     {
         return $this->environment->client();
