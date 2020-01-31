@@ -15,6 +15,8 @@ class RafterServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        if (! $this->runningOnRafter()) return;
+
         $this->ensureRoutesAreDefined();
 
         Queue::extend('rafter', function () {
@@ -24,8 +26,20 @@ class RafterServiceProvider extends ServiceProvider
 
     public function register()
     {
+        if (! $this->runningOnRafter()) return;
+
         $this->ensureQueueIsConfigured();
         $this->ensureCacheIsConfigured();
+    }
+
+    /**
+     * Whether the current environment is running on Rafter
+     *
+     * @return boolean
+     */
+    protected function runningOnRafter()
+    {
+        return $_ENV['IS_RAFTER'] ?? false;
     }
 
     /**
