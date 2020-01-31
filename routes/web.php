@@ -12,14 +12,17 @@
 */
 
 use App\Jobs\TestJob;
-use App\Rafter\Rafter;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-Auth::loginUsingId(1);
+if (app()->environment('local')) {
+    Auth::loginUsingId(1);
+}
 
+// GitHub authorization flow
 Route::get('auth/github', 'SourceProviderController@store');
+
+Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
 // TODO: Handle webhooks
 Route::post('/hooks/github', function () {
@@ -33,6 +36,7 @@ Route::get('/test', function () {
 Route::get('/', function () {
     return view('welcome');
 });
+
 Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {
