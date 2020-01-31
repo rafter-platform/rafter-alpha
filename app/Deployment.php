@@ -154,7 +154,7 @@ class Deployment extends Model
 
                 $vars->inject([
                     'DB_DATABASE' => $database->name,
-                    'DB_USER' => $database->databaseUser(),
+                    'DB_USERNAME' => $database->databaseUser(),
                     'DB_PASSWORD' => $database->databasePassword(),
                     'DB_SOCKET' => "/cloudsql/{$database->connectionString()}"
                 ]);
