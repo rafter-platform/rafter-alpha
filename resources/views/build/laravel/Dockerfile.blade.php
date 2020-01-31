@@ -5,8 +5,13 @@ RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 # Install production dependencies
 RUN apt-get update && apt-get install -y \
     libjpeg-dev \
-    nodejs \
-    mariadb-client
+    nodejs
+
+# Install MySQL driver extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mysqli
 
 # Enable PECL and PEAR extensions
 RUN docker-php-ext-enable \
