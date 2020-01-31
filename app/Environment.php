@@ -22,6 +22,7 @@ class Environment extends Model
     protected $fillable = [
         'name',
         'url',
+        'environment_variables',
     ];
 
     public function getRouteKeyName()
