@@ -15,24 +15,29 @@
 <body class="bg-gray-100 h-screen antialiased leading-none">
     <div id="app">
         <div class="flex">
-            <div>
+            <div class="min-h-screen flex flex-col">
                 <div class="bg-blue-900 p-6">
                     <a href="{{ url('/home') }}" class="text-lg font-semibold text-gray-100 no-underline">
                         {{ config('app.name', 'Laravel') }}
                     </a>
                 </div>
-                <div class="p-6 py-8 bg-blue-800 text-blue-100 w-64 h-screen">
+                <div class="p-6 py-8 bg-blue-800 text-blue-100 w-64 flex-1">
                     <div class="mb-8">
                         <a href="{{ route('home') }}">Dashboard</a>
                     </div>
 
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Projects</div>
-                    <ul class="mt-4">
+                    <ul class="mt-4 mb-8">
                         @foreach (Auth::user()->currentTeam->projects as $project)
                             <li>
                                 <a href="{{ route('projects.show', [$project]) }}">{{ $project->name }}</a>
                             </li>
                         @endforeach
+                    </ul>
+
+                    <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Manage</div>
+                    <ul class="mt-4 mb-8">
+                        <li><a href="{{ route('databases.index') }}">Databases</a></li>
                     </ul>
                 </div>
             </div>

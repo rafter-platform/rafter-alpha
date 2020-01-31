@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DatabaseInstance;
+use App\GoogleProject;
 use Illuminate\Http\Request;
 
 class DatabaseInstanceController extends Controller
@@ -14,7 +15,14 @@ class DatabaseInstanceController extends Controller
      */
     public function index()
     {
-        //
+        return view('databases.index', [
+            'databaseInstances' => auth()->user()->currentTeam->databaseInstances,
+            'googleProjects' => auth()->user()->currentTeam->googleProjects,
+            'types' => DatabaseInstance::TYPES,
+            'versions' => DatabaseInstance::VERSIONS,
+            'tiers' => DatabaseInstance::TIERS,
+            'regions' => GoogleProject::REGIONS,
+        ]);
     }
 
     /**

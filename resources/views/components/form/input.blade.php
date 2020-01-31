@@ -3,7 +3,16 @@
         {{ $label }}:
     </label>
 
-    <input id="{{ $name }}" type="{{ $type ?? 'text' }}" class="form-input w-full @error($name) border-red-500 @enderror" name="{{ $name }}" value="{{ old($name) }}" {{ $required ? 'required' : ''}}>
+    <input
+        id="{{ $name }}"
+        type="{{ $type ?? 'text' }}"
+        class="form-input w-full @error($name) border-red-500 @enderror"
+        name="{{ $name }}"
+        value="{{ old($name) ?? $value ?? '' }}"
+        {{ $required ? 'required' : ''}}
+        {{ $min ?? false ? 'min=' . $min : '' }}
+        {{ $max ?? false ? 'max=' . $max : '' }}
+    />
 
     @error($name)
         <p class="text-red-500 text-xs italic mt-4">

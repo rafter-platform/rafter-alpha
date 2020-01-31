@@ -45,4 +45,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('projects', 'ProjectController');
     Route::resource('projects.environments', 'EnvironmentController');
     Route::resource('projects.environments.deployments', 'DeploymentController');
+    Route::resource('databases', 'DatabaseInstanceController');
 });

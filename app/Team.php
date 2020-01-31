@@ -32,4 +32,9 @@ class Team extends Model
     {
         return $this->hasMany('App\Project');
     }
+
+    public function databaseInstances()
+    {
+        return $this->hasManyThrough('App\DatabaseInstance', 'App\GoogleProject');
+    }
 }
