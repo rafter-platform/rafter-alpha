@@ -1,0 +1,82 @@
+{
+    "apiVersion": "serving.knative.dev/v1",
+    "kind": "Service",
+    "metadata": {
+        "name": "rafter-production",
+        "namespace": "1018375464568",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/1018375464568/services/rafter-production",
+        "uid": "7e1d0242-7517-47f7-b399-03d11bd4eada",
+        "resourceVersion": "AAWdhR7dnog",
+        "generation": 2,
+        "labels": { "cloud.googleapis.com/location": "us-central1" },
+        "annotations": {
+            "serving.knative.dev/creator": "rafter@rafter-demo-project.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier": "rafter@rafter-demo-project.iam.gserviceaccount.com"
+        },
+        "creationTimestamp": "2020-02-01T14:55:34.023171Z"
+    },
+    "spec": {
+        "template": {
+            "metadata": {
+                "annotations": {
+                    "run.googleapis.com/cloudsql-instances": "rafter-demo-project:us-central1:et-harum-neque-aut-quae-iure-qui-exercitationem-quis",
+                    "autoscaling.knative.dev/maxScale": "1000"
+                }
+            },
+            "spec": {
+                "containerConcurrency": 80,
+                "timeoutSeconds": 900,
+                "containers": [
+                    {
+                        "image": "gcr.io/rafter-demo-project/rafter-production@sha256:f5f8beb5742dfa1d057d6ab5dee206fa90815e99357263347722b14f7136964b",
+                        "env": [
+                            { "name": "IS_RAFTER", "value": "true" }
+                        ],
+                        "resources": {
+                            "limits": { "cpu": "1000m", "memory": "1Gi" }
+                        },
+                        "ports": [{ "containerPort": 8080 }]
+                    }
+                ]
+            }
+        },
+        "traffic": [{ "percent": 100, "latestRevision": true }]
+    },
+    "status": {
+        "observedGeneration": 2,
+        "conditions": [
+            {
+                "type": "Ready",
+                "status": "False",
+                "reason": "HealthCheckContainerError",
+                "message": "Cloud Run error: Container failed to start. Failed to start and then listen on the port defined by the PORT environment variable. Logs for this revision might contain more information.",
+                "lastTransitionTime": "2020-02-01T15:12:37.605Z"
+            },
+            {
+                "type": "ConfigurationsReady",
+                "status": "False",
+                "reason": "HealthCheckContainerError",
+                "message": "Cloud Run error: Container failed to start. Failed to start and then listen on the port defined by the PORT environment variable. Logs for this revision might contain more information.",
+                "lastTransitionTime": "2020-02-01T15:12:37.605Z"
+            },
+            {
+                "type": "RoutesReady",
+                "status": "True",
+                "lastTransitionTime": "2020-02-01T14:56:00.231Z"
+            }
+        ],
+        "latestReadyRevisionName": "rafter-production-srsx6",
+        "latestCreatedRevisionName": "rafter-production-n72cx",
+        "traffic": [
+            {
+                "revisionName": "rafter-production-srsx6",
+                "percent": 100,
+                "latestRevision": true
+            }
+        ],
+        "url": "https://rafter-production-nmyoncbzeq-uc.a.run.app",
+        "address": {
+            "url": "https://rafter-production-nmyoncbzeq-uc.a.run.app"
+        }
+    }
+}

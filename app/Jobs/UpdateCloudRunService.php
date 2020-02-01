@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class UpdateCloudRunService implements ShouldQueue
 {
@@ -32,6 +33,15 @@ class UpdateCloudRunService implements ShouldQueue
      */
     public function handle()
     {
-        $this->deployment->updateCloudRunService();
+        try {
+            $this->deployment->updateCloudRunService();
+        } catch (Throwable $exception) {
+            $this->fail($exception);
+        }
+    }
+
+    public function failed(Throwable $exception)
+    {
+        $this->deployment->markAsFailed();
     }
 }

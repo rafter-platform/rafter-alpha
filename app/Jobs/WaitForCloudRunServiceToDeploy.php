@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Deployment;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,26 +40,20 @@ class WaitForCloudRunServiceToDeploy implements ShouldQueue
     {
         $service = $this->deployment->getCloudRunService();
 
-        // If it just started
-        if (empty($service['status'])) {
+        if (! $service->isReady()) {
             $this->release(10);
             return;
         }
 
-        // If it's still going
-        if (collect($service['status']['conditions'])->every(function ($item) { return $item['status'] !== 'True'; })) {
-            $this->release(10);
+        if ($service->hasErrors()) {
+            $this->fail(new Exception($service->getError()));
             return;
         }
-
-        // TODO: Check to see if any part of the service is failing
-
-        // Else, everything went well.
 
         // TODO: Mark deployment as successful if this is NOT a new service
 
         // Else, set the URL for the first time and move on.
-        $this->deployment->environment->setUrl($service['status']['url']);
+        $this->deployment->environment->setUrl($service->getUrl());
     }
 
     public function failed(Throwable $exception)

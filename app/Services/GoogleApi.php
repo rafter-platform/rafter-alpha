@@ -6,6 +6,7 @@ use App\Environment;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudBuildOperation;
 use App\GoogleCloud\CloudRunConfig;
+use App\GoogleCloud\CloudRunService;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
@@ -123,9 +124,11 @@ class GoogleApi
      */
     public function getCloudRunService($name, $region)
     {
-        return $this->request(
+        $response = $this->request(
             "https://{$region}-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/{$this->googleProject->project_id}/services/{$name}"
         );
+
+        return new CloudRunService($response);
     }
 
     /**
