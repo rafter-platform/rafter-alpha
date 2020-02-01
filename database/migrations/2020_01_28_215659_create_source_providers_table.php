@@ -18,6 +18,7 @@ class CreateSourceProvidersTable extends Migration
             $table->unsignedBigInteger('user_id')->index();
             $table->string('name');
             $table->string('type', 25);
+            $table->string('installation_id')->index();
             $table->text('meta');
             $table->timestamps();
         });

@@ -15,9 +15,8 @@ class SourceProviderController extends Controller
         $source = $request->user()->sourceProviders()->create([
             'name' => 'GitHub',
             'type' => 'GitHub',
-            'meta' => [
-                'installationId' => $installationId,
-            ],
+            'installation_id' => $installationId,
+            'meta' => [],
         ]);
 
         // Exchange the code for an access token for the user, and store it
@@ -29,8 +28,7 @@ class SourceProviderController extends Controller
             ]);
         }
 
-        $meta = $source->meta;
-        $meta['token'] = $response['access_token'];
+        $meta = ['token' => $response['access_token']];
         $source->update(['meta' => $meta]);
 
         if (! $source->client()->valid()) {
