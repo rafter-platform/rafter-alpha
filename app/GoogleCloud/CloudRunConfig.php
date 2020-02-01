@@ -71,11 +71,26 @@ class CloudRunConfig
         return $this->deployment->envVars()->all();
     }
 
+    /**
+     * Define the system resources (Memory and CPU) for this service.
+     *
+     * @return array
+     */
+    public function resources()
+    {
+        return [
+            'limits' => [
+                'memory' => '1Gi',
+            ],
+        ];
+    }
+
     public function container()
     {
         return [
             'image' => $this->image(),
             'env' => $this->env(),
+            'resources' => $this->resources(),
         ];
     }
 
