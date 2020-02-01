@@ -24,10 +24,7 @@ Route::get('auth/github', 'SourceProviderController@store');
 
 Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
-// TODO: Handle webhooks
-Route::post('/hooks/github', function () {
-    Log::info(request()->all());
-});
+Route::post('/hooks/{type}', 'HookDeploymentController@store');
 
 Route::get('/test', function () {
     TestJob::dispatch(12);

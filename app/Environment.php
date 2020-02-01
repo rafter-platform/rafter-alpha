@@ -157,11 +157,10 @@ class Environment extends Model
     /**
      * Create a new deployment on Cloud Run.
      */
-    public function deploy()
+    public function deploy($commitHash)
     {
-        // TODO: Pass in an Artifact (Zip bucket location, or GitHub event payload);
         $deployment = $this->deployments()->create([
-            'commit_hash' => $this->sourceProvider()->client()->latestHashFor($this->project->repository, $this->branch)
+            'commit_hash' => $commitHash,
         ]);
 
         CreateImageForDeployment::withChain([

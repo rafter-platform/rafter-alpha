@@ -18,7 +18,7 @@ class CreateEnvironmentsTable extends Migration
             $table->unsignedBigInteger('project_id')->index();
             $table->unsignedBigInteger('database_id')->nullable();
             $table->string('name');
-            $table->string('branch')->default('master');
+            $table->string('branch')->default('master')->index();
             $table->string('url')->nullable();
             $table->string('web_service_name')->nullable();
             $table->mediumText('environmental_variables')->nullable();
