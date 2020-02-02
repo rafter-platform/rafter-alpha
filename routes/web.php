@@ -13,7 +13,6 @@
 
 use App\Jobs\TestJob;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 if (app()->environment('local')) {
     Auth::loginUsingId(1);
