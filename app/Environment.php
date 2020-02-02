@@ -146,12 +146,12 @@ class Environment extends Model
             'commit_hash' => $this->sourceProvider()->client()->latestHashFor($this->project->repository, $this->branch)
         ]);
 
-        CreateImageForDeployment::withChain([
+        (new CreateImageForDeployment($deployment))->withDeploymentChain([
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
-        ])->dispatch($deployment);
+        ])->dispatch();
     }
 
     /**
@@ -163,11 +163,11 @@ class Environment extends Model
             'commit_hash' => $commitHash,
         ]);
 
-        CreateImageForDeployment::withChain([
+        (new CreateImageForDeployment($deployment))->withDeploymentChain([
             new WaitForImageToBeBuilt($deployment),
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
-        ])->dispatch($deployment);
+        ])->dispatch();
     }
 
     /**

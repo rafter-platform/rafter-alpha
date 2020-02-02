@@ -2,29 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Deployment;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Exception;
 
-class EnsureAppIsPublic implements ShouldQueue
+class EnsureAppIsPublic extends DeploymentStepJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $deployment;
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(Deployment $deployment)
-    {
-        $this->deployment = $deployment;
-    }
-
     /**
      * Execute the job.
      *
@@ -32,22 +13,27 @@ class EnsureAppIsPublic implements ShouldQueue
      */
     public function handle()
     {
-        $environment = $this->deployment->environment;
+        try {
+            $environment = $this->deployment->environment;
 
-        // Get the existing policies
-        $policy = $environment->client()->getIamPolicyForCloudRunService($environment);
+            // Get the existing policies
+            $policy = $environment->client()->getIamPolicyForCloudRunService($environment);
 
-        // Add the invoker role to allUsers (public, anon)
-        $policy['bindings'][] = [
-            'role' => 'roles/run.invoker',
-            'members' => [
-                'allUsers',
-            ],
-        ];
+            // Add the invoker role to allUsers (public, anon)
+            $policy['bindings'][] = [
+                'role' => 'roles/run.invoker',
+                'members' => [
+                    'allUsers',
+                ],
+            ];
 
-        // Update the policy
-        $environment->client()->setIamPolicyForCloudRunService($environment, $policy);
+            // Update the policy
+            $environment->client()->setIamPolicyForCloudRunService($environment, $policy);
 
-        // Assuming nothing went wrong, we are good.
+            // Assuming nothing went wrong, we are good.
+            return true;
+        } catch (Exception $e) {
+            $this->fail($e);
+        }
     }
 }

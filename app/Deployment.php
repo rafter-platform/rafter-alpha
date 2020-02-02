@@ -25,6 +25,11 @@ class Deployment extends Model
         return $this->belongsTo('App\Environment');
     }
 
+    public function steps()
+    {
+        return $this->hasMany('App\DeploymentStep');
+    }
+
     public function project()
     {
         return $this->environment->project;
