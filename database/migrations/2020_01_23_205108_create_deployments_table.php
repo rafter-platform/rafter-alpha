@@ -16,7 +16,7 @@ class CreateDeploymentsTable extends Migration
         Schema::create('deployments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('environment_id')->index();
-            $table->string('status')->default('pending');
+            $table->string('status')->default('queued');
             $table->string('operation_name')->nullable();
             $table->string('image')->nullable();
             $table->string('commit_hash')->nullable();

@@ -41,7 +41,7 @@ abstract class DeploymentStepJob implements ShouldQueue
 
         // When the job is instantiated, create the step record
         $this->step = $this->deployment->steps()->create([
-            'name' => (new ReflectionClass(static::class))->getShortName(),
+            'name' => class_basename(static::class),
         ]);
     }
 

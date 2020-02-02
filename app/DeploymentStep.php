@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -16,6 +17,11 @@ class DeploymentStep extends Model
         'started_at',
         'finished_at',
         'status',
+    ];
+
+    protected $casts = [
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime',
     ];
 
     public function deployment()
@@ -45,7 +51,7 @@ class DeploymentStep extends Model
      */
     public function hasStarted()
     {
-        return $this->status === static::STATUS_STARTED;
+        return ! empty($this->started_at);
     }
 
     /**
@@ -62,6 +68,16 @@ class DeploymentStep extends Model
     }
 
     /**
+     * Whether this job has finished or failed
+     *
+     * @return boolean
+     */
+    public function hasFinished()
+    {
+        return ! empty($this->finished_at);
+    }
+
+    /**
      * Mark the step as failed
      *
      * @return void
@@ -72,5 +88,19 @@ class DeploymentStep extends Model
             'status' => static::STATUS_FAILED,
             'finished_at' => Carbon::now(),
         ]);
+    }
+
+    /**
+     * Get the duration of the job, in human diff.
+     *
+     * @return string
+     */
+    public function duration()
+    {
+        if (! $this->hasStarted()) return '';
+
+        return ($this->finished_at ?? Carbon::now())
+            ->diffAsCarbonInterval($this->started_at)
+            ->forHumans(['short' => true]);
     }
 }

@@ -2,11 +2,13 @@
     switch (strtolower($status)) {
         case 'pending':
         case 'in_progress':
+        case 'started':
             $color = 'yellow';
             break;
 
         case 'ready':
         case 'done':
+        case 'finished':
             $color = 'green';
             break;
 
