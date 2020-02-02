@@ -6,6 +6,8 @@ php artisan event:cache
 
 if [ -z "$DB_DATABASE" ]
 then
+    echo "No database present; not migrating"
+else
     php artisan migrate --force
 fi
 
