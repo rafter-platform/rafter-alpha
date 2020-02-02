@@ -1,13 +1,13 @@
 # Rafter 🏡
 
-Rafter is a serverless deployment platform powered by [Google Cloud](https://cloud.google.com). It leverages Google Cloud Run (and many other tools) to transform your Git repository into a fully-scalable serverless application running in the cloud - with zero configuration.
+Rafter is a serverless deployment platform powered by [Google Cloud](https://cloud.google.com). It leverages Google Cloud Run (and many other tools) to transform your Git repository into a fully-scalable serverless application running in the cloud - with **zero configuration**.
 
-- 💰 Scales to zero when not in use, saving you money — perfect for hobby projects
-- 🔥 Automatically scales to handle load
-- 🔌 Manages, connects and creates Cloud SQL databases for your applications automatically
-- ⚡️ Connects to GitHub and supports deploy-on-push
-- 🚀 Spin up multiple environments available at vanity URLs at the click of a button
-- ✨ No Dockerfiles required
+💰 Scales to zero when not in use, saving you money — perfect for hobby projects<br>
+🔥 Automatically scales to handle load<br>
+🔌 Manages, connects and creates Cloud SQL databases for your applications automatically<br>
+⚡️ Connects to GitHub and supports deploy-on-push<br>
+🚀 Spin up multiple environments available at vanity URLs at the click of a button<br>
+✨ No Dockerfiles required
 
 ## Google Cloud Services
 
