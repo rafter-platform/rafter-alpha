@@ -14,6 +14,7 @@ class SourceProvider extends Model
         'name',
         'type',
         'meta',
+        'installation_id',
     ];
 
     public function user()

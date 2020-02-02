@@ -14,6 +14,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['user' => Auth::user()->loadMissing('currentTeam', 'teams')]);
+        return view('home', [
+            'githubAppUrl' => "https://github.com/apps/" . config('services.github.app_name') . "/installations/new",
+        ]);
     }
 }

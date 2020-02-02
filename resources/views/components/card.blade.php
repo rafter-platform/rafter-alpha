@@ -1,9 +1,11 @@
-<div class="flex flex-col break-words bg-white border border-2 rounded shadow-md mb-4">
-    <div class="font-semibold bg-gray-200 text-gray-700 py-3 px-6 mb-0">
+<div class="card break-words bg-white border border-2 rounded shadow mb-4 p-4 {{ $classes ?? '' }}">
+    @unless (empty($title))
+    <div class="text-xl mb-4">
         {{ $title }}
     </div>
+    @endunless
 
-    <div class="w-full p-6">
+    <div class="text-gray-700 font-normal">
         {{ $slot }}
     </div>
 </div>

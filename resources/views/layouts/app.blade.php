@@ -12,16 +12,16 @@
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg-gray-100 h-screen antialiased leading-none">
+<body class="bg-gray-100 h-screen antialiased leading-normal">
     <div id="app">
         <div class="flex">
             <div class="min-h-screen flex flex-col">
-                <div class="bg-blue-900 p-6">
+                <div class="bg-blue-900 p-4">
                     <a href="{{ url('/home') }}" class="text-lg font-semibold text-gray-100 no-underline">
                         {{ config('app.name', 'Laravel') }}
                     </a>
                 </div>
-                <div class="p-6 py-8 bg-blue-800 text-blue-100 w-64 flex-1">
+                <div class="p-4 bg-blue-800 text-blue-100 w-64 flex-1">
                     <div class="mb-8">
                         <a href="{{ route('home') }}">Dashboard</a>
                     </div>
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="w-full">
-                <div class="text-right p-6 mb-8 bg-white">
+                <div class="text-right p-4 bg-white">
                     <span class="text-sm pr-4">{{ Auth::user()->name }}</span>
 
                     <a href="{{ route('logout') }}"
@@ -54,7 +54,7 @@
                     </form>
                 </div>
                 <div class="flex items-center">
-                    <div class="md:w-1/2 md:mx-auto">
+                    <div class="p-8 w-full">
                         @yield('content')
                     </div>
                 </div>

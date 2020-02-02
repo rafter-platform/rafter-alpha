@@ -13,10 +13,14 @@
 
 @import url('https://rsms.me/inter/inter.css');
 
-html { font-family: 'Inter', sans-serif; }
+.card a {
+    @apply text-blue-600 underline;
+}
+
+/* html { font-family: 'Inter', sans-serif; }
 @supports (font-variation-settings: normal) {
   html { font-family: 'Inter var', sans-serif; }
-}
+} */
 
 /**
  * This injects any component classes registered by plugins.

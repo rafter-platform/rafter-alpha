@@ -3,6 +3,8 @@
         {{ $label }}:
     </label>
 
+    <div class="text-sm text-gray-600 w-full mb-2">{{ $helper ?? '' }}</div>
+
     <input
         id="{{ $name }}"
         type="{{ $type ?? 'text' }}"

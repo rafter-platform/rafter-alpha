@@ -40,7 +40,7 @@ class WaitForCloudRunServiceToDeploy implements ShouldQueue
     {
         $service = $this->deployment->getCloudRunService();
 
-        if (! $service->isReady()) {
+        if (! $service->isReady() && ! $service->hasErrors()) {
             $this->release(10);
             return;
         }

@@ -10,6 +10,10 @@ class HookDeploymentController extends Controller
 {
     public function store(Request $request, $type)
     {
+        if ($request->action !== 'push') {
+            return response('', 200);
+        }
+
         Log::info($request->all());
 
         $installationId = $request->installation['id'];
