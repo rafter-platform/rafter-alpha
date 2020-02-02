@@ -22,10 +22,13 @@ if (app()->environment('local')) {
 // GitHub authorization flow
 Route::get('auth/github', 'SourceProviderController@store');
 
+// Dynamic Dockerfiles and entrypoints for Cloud Build
 Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
+// Incoming GitHub webhooks
 Route::post('/hooks/{type}', 'HookDeploymentController@store');
 
+// TODO: Remove
 Route::get('/test', function () {
     TestJob::dispatch(12);
 });
