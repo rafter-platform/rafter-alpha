@@ -11,6 +11,7 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    @livewireStyles
 </head>
 <body class="bg-gray-200 h-screen antialiased leading-normal">
     <div id="app">
@@ -64,5 +65,6 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
+    @livewireScripts
 </body>
 </html>

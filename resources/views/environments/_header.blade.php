@@ -6,7 +6,7 @@
                 /
                 <a href="{{ route('projects.environments.show', [$project, $environment]) }}">{{ $environment->name }}</a>
             </h1>
-            <a class="text-gray-600" href="{{ $environment->url }}">{{ $environment->url }}</a>
+            <a class="text-gray-800 text-sm" href="{{ $environment->url }}" target="_blank">{{ $environment->url }}</a>
         </div>
     </div>
 @endcomponent
