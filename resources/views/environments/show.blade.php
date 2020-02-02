@@ -1,18 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    @component('components.title')
-        <div class="flex items-center justify-between pb-4 border-b-2">
-            <div>
-                <h1 class="mb-2">
-                    <a href="{{ route('projects.show', [$project]) }}">{{ $project->name }}</a>
-                    / {{ $environment->name }}
-                </h1>
-                <a class="text-gray-600" href="{{ $environment->url }}">{{ $environment->url }}</a>
-            </div>
-        </div>
-    @endcomponent
-
+    @include('environments._header')
     @include('components.subtitle', ['title' => 'Deployments'])
 
     <p class="mb-4 text-gray-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus facere dignissimos nam. Labore qui magni accusamus veniam deleniti cupiditate est fugiat maxime, voluptate laborum sapiente at aliquam mollitia harum aspernatur?</p>

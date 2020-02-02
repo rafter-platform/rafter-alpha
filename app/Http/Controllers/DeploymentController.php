@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Deployment;
+use App\Environment;
+use App\Project;
 use Illuminate\Http\Request;
 
 class DeploymentController extends Controller
@@ -44,9 +46,13 @@ class DeploymentController extends Controller
      * @param  \App\Deployment  $deployment
      * @return \Illuminate\Http\Response
      */
-    public function show(Deployment $deployment)
+    public function show(Project $project, Environment $environment, Deployment $deployment)
     {
-        //
+        return view('deployments.show', [
+            'project' => $project,
+            'environment' => $environment,
+            'deployment' => $deployment,
+        ]);
     }
 
     /**
