@@ -53,7 +53,7 @@
                         {{ csrf_field() }}
                     </form>
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center" style="max-width: 1200px">
                     <div class="p-8 w-full">
                         @yield('content')
                     </div>
