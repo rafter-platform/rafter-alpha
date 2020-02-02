@@ -143,7 +143,9 @@ class Environment extends Model
     {
         // TODO: Make more flexible (support manual pushes, etc)
         $deployment = $this->deployments()->create([
-            'commit_hash' => $this->sourceProvider()->client()->latestHashFor($this->project->repository, $this->branch)
+            'commit_hash' => $this->sourceProvider()->client()->latestHashFor($this->project->repository, $this->branch),
+            'commit_message' => 'Initial Deploy',
+            'initiator_id' => $this->project->team->owner->id,
         ]);
 
         (new CreateImageForDeployment($deployment))->withDeploymentChain([
@@ -157,10 +159,12 @@ class Environment extends Model
     /**
      * Create a new deployment on Cloud Run.
      */
-    public function deploy($commitHash)
+    public function deploy($commitHash, $commitMessage, $initiatorId)
     {
         $deployment = $this->deployments()->create([
             'commit_hash' => $commitHash,
+            'commit_message' => $commitMessage,
+            'initiator_id' => $initiatorId,
         ]);
 
         (new CreateImageForDeployment($deployment))->withDeploymentChain([

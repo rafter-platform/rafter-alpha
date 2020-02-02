@@ -45,4 +45,15 @@ class Team extends Model
     {
         return $this->hasManyThrough('App\DatabaseInstance', 'App\GoogleProject');
     }
+
+    /**
+     * Whether the given user belongs to a team.
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function hasUser(User $user)
+    {
+        return $this->owner->is($user) || $this->users->contains($user->id);
+    }
 }

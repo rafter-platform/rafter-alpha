@@ -11,7 +11,7 @@ class EnsureAppIsPublic extends DeploymentStepJob
      *
      * @return void
      */
-    public function handle()
+    public function execute()
     {
         try {
             $environment = $this->deployment->environment;

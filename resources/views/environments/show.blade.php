@@ -13,12 +13,12 @@
         ])
             @slot('title')
                 <div class="flex justify-start">
-                    <span class="mr-4">Commit Message</span>
+                    <span class="mr-4">{{ $deployment->commit_message }}</span>
                     @include('components.status', ['status' => $deployment->status])
                 </div>
             @endslot
             @slot('meta')
-                Deployed to <b>{{ $environment->name }}</b> by <b>First Last</b>
+                Deployed to <b>{{ $environment->name }}</b> by <b>{{ $deployment->initiator->name }}</b>
             @endslot
             @slot('status')
                 {{ $deployment->created_at->diffForHumans() }}

@@ -18,6 +18,8 @@ class Deployment extends Model
         'status',
         'image',
         'commit_hash',
+        'commit_message',
+        'initiator_id',
     ];
 
     public function environment()
@@ -38,6 +40,13 @@ class Deployment extends Model
     public function sourceProvider()
     {
         return $this->project()->sourceProvider;
+    }
+
+    public function initiator()
+    {
+        return $this->belongsTo('App\User', 'initiator_id')->withDefault([
+            'name' => 'Anonymous User',
+        ]);
     }
 
     /**

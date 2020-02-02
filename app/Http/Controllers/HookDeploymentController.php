@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Environment;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -20,6 +21,8 @@ class HookDeploymentController extends Controller
         $branch = str_replace("refs/heads/", "", $request->ref);
         $repository = $request->repository['full_name'];
         $hash = $request->head_commit['id'];
+        $message = $request->head_commit['message'];
+        $senderEmail = $request->pusher['email'] ?? null;
 
         $environment = Environment::query()
             ->where('branch', $branch)
@@ -35,7 +38,14 @@ class HookDeploymentController extends Controller
             ->first();
 
         if ($environment) {
-            $environment->deploy($hash);
+            $user = User::where('email', $senderEmail);
+            $initiatorId = null;
+
+            if ($user && $environment->project->team->hasUser($user)) {
+                $initiatorId = $user->id;
+            }
+
+            $environment->deploy($hash, $message, $initiatorId);
         }
 
         return response('', 200);
