@@ -10,14 +10,14 @@ class HookDeploymentController extends Controller
 {
     public function store(Request $request, $type)
     {
-        if ($request->action !== 'push') {
+        if ($request->header('X-GitHub-Event') !== 'push') {
             return response('', 200);
         }
 
-        Log::info($request->all());
+        // Log::info($request->all());
 
         $installationId = $request->installation['id'];
-        $branch = str_replace("refs/head/", "", $request->ref);
+        $branch = str_replace("refs/heads/", "", $request->ref);
         $repository = $request->repository['full_name'];
         $hash = $request->head_commit['id'];
 
@@ -31,7 +31,8 @@ class HookDeploymentController extends Controller
             })
             ->whereHas('project', function ($query) use ($repository) {
                 $query->where('repository', $repository);
-            });
+            })
+            ->first();
 
         if ($environment) {
             $environment->deploy($hash);
