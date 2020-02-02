@@ -37,6 +37,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Eager load the following relationships.
+     *
+     * @var array
+     */
+    protected $with = [
+        'currentTeam',
+    ];
+
     public function ownedTeams()
     {
         return $this->hasMany('App\Team');

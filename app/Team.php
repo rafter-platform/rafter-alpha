@@ -12,6 +12,14 @@ class Team extends Model
         'personal_team' => 'boolean',
     ];
 
+    /**
+     * Eager load the following relations.
+     *
+     * @var array
+     */
+    protected $with = [
+        'projects',
+    ];
 
     public function owner()
     {
