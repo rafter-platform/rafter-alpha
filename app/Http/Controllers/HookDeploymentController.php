@@ -38,7 +38,7 @@ class HookDeploymentController extends Controller
             ->first();
 
         if ($environment) {
-            $user = User::where('email', $senderEmail);
+            $user = User::where('email', $senderEmail)->first();
             $initiatorId = null;
 
             if ($user && $environment->project->team->hasUser($user)) {
