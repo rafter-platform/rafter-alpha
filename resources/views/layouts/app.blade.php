@@ -12,7 +12,7 @@
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg-gray-100 h-screen antialiased leading-normal">
+<body class="bg-gray-200 h-screen antialiased leading-normal">
     <div id="app">
         <div class="flex">
             <div class="min-h-screen flex flex-col">
@@ -53,7 +53,7 @@
                         {{ csrf_field() }}
                     </form>
                 </div>
-                <div class="flex items-center" style="max-width: 1200px">
+                <div class="flex items-center" style="max-width: 1000px">
                     <div class="p-8 w-full">
                         @yield('content')
                     </div>

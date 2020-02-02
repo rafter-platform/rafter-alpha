@@ -17,14 +17,24 @@
     </div>
     @endif
 
-    <h2 class="font-light text-2xl mb-4">Environments</h2>
+    @include('components.subtitle', ['title' => 'Environments'])
 
-    <p class="mb-4 text-gray-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta neque suscipit delectus voluptates vitae laboriosam quisquam fuga deleniti, quam voluptatem quibusdam tempora ipsum doloremque sunt, dolore ut alias ea temporibus.</p>
-    @component('components.card')
-        @foreach ($project->environments as $environment)
-            <div>
-                <a href="{{ route('projects.environments.show', [$project, $environment]) }}">{{ $environment->name }}</a>
-            </div>
-        @endforeach
-    @endcomponent
+    <p class="mb-4 text-gray-600">
+        By default, production and staging environments are automatically created for your project. You can add additional environments and
+        configure them to auto-deploy when you push commits to certain branches.
+    </p>
+
+    @foreach ($project->environments as $environment)
+        @component('components.item', ['link' => route('projects.environments.show', [$project, $environment])])
+            @slot('title')
+                {{ $environment->name}}
+            @endslot
+            @slot('meta')
+                {{ $environment->url ?? 'URL not yet available' }}
+            @endslot
+            @slot('status')
+                Last deployed {{ $environment->deployments()->latest()->first()->created_at->diffForHumans() }}
+            @endslot
+        @endcomponent
+    @endforeach
 @endsection

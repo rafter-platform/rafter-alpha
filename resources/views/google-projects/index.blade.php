@@ -26,7 +26,7 @@
     @endcomponent
 @endif
 
-@component('components.card', ['classes' => 'md:w-1/2'])
+@component('components.card', ['classes' => 'md:w-3/4'])
     @slot('title')
         <h2>Add a Google Cloud Project</h2>
     @endslot

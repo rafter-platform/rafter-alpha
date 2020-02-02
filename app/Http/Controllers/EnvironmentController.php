@@ -47,7 +47,10 @@ class EnvironmentController extends Controller
      */
     public function show(Project $project, Environment $environment)
     {
-        //
+        return view('environments.show', [
+            'project' => $project,
+            'environment' => $environment,
+        ]);
     }
 
     /**

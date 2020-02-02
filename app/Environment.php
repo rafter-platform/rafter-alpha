@@ -37,7 +37,7 @@ class Environment extends Model
 
     public function deployments()
     {
-        return $this->hasMany('App\Deployment');
+        return $this->hasMany('App\Deployment')->latest('id');
     }
 
     public function database()
