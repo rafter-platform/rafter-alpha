@@ -171,6 +171,7 @@ class Environment extends Model
             new WaitForImageToBeBuilt($deployment),
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
+            new EnsureAppIsPublic($deployment),
         ])->dispatch();
     }
 

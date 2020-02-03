@@ -6,6 +6,7 @@ use App\Environment;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudBuildOperation;
 use App\GoogleCloud\CloudRunConfig;
+use App\GoogleCloud\CloudRunIamPolicy;
 use App\GoogleCloud\CloudRunService;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
@@ -134,9 +135,11 @@ class GoogleApi
     /**
      * Get the IAM policy for a given Cloud Run service.
      */
-    public function getIamPolicyForCloudRunService(Environment $environment)
+    public function getIamPolicyForCloudRunService(Environment $environment): CloudRunIamPolicy
     {
-        return $this->request($this->cloudRunIamPolicyUrl($environment) . ':getIamPolicy');
+        $response = $this->request($this->cloudRunIamPolicyUrl($environment) . ':getIamPolicy');
+
+        return new CloudRunIamPolicy($response);
     }
 
     /**

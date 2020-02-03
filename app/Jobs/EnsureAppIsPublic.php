@@ -19,18 +19,13 @@ class EnsureAppIsPublic extends DeploymentStepJob
             // Get the existing policies
             $policy = $environment->client()->getIamPolicyForCloudRunService($environment);
 
-            // Add the invoker role to allUsers (public, anon)
-            $policy['bindings'][] = [
-                'role' => 'roles/run.invoker',
-                'members' => [
-                    'allUsers',
-                ],
-            ];
+            if (! $policy->isPublic()) {
+                $policy->setPublic();
+            }
 
             // Update the policy
-            $environment->client()->setIamPolicyForCloudRunService($environment, $policy);
+            $environment->client()->setIamPolicyForCloudRunService($environment, $policy->getPolicy());
 
-            // Assuming nothing went wrong, we are good.
             return true;
         } catch (Exception $e) {
             $this->fail($e);
