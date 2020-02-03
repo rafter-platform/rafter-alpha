@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Jobs\ConfigureQueues;
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
@@ -150,6 +151,7 @@ class Environment extends Model
         ]);
 
         (new CreateImageForDeployment($deployment))->withDeploymentChain([
+            new ConfigureQueues($deployment),
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
@@ -170,6 +172,7 @@ class Environment extends Model
         ]);
 
         (new CreateImageForDeployment($deployment))->withDeploymentChain([
+            new ConfigureQueues($deployment),
             new WaitForImageToBeBuilt($deployment),
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),

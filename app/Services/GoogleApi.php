@@ -12,6 +12,7 @@ use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\EnableApisOperation;
+use App\GoogleCloud\QueueConfig;
 use App\GoogleProject;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -207,6 +208,21 @@ class GoogleApi
             "POST",
             $databaseConfig->config()
         );
+    }
+
+    /**
+     * Create or update a queue
+     *
+     * @param QueueConfig $queueConfig
+     * @return array
+     */
+    public function createOrUpdateQueue(QueueConfig $queueConfig)
+    {
+        $this->request(
+            "https://cloudtasks.googleapis.com/v2beta3/{$queueConfig->name()}",
+            "PATCH",
+            $queueConfig->config()
+        )
     }
 
     /**
