@@ -33,7 +33,7 @@ class CloudRunIamPolicy
      */
     protected function getBindings()
     {
-        return $this->policy['bindings'];
+        return $this->policy['bindings'] ?? [];
     }
 
     /**
@@ -55,12 +55,16 @@ class CloudRunIamPolicy
      */
     public function setPublic()
     {
-        $this->policy['bindings'][] = [
+        $bindings = $this->getBindings();
+
+        $bindings[] = [
             'role' => 'roles/run.invoker',
             'members' => [
                 'allUsers',
             ],
         ];
+
+        $this->policy['bindings'] = $bindings;
 
         return $this;
     }
