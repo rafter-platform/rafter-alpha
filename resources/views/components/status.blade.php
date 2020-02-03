@@ -9,6 +9,7 @@
         case 'ready':
         case 'done':
         case 'finished':
+        case 'successful':
             $color = 'green';
             break;
 
