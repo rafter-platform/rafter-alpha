@@ -12,7 +12,9 @@ class ConfigureQueues extends DeploymentStepJob
         try {
             $queueConfig = new QueueConfig($this->deployment->environment);
 
-            $this->environment->client()->createOrUpdateQueue($queueConfig);
+            $this->deployment->environment->client()->createOrUpdateQueue($queueConfig);
+
+            return true;
         } catch (Exception $e) {
             $this->fail($e);
         }
