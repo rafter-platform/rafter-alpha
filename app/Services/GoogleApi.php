@@ -222,7 +222,7 @@ class GoogleApi
             "https://cloudtasks.googleapis.com/v2beta3/{$queueConfig->name()}",
             "PATCH",
             $queueConfig->config()
-        )
+        );
     }
 
     /**
