@@ -28,8 +28,6 @@ class WaitForCloudRunServiceToDeploy extends DeploymentStepJob
             return;
         }
 
-        // TODO: Mark deployment as successful if this is NOT a new service
-
         // Else, set the URL for the first time and move on.
         $this->deployment->environment->setUrl($service->getUrl());
 

@@ -5,6 +5,7 @@ namespace App;
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
+use App\Jobs\FinalizeDeployment;
 use App\Jobs\UpdateCloudRunService;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
@@ -153,6 +154,7 @@ class Environment extends Model
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
+            new FinalizeDeployment($deployment),
         ])->dispatch();
     }
 
@@ -172,6 +174,7 @@ class Environment extends Model
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
+            new FinalizeDeployment($deployment),
         ])->dispatch();
     }
 
