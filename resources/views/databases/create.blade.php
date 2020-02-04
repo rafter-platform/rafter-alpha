@@ -5,6 +5,8 @@
     <h2>Create a Database Instance</h2>
 @endcomponent
 
+@include('components.flash')
+
 @component('components.card')
 
 <form action="{{ route('databases.store') }}" method="POST">

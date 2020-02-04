@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\DatabaseInstance;
 use App\GoogleProject;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DatabaseInstanceController extends Controller
 {
@@ -44,7 +46,37 @@ class DatabaseInstanceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'google_project_id' => [
+                'required',
+                Rule::in(auth()->user()->currentTeam->googleProjects()->pluck('id'))
+            ],
+            'name' => ['required', 'string'],
+            'type' => ['required', Rule::in(array_keys(DatabaseInstance::TYPES))],
+            'version' => ['required', Rule::in(array_keys(DatabaseInstance::VERSIONS))],
+            'tier' => ['required', Rule::in(array_keys(DatabaseInstance::TIERS['mysql']))],
+            'size' => ['required', 'integer', 'min:10'],
+            'region' => ['required', Rule::in(array_keys(GoogleProject::REGIONS))],
+        ]);
+
+        try {
+            $instance = auth()->user()->currentTeam->databaseInstances()->create([
+                'google_project_id' => $request->google_project_id,
+                'name' => $request->name,
+                'google_project_id' => $request->google_project_id,
+                'type' => $request->type,
+                'version' => $request->version,
+                'tier' => $request->tier,
+                'size' => $request->size,
+                'region' => $request->region,
+            ]);
+
+            $instance->provision();
+
+            return redirect()->route('databases.show', [$instance])->with('status', 'Database is being created.');
+        } catch (Exception $e) {
+            return back()->with('status', $e->getMessage())->withInput();
+        }
     }
 
     /**

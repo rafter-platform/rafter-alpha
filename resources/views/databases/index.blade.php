@@ -14,7 +14,10 @@
     @foreach ($databaseInstances as $instance)
         @component('components.item', ['link' => route('databases.show', [$instance])])
             @slot('title')
-                {{ $instance->name }}
+                <div class="flex justify-start">
+                    <span class="mr-4">{{ $instance->name }}</span>
+                    @include('components.status', ['status' => $instance->status])
+                </div>
             @endslot
             @slot('meta')
                 {{ $instance->region }} / {{ $instance->tier }} / {{ $instance->size }}GB / {{ $instance->databases()->count() }} databases

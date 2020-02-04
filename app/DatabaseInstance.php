@@ -61,6 +61,7 @@ class DatabaseInstance extends Model
         'root_password',
         'operation_name',
         'synced',
+        'google_project_id',
     ];
 
     protected $casts = [
