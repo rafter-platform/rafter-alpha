@@ -60,6 +60,11 @@ class DatabaseInstance extends Model
         'region',
         'root_password',
         'operation_name',
+        'synced',
+    ];
+
+    protected $casts = [
+        'synced' => 'boolean',
     ];
 
     public function googleProject()

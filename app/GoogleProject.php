@@ -4,6 +4,7 @@ namespace App;
 
 use App\Jobs\DetermineProjectNumber;
 use App\Jobs\EnableProjectApis;
+use App\Jobs\SyncDatabaseInstances;
 use App\Jobs\WaitForProjectApisToBeEnabled;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
@@ -55,6 +56,11 @@ class GoogleProject extends Model
         return $this->belongsTo('App\Team');
     }
 
+    public function databaseInstances()
+    {
+        return $this->hasMany('App\DatabaseInstance');
+    }
+
     /**
      * Set up the Google Project with basic requirements
      * for deploying with Rafter.
@@ -63,7 +69,8 @@ class GoogleProject extends Model
     {
         DetermineProjectNumber::withChain([
             new EnableProjectApis($this),
-            new WaitForProjectApisToBeEnabled($this)
+            new WaitForProjectApisToBeEnabled($this),
+            new SyncDatabaseInstances($this),
         ])->dispatch($this);
     }
 

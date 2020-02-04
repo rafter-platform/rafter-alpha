@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DatabaseInstance;
 use App\Environment;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudBuildOperation;
@@ -184,6 +185,16 @@ class GoogleApi
     }
 
     /**
+     * Return a list of instances in this Google Project
+     *
+     * @return array
+     */
+    public function getDatabaseInstances()
+    {
+        return $this->request("https://www.googleapis.com/sql/v1beta4/projects/{$this->googleProject->project_id}/instances");
+    }
+
+    /**
      * Get a current database operation.
      *
      * @return \App\GoogleCloud\DatabaseOperation
@@ -207,6 +218,19 @@ class GoogleApi
             "https://www.googleapis.com/sql/v1beta4/projects/{$databaseConfig->projectId()}/instances/{$databaseConfig->instanceName()}/databases",
             "POST",
             $databaseConfig->config()
+        );
+    }
+
+    /**
+     * Get databases in a database instance
+     *
+     * @param DatabaseInstance $databaseInstance
+     * @return array
+     */
+    public function getDatabases(DatabaseInstance $databaseInstance)
+    {
+        return $this->request(
+            "https://www.googleapis.com/sql/v1beta4/projects/{$this->googleProject->project_id}/instances/{$databaseInstance->name}/databases"
         );
     }
 
