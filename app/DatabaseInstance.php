@@ -17,7 +17,7 @@ class DatabaseInstance extends Model
 
     const VERSIONS = [
         'MYSQL_5_7' => 'MySQL 5.7',
-        'MYSQL_5_6' => 'MySQL 5.7',
+        'MYSQL_5_6' => 'MySQL 5.6',
         // 'POSTGRES_9_6' => 'Postgres 9.6',
         // 'POSTGRES_11' => 'Postgres 11 (Beta)',
     ];

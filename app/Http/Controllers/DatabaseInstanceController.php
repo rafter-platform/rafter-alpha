@@ -17,11 +17,6 @@ class DatabaseInstanceController extends Controller
     {
         return view('databases.index', [
             'databaseInstances' => auth()->user()->currentTeam->databaseInstances,
-            'googleProjects' => auth()->user()->currentTeam->googleProjects,
-            'types' => DatabaseInstance::TYPES,
-            'versions' => DatabaseInstance::VERSIONS,
-            'tiers' => DatabaseInstance::TIERS,
-            'regions' => GoogleProject::REGIONS,
         ]);
     }
 
@@ -32,7 +27,13 @@ class DatabaseInstanceController extends Controller
      */
     public function create()
     {
-        //
+        return view('databases.create', [
+            'googleProjects' => auth()->user()->currentTeam->googleProjects,
+            'types' => DatabaseInstance::TYPES,
+            'versions' => DatabaseInstance::VERSIONS,
+            'tiers' => DatabaseInstance::TIERS,
+            'regions' => GoogleProject::REGIONS,
+        ]);
     }
 
     /**
@@ -54,7 +55,9 @@ class DatabaseInstanceController extends Controller
      */
     public function show(DatabaseInstance $databaseInstance)
     {
-        //
+        return view('databases.show', [
+            'instance' => $databaseInstance->loadMissing('databases'),
+        ]);
     }
 
     /**

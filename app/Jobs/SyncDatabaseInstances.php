@@ -48,7 +48,7 @@ class SyncDatabaseInstances implements ShouldQueue
                     'tier' => $instance['settings']['tier'],
                     'size' => $instance['settings']['dataDiskSizeGb'],
                     'status' => DatabaseInstance::STATUS_ACTIVE,
-                    'region' => $instance['name'],
+                    'region' => $instance['region'],
                     'synced' => true,
                 ]);
 
