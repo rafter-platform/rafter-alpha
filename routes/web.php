@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth']], function () {
     // Environment Databases
     Route::get('/projects/{project}/environments/{environment}/database', 'EnvironmentDatabaseController@show')
         ->name('projects.environments.database');
+    Route::put('/projects/{project}/environments/{environment}/database', 'EnvironmentDatabaseController@update')
+        ->name('projects.environments.database.update');
 
     // Deployments
     Route::resource('projects.environments.deployments', 'DeploymentController');

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Database;
+use App\DatabaseInstance;
 use App\Environment;
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class EnvironmentDatabaseController extends Controller
 {
@@ -13,7 +16,45 @@ class EnvironmentDatabaseController extends Controller
         return view('environments.database', [
             'project' => $project,
             'environment' => $environment,
-            'databaseInstances' => auth()->user()->currentTeam->databaseInstances,
+            'databaseInstances' => $this->databaseInstances(),
+            'databases' => $this->databases(),
         ]);
+    }
+
+    public function update(Request $request, Project $project, Environment $environment)
+    {
+        $this->validate($request, [
+            'method' => ['string', 'required', 'in:new,existing'],
+            'database_instance_id' => [
+                'required_if:method,new',
+                Rule::in($this->databaseInstances()->map->id),
+            ],
+            'database_id' => [
+                'required_if:method,existing',
+                Rule::in($this->databases()->map->id),
+            ]
+        ]);
+
+        if ($request->method === 'new') {
+            $environment->createDatabase(DatabaseInstance::find($request->database_instance_id));
+        } else {
+            $environment->database()->associate(Database::find($request->database_id));
+            $environment->save();
+        }
+
+        $status = $request->method === 'new' ? 'being created' : 'connected';
+
+        return redirect()->route('projects.environments.database', [$project, $environment])
+            ->with('status', "Database $status");
+    }
+
+    protected function databaseInstances()
+    {
+        return auth()->user()->currentTeam->databaseInstances;
+    }
+
+    protected function databases()
+    {
+        return $this->databaseInstances()->map->databases->flatten();
     }
 }
