@@ -39,7 +39,7 @@
 
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Manage</div>
                     <ul class="mt-4 mb-8">
-                        <li><a href="{{ route('databases.index') }}">Databases</a></li>
+                        <li><a href="{{ route('database-instances.index') }}">Databases</a></li>
                     </ul>
                 </div>
             </div>

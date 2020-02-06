@@ -16,7 +16,7 @@
                 Connected to <b>{{ $environment->database->name }}</b> on <b>{{ $environment->database->databaseInstance->name }}</b>.
             </p>
 
-            <form action="{{ route('projects.environments.database.delete', [$project, $environment]) }}" method="POST">
+            <form action="{{ route('projects.environments.database.destroy', [$project, $environment, $environment->database]) }}" method="POST">
                 @csrf
                 @method('DELETE')
 
@@ -32,9 +32,8 @@
                     Connect Database
                 @endslot
 
-                <form action="{{ route('projects.environments.database.update', [$project, $environment]) }}" method="POST" x-data="{ method: 'new' }">
+                <form action="{{ route('projects.environments.database.store', [$project, $environment]) }}" method="POST" x-data="{ method: 'new' }">
                     @csrf
-                    @method('PUT')
 
                     <div class="flex mb-4">
                         <label class="mr-4">

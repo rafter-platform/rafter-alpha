@@ -12,7 +12,7 @@
 
 <div class="mb-6">
     @foreach ($databaseInstances as $instance)
-        @component('components.item', ['link' => route('databases.show', [$instance])])
+        @component('components.item', ['link' => route('database-instances.show', [$instance])])
             @slot('title')
                 <div class="flex justify-start">
                     <span class="mr-4">{{ $instance->name }}</span>
@@ -26,7 +26,7 @@
     @endforeach
 </div>
 
-@component('components.button', ['link' => route('databases.create')])
+@component('components.button', ['link' => route('database-instances.create')])
 Create Database
 @endcomponent
 

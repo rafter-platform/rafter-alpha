@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class EnvironmentDatabaseController extends Controller
 {
-    public function show(Project $project, Environment $environment)
+    public function index(Project $project, Environment $environment)
     {
         return view('environments.database', [
             'project' => $project,
@@ -21,7 +21,7 @@ class EnvironmentDatabaseController extends Controller
         ]);
     }
 
-    public function update(Request $request, Project $project, Environment $environment)
+    public function store(Request $request, Project $project, Environment $environment)
     {
         $this->validate($request, [
             'method' => ['string', 'required', 'in:new,existing'],
@@ -44,8 +44,7 @@ class EnvironmentDatabaseController extends Controller
 
         $status = $request->method === 'new' ? 'being created' : 'connected';
 
-        return redirect()->route('projects.environments.database', [$project, $environment])
-            ->with('status', "Database $status");
+        return redirect()->back()->with('status', "Database $status");
     }
 
     /**

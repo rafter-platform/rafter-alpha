@@ -17,7 +17,7 @@ class DatabaseInstanceController extends Controller
      */
     public function index()
     {
-        return view('databases.index', [
+        return view('database-instances.index', [
             'databaseInstances' => auth()->user()->currentTeam->databaseInstances,
         ]);
     }
@@ -29,7 +29,7 @@ class DatabaseInstanceController extends Controller
      */
     public function create()
     {
-        return view('databases.create', [
+        return view('database-instances.create', [
             'googleProjects' => auth()->user()->currentTeam->googleProjects,
             'types' => DatabaseInstance::TYPES,
             'versions' => DatabaseInstance::VERSIONS,
@@ -73,7 +73,7 @@ class DatabaseInstanceController extends Controller
 
             $instance->provision();
 
-            return redirect()->route('databases.show', [$instance])->with('status', 'Database is being created.');
+            return redirect()->route('database-instances.show', [$instance])->with('status', 'Database is being created.');
         } catch (Exception $e) {
             return back()->with('status', $e->getMessage())->withInput();
         }
@@ -87,7 +87,7 @@ class DatabaseInstanceController extends Controller
      */
     public function show(DatabaseInstance $databaseInstance)
     {
-        return view('databases.show', [
+        return view('database-instances.show', [
             'instance' => $databaseInstance->loadMissing('databases'),
         ]);
     }

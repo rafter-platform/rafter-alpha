@@ -9,7 +9,7 @@
 
 @component('components.card')
 
-<form action="{{ route('databases.store') }}" method="POST">
+<form action="{{ route('database-instances.store') }}" method="POST">
     @csrf
 
     @include('components.form.select', [

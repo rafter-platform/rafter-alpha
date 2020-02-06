@@ -5,7 +5,7 @@
 @component('components.title')
     <div class="border-b-2">
         <div class="mb-4">
-            <a href="{{ route('databases.index') }}">Databases</a> /
+            <a href="{{ route('database-instances.index') }}">Databases</a> /
             {{ $instance->name }}
         </div>
         <div class="flex items-center mb-4">

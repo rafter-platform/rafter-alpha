@@ -25,8 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Since we use /databases to actually look up DatabaseInstances, we need to tell
-        // Laravel that's what we mean instead of the Database model
-        Route::model('database', DatabaseInstance::class);
+        //
     }
 }

@@ -52,16 +52,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('projects.environments', 'EnvironmentController');
 
     // Environment Databases
-    Route::get('/projects/{project}/environments/{environment}/database', 'EnvironmentDatabaseController@show')
-        ->name('projects.environments.database');
-    Route::put('/projects/{project}/environments/{environment}/database', 'EnvironmentDatabaseController@update')
-        ->name('projects.environments.database.update');
-    Route::delete('/projects/{project}/environments/{environment}/database', 'EnvironmentDatabaseController@destroy')
-        ->name('projects.environments.database.delete');
+    Route::resource('projects.environments.database', 'EnvironmentDatabaseController')
+        ->only(['index', 'store', 'destroy']);
 
     // Deployments
     Route::resource('projects.environments.deployments', 'DeploymentController');
 
     // Database Instances
-    Route::resource('databases', 'DatabaseInstanceController');
+    Route::resource('database-instances', 'DatabaseInstanceController');
 });
