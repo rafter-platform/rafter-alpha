@@ -15,6 +15,17 @@
             <p>
                 Connected to <b>{{ $environment->database->name }}</b> on <b>{{ $environment->database->databaseInstance->name }}</b>.
             </p>
+
+            <form action="{{ route('projects.environments.database.delete', [$project, $environment]) }}" method="POST">
+                @csrf
+                @method('DELETE')
+
+                <div class="pt-4">
+                    @component('components.button', ['color' => 'red'])
+                        Disconnect Database
+                    @endcomponent
+                </div>
+            </form>
         @else
             @component('components.card')
                 @slot('title')

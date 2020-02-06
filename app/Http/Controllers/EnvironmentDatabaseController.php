@@ -48,6 +48,22 @@ class EnvironmentDatabaseController extends Controller
             ->with('status', "Database $status");
     }
 
+    /**
+     * Disconnect a database from an environment.
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Environment $environment
+     * @return Response
+     */
+    public function destroy(Request $request, Project $project, Environment $environment)
+    {
+        $environment->database()->dissociate();
+        $environment->save();
+
+        return redirect()->back()->with('status', 'Database disconnected');
+    }
+
     protected function databaseInstances()
     {
         return auth()->user()->currentTeam->databaseInstances;
