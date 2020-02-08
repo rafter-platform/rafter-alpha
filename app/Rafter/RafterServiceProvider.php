@@ -2,11 +2,11 @@
 
 namespace App\Rafter;
 
+use App\Rafter\Http\Middleware\EnsureRafterWorker;
 use App\Rafter\Http\Middleware\VerifyGoogleOidcToken;
 use App\Rafter\Queue\RafterConnector;
 use App\Rafter\Queue\RafterWorker;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
@@ -53,8 +53,8 @@ class RafterServiceProvider extends ServiceProvider
         }
 
         // Handle queue jobs
-        Route::group(['middleware' => [VerifyGoogleOidcToken::class]], function () {
-            Route::post(Rafter::ROUTE, 'App\Rafter\Http\Controllers\RafterQueueWorkerController@handle');
+        Route::group(['middleware' => [VerifyGoogleOidcToken::class, EnsureRafterWorker::class]], function () {
+            Route::post(Rafter::QUEUE_ROUTE, 'App\Rafter\Http\Controllers\RafterQueueWorkerController@handle');
         });
     }
 
