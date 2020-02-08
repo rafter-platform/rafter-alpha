@@ -5,13 +5,27 @@
         <h1>{{ auth()->user()->currentTeam->name }} Dashboard</h1>
     @endcomponent
 
-    @if (session('status'))
-        <div class="text-sm border border-t-8 rounded text-green-700 border-green-600 bg-green-100 px-3 py-4 mb-4" role="alert">
-            {{ session('status') }}
-        </div>
-    @endif
+    @include('components.flash')
 
-    @unless (auth()->user()->currentTeam->projects()->count())
+    @if (auth()->user()->currentTeam->projects()->count())
+        @component('components.subtitle')
+            Projects
+        @endcomponent
+
+        @foreach (Auth::user()->currentTeam->projects as $project)
+            @component('components.item', ['link' => route('projects.show', $project)])
+                @slot('title')
+                    {{ $project->name }}
+                @endslot
+                @slot('meta')
+                    {{ \App\Project::TYPES[$project->type] }} / {{ $project->region }} / {{ $project->googleProject->name }}
+                @endslot
+                @slot('status')
+                    Last deployed {{ $project->environments()->first()->activeDeployment()->created_at->diffForHumans() }}
+                @endslot
+            @endcomponent
+        @endforeach
+    @else
     @component('components.card', ['classes' => 'md:w-1/2'])
         @slot('title')
             <h2>Rafter Onboarding</h2>
@@ -49,5 +63,5 @@
             </li>
         </ol>
     @endcomponent
-    @endunless
+    @endif
 @endsection

@@ -31,10 +31,13 @@
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Projects</div>
                     <ul class="mt-4 mb-8">
                         @foreach (Auth::user()->currentTeam->projects as $project)
-                            <li>
+                            <li class="mb-2">
                                 <a href="{{ route('projects.show', [$project]) }}">{{ $project->name }}</a>
                             </li>
                         @endforeach
+                        <li>
+                            <a class="text-blue-200 uppercase tracking-wide text-sm" href="{{ route('projects.create') }}">+ Create Project</a>
+                        </li>
                     </ul>
 
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Manage</div>
