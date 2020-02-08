@@ -53,6 +53,17 @@ class Environment extends Model
     }
 
     /**
+     * Get the active deployment
+     *
+     * @return Deployment
+     */
+    public function activeDeployment()
+    {
+        // TODO: Update logic to actually set an active_deployment_id when a deployment is active
+        return $this->deployments()->first();
+    }
+
+    /**
      * Whether the environment is using a database.
      */
     public function usesDatabase()

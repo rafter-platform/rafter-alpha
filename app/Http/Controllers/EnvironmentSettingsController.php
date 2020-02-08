@@ -25,7 +25,7 @@ class EnvironmentSettingsController extends Controller
         if (! empty($request->environmental_variables)) {
             $environment->update(['environmental_variables' => $request->environmental_variables]);
 
-            // TODO: Kick off redeploy
+            $environment->activeDeployment()->redeploy(auth()->user()->id);
         }
 
         return back()->with('status', 'Settings updated');

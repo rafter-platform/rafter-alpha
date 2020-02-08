@@ -133,6 +133,11 @@ class Deployment extends Model
         $this->update(['image' => $image]);
     }
 
+    /**
+     * Create a cloud run service for this deployment
+     *
+     * @return void
+     */
     public function createCloudRunService()
     {
         $cloudRunConfig = new CloudRunConfig($this);
@@ -140,11 +145,31 @@ class Deployment extends Model
         $this->client()->createCloudRunService($cloudRunConfig);
     }
 
+    /**
+     * Update the Cloud Run service with this deployment
+     *
+     * @return void
+     */
     public function updateCloudRunService()
     {
         $cloudRunConfig = new CloudRunConfig($this);
 
         $this->client()->replaceCloudRunService($cloudRunConfig);
+    }
+
+    /**
+     * Redeploy a given deployment
+     *
+     * @param int|null $initiatorId
+     * @return void
+     */
+    public function redeploy($initiatorId = null)
+    {
+        $this->environment->deploy(
+            $this->commit_hash,
+            $this->commit_message,
+            $initiatorId
+        );
     }
 
     /**
