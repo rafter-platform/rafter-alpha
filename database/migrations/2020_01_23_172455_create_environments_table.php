@@ -20,7 +20,9 @@ class CreateEnvironmentsTable extends Migration
             $table->string('name');
             $table->string('branch')->default('master')->index();
             $table->string('url')->nullable();
+            $table->string('worker_url')->nullable();
             $table->string('web_service_name')->nullable();
+            $table->string('worker_service_name')->nullable();
             $table->mediumText('environmental_variables')->nullable();
             $table->timestamps();
 

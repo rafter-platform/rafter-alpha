@@ -120,11 +120,19 @@ class Deployment extends Model
     }
 
     /**
-     * Get Cloud Run service
+     * Get Cloud Run web service
      */
-    public function getCloudRunService()
+    public function getCloudRunWebService()
     {
-        return $this->client()->getCloudRunService($this->environment->slug(), $this->environment->project->region);
+        return $this->client()->getCloudRunService($this->environment->web_service_name, $this->environment->project->region);
+    }
+
+    /**
+     * Get Cloud Run web service
+     */
+    public function getCloudRunWorkerService()
+    {
+        return $this->client()->getCloudRunService($this->environment->worker_service_name, $this->environment->project->region);
     }
 
     /**
@@ -144,7 +152,8 @@ class Deployment extends Model
     }
 
     /**
-     * Create a cloud run service for this deployment
+     * Create a cloud run service for this deployment,
+     * and set the name on the environment
      *
      * @return void
      */
@@ -153,6 +162,22 @@ class Deployment extends Model
         $cloudRunConfig = new CloudRunConfig($this);
 
         $this->client()->createCloudRunService($cloudRunConfig);
+        $this->environment->setWebName($cloudRunConfig->name());
+    }
+
+    /**
+     * Create a Cloud run worker service for this deployment,
+     * and set the name on the environment
+     *
+     * @return void
+     */
+    public function createCloudRunWorkerService()
+    {
+        $cloudRunConfig = (new CloudRunConfig($this))
+            ->forWorker();
+
+        $this->client()->createCloudRunService($cloudRunConfig);
+        $this->environment->setWorkerName($cloudRunConfig->name());
     }
 
     /**
@@ -165,6 +190,19 @@ class Deployment extends Model
         $cloudRunConfig = new CloudRunConfig($this);
 
         $this->client()->replaceCloudRunService($cloudRunConfig);
+    }
+
+    /**
+     * Update a Cloud run worker service for this deployment.
+     *
+     * @return void
+     */
+    public function updateCloudRunWorkerService()
+    {
+        $cloudRunConfig = (new CloudRunConfig($this))
+            ->forWorker();
+
+        $this->client()->createCloudRunService($cloudRunConfig);
     }
 
     /**

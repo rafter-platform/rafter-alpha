@@ -27,7 +27,7 @@ abstract class DeploymentStepJob implements ShouldQueue
      *
      * @var \App\Deployment
      */
-    public $deployment;
+    public Deployment $deployment;
 
     /**
      * Deployment step tied to this job.

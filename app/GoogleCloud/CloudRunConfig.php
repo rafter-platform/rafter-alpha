@@ -3,21 +3,50 @@
 namespace App\GoogleCloud;
 
 use App\Deployment;
-use App\EnvVars;
 
 class CloudRunConfig
 {
     protected $deployment;
     protected $environment;
 
+    /**
+     * Whether this service is a worker/non-web service
+     *
+     * @var boolean
+     */
+    protected $isWorker = false;
+
     public function __construct(Deployment $deployment) {
         $this->deployment = $deployment;
         $this->environment = $deployment->environment;
     }
 
+    /**
+     * Mark this service as a worker service
+     *
+     * @return self
+     */
+    public function forWorker()
+    {
+        $this->isWorker = true;
+
+        return $this;
+    }
+
+    /**
+     * Get the name of the service
+     *
+     * @return string
+     */
     public function name()
     {
-        return $this->environment->slug();
+        $base = $this->environment->slug();
+
+        if ($this->isWorker) {
+            return $base . '-worker';
+        }
+
+        return $base;
     }
 
     public function projectId()
@@ -68,7 +97,13 @@ class CloudRunConfig
      */
     public function env()
     {
-        return $this->deployment->envVars()->all();
+        $vars = $this->deployment->envVars();
+
+        if ($this->isWorker) {
+            $vars->set('IS_RAFTER_WORKER', 'true');
+        }
+
+        return $vars->all();
     }
 
     /**

@@ -135,7 +135,7 @@ class GoogleApi
     }
 
     /**
-     * Get the IAM policy for a given Cloud Run service.
+     * Get the IAM policy for a given Cloud Run web service.
      */
     public function getIamPolicyForCloudRunService(Environment $environment): CloudRunIamPolicy
     {
@@ -145,7 +145,7 @@ class GoogleApi
     }
 
     /**
-     * Get the IAM policy for a given Cloud Run service.
+     * Get the IAM policy for a given Cloud Run web service.
      */
     public function setIamPolicyForCloudRunService(Environment $environment, $policy)
     {
@@ -159,7 +159,7 @@ class GoogleApi
     }
 
     /**
-     * Get the URL to interact with an environment's Cloud Run IAM policy, which is... really long.
+     * Get the URL to interact with a web environment's Cloud Run IAM policy, which is... really long.
      */
     protected function cloudRunIamPolicyUrl(Environment $environment)
     {
@@ -168,7 +168,7 @@ class GoogleApi
             $environment->project->region,
             $environment->project->googleProject->project_id,
             $environment->project->region,
-            $environment->slug()
+            $environment->web_service_name
         );
     }
 

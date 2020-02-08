@@ -15,6 +15,7 @@ class UpdateCloudRunService extends DeploymentStepJob
     {
         try {
             $this->deployment->updateCloudRunService();
+            $this->deployment->updateCloudRunWorkerService();
 
             return true;
         } catch (Throwable $exception) {

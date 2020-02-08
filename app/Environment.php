@@ -229,6 +229,42 @@ class Environment extends Model
         $this->save();
     }
 
+    /**
+     * Set the URL for the worker service
+     *
+     * @param string $url
+     * @return void
+     */
+    public function setWorkerUrl($url)
+    {
+        $this->worker_url = $url;
+        $this->save();
+    }
+
+    /**
+     * Set the name of the web service
+     *
+     * @param string $name
+     * @return void
+     */
+    public function setWebName($name)
+    {
+        $this->web_service_name = $name;
+        $this->save();
+    }
+
+    /**
+     * Set the name of the worker service
+     *
+     * @param string $name
+     * @return void
+     */
+    public function setWorkerName($name)
+    {
+        $this->worker_service_name = $name;
+        $this->save();
+    }
+
     public function client(): GoogleApi
     {
         return $this->project->googleProject->client();

@@ -4,6 +4,7 @@ namespace App\Rafter\Http\Middleware;
 
 use Closure;
 use Google_Client;
+use Illuminate\Support\Facades\Log;
 
 class VerifyGoogleOidcToken
 {
@@ -22,7 +23,7 @@ class VerifyGoogleOidcToken
         }
 
         $client = new Google_Client();
-        if ($client->verifyIdToken($request->bearerToken())) {
+        if (! $client->verifyIdToken($request->bearerToken())) {
             return response("Unable to verify Google OIDC token", 401);
         }
 

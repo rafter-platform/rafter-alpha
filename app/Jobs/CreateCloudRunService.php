@@ -15,6 +15,7 @@ class CreateCloudRunService extends DeploymentStepJob
     {
         try {
             $this->deployment->createCloudRunService();
+            $this->deployment->createCloudRunWorkerService();
 
             return true;
         } catch (Throwable $exception) {

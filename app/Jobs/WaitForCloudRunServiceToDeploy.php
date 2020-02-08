@@ -16,20 +16,32 @@ class WaitForCloudRunServiceToDeploy extends DeploymentStepJob
      */
     public function execute()
     {
-        $service = $this->deployment->getCloudRunService();
+        $webService = $this->deployment->getCloudRunWebService();
+        $workerService = $this->deployment->getCloudRunWorkerService();
 
-        if (! $service->isReady() && ! $service->hasErrors()) {
-            $this->release(10);
+        // Check both services to see if they're ready. every() will eagerly stop
+        // if the first service isn't ready, so the same job isn't released into the queue
+        // multiple times.
+        $ready = collect([$webService, $workerService])->every(function ($service) {
+            if (! $service->isReady() && ! $service->hasErrors()) {
+                $this->release(10);
+                return false;
+            }
+
+            if ($service->hasErrors()) {
+                $this->fail(new Exception($service->getError()));
+                return false;
+            }
+
+            return true;
+        });
+
+        if (! $ready) {
             return;
         }
 
-        if ($service->hasErrors()) {
-            $this->fail(new Exception($service->getError()));
-            return;
-        }
-
-        // Else, set the URL for the first time and move on.
-        $this->deployment->environment->setUrl($service->getUrl());
+        $this->deployment->environment->setUrl($webService->getUrl());
+        $this->deployment->environment->setWorkerUrl($workerService->getUrl());
 
         return true;
     }
