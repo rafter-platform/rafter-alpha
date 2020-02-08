@@ -39,6 +39,6 @@ class SourceProviderController extends Controller
             ]);
         }
 
-        return redirect()->route('projects.create')->with('status', 'GitHub has been connected');
+        return redirect()->route('projects.create')->with('status', 'GitHub has been connected. Now create your first Rafter project.');
     }
 }
