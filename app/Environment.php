@@ -195,6 +195,32 @@ class Environment extends Model
     }
 
     /**
+     * Redeploy a deployment without having to wait for a build.
+     *
+     * @param Deployment $deployment
+     * @param int|null $initiatorId
+     * @return Deployment
+     */
+    public function redeploy(Deployment $deployment, $initiatorId)
+    {
+        $deployment = $this->deployments()->create([
+            'commit_hash' => $deployment->commit_hash,
+            'commit_message' => $deployment->commit_message,
+            'image' => $deployment->image,
+            'initiator_id' => $initiatorId,
+        ]);
+
+        (new ConfigureQueues($deployment))->withDeploymentChain([
+            new UpdateCloudRunService($deployment),
+            new WaitForCloudRunServiceToDeploy($deployment),
+            new EnsureAppIsPublic($deployment),
+            new FinalizeDeployment($deployment),
+        ])->dispatch();
+
+        return $deployment;
+    }
+
+    /**
      * Update the URL on the environment.
      */
     public function setUrl($url)

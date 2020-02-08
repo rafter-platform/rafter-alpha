@@ -175,9 +175,8 @@ class Deployment extends Model
      */
     public function redeploy($initiatorId = null)
     {
-        return $this->environment->deploy(
-            $this->commit_hash,
-            $this->commit_message,
+        return $this->environment->redeploy(
+            $this,
             $initiatorId
         );
     }
