@@ -161,11 +161,11 @@ class Deployment extends Model
      * Redeploy a given deployment
      *
      * @param int|null $initiatorId
-     * @return void
+     * @return Deployment
      */
     public function redeploy($initiatorId = null)
     {
-        $this->environment->deploy(
+        return $this->environment->deploy(
             $this->commit_hash,
             $this->commit_message,
             $initiatorId
@@ -181,7 +181,7 @@ class Deployment extends Model
     {
         $vars = EnvVars::fromString($this->environment->environmental_variables);
 
-        $vars->set('IS_RAFTER', true);
+        $vars->set('IS_RAFTER', 'true');
 
         if ($this->project()->isLaravel()) {
             $vars->inject([

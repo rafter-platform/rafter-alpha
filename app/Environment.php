@@ -167,6 +167,8 @@ class Environment extends Model
             new EnsureAppIsPublic($deployment),
             new FinalizeDeployment($deployment),
         ])->dispatch();
+
+        return $deployment;
     }
 
     /**
@@ -188,6 +190,8 @@ class Environment extends Model
             new EnsureAppIsPublic($deployment),
             new FinalizeDeployment($deployment),
         ])->dispatch();
+
+        return $deployment;
     }
 
     /**
