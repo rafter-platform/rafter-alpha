@@ -4,10 +4,15 @@ namespace App\Rafter;
 
 class Rafter
 {
-    const ROUTE = '/_rafter/queue/work';
+    const QUEUE_ROUTE = '/_rafter/queue/work';
 
+    /**
+     * Get the URL to the queue worker
+     *
+     * @return string
+     */
     public static function queueWorkerUrl()
     {
-        return url(static::ROUTE, [], true);
+        return $_ENV['RAFTER_WORKER_URL'] . static::QUEUE_ROUTE;
     }
 }
