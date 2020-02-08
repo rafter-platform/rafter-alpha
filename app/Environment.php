@@ -8,6 +8,7 @@ use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
 use App\Jobs\UpdateCloudRunService;
+use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
@@ -148,6 +149,23 @@ class Environment extends Model
     }
 
     /**
+     * Add a single env var to this environment's variables
+     *
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+    public function addEnvVar($key, $value)
+    {
+        $vars = EnvVars::fromString($this->environmental_variables);
+
+        $vars->set($key, $value);
+
+        $this->environmental_variables = $vars->toString();
+        $this->save();
+    }
+
+    /**
      * Create an initial deployment on Cloud Run.
      */
     public function createInitialDeployment()
@@ -163,6 +181,9 @@ class Environment extends Model
             new ConfigureQueues($deployment),
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
+            new WaitForCloudRunServiceToDeploy($deployment),
+            // Deploy the service another time, since we now have URL env vars set
+            new UpdateCloudRunServiceWithUrls($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
             new FinalizeDeployment($deployment),
@@ -221,24 +242,32 @@ class Environment extends Model
     }
 
     /**
-     * Update the URL on the environment.
+     * Update the URL on the environment. This will only run once.
      */
     public function setUrl($url)
     {
+        if (! empty($this->url)) return;
+
         $this->url = $url;
         $this->save();
+
+        $this->addEnvVar('APP_URL', $this->url);
     }
 
     /**
-     * Set the URL for the worker service
+     * Set the URL for the worker service. This will only run once.
      *
      * @param string $url
      * @return void
      */
     public function setWorkerUrl($url)
     {
+        if (! empty($this->worker_url)) return;
+
         $this->worker_url = $url;
         $this->save();
+
+        $this->addEnvVar('RAFTER_WORKER_URL', $this->worker_url);
     }
 
     /**
