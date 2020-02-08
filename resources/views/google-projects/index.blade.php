@@ -70,6 +70,23 @@
                 </p>
             @endslot
         @endcomponent
+
+        <p class="block text-gray-700 text-sm font-bold mb-2">
+            Resource Management API:
+        </label>
+
+        <p class="text-sm text-gray-600 w-full mb-2">
+            <b>Important</b>: In order for Rafter to manage APIs in your Google Project, you must first enable the
+            <a class="font-bold" href="https://console.developers.google.com/apis/library/cloudresourcemanager.googleapis.com" target="_blank">Resource Management API</a>
+            in your project. Visit the link below, and click <b>Enable API</b>.
+        </p>
+
+        <p class="text-sm text-gray-600 w-full mb-2">Return to this page and click "Add Project" once the API is enabled.</p>
+
+        <p class="mb-6">
+            <a href="https://console.developers.google.com/apis/library/cloudresourcemanager.googleapis.com" target="_blank">https://console.developers.google.com/apis/library/cloudresourcemanager.googleapis.com</a>
+        </p>
+
         <div class="text-right">
             @component('components.button')
                 Add Project
