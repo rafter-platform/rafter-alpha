@@ -199,7 +199,7 @@ class Deployment extends Model
                 'RAFTER_REGION' => $this->project()->region,
                 'CACHE_DRIVER' => 'firestore',
                 'QUEUE_CONNECTION' => 'rafter',
-                'SESSION_DRIVER' => 'firestore',
+                'SESSION_DRIVER' => 'cookie',
                 'LOG_CHANNEL' => 'syslog',
             ]);
 
