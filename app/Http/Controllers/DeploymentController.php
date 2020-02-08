@@ -99,7 +99,7 @@ class DeploymentController extends Controller
      */
     public function redeploy(Project $project, Environment $environment, Deployment $deployment)
     {
-        $newDeployment = $deployment->redeploy();
+        $newDeployment = $deployment->redeploy(auth()->user()->id);
 
         return redirect()->route('projects.environments.deployments.show', [$project, $environment, $newDeployment])
             ->with('status', 'Deployment has been redeployed');

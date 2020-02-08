@@ -2,6 +2,7 @@
 
 @section('content')
     @include('environments._header')
+    @include('components.flash')
 
     <div class="flex justify-between">
         @include('components.subtitle', ['title' => 'Deployment Details'])

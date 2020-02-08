@@ -44,7 +44,6 @@ class SyncDatabaseInstances implements ShouldQueue
                     'name' => $instance['name'],
                     'version' => $instance['databaseVersion'],
                     'type' => 'mysql', // TODO: Support Postgres
-                    'version' => $instance['region'],
                     'tier' => $instance['settings']['tier'],
                     'size' => $instance['settings']['dataDiskSizeGb'],
                     'status' => DatabaseInstance::STATUS_ACTIVE,
