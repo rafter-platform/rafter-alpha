@@ -5,7 +5,7 @@
         <ul>
             <li><a href="{{ route('projects.environments.show', [$project, $environment]) }}">Deployments</a></li>
             <li><a href="{{ route('projects.environments.database.index', [$project, $environment]) }}">Databases</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="{{ route('projects.environments.settings.index', [$project, $environment]) }}">Settings</a></li>
         </ul>
     </nav>
 

@@ -55,6 +55,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('projects.environments.database', 'EnvironmentDatabaseController')
         ->only(['index', 'store', 'destroy']);
 
+    // Environment Settings
+    Route::resource('projects.environments.settings', 'EnvironmentSettingsController')
+        ->only(['index', 'store']);
+
     // Deployments
     Route::resource('projects.environments.deployments', 'DeploymentController');
 

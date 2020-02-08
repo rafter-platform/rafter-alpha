@@ -156,6 +156,8 @@ class Deployment extends Model
     {
         $vars = EnvVars::fromString($this->environment->environmental_variables);
 
+        $vars->set('IS_RAFTER', true);
+
         if ($this->project()->isLaravel()) {
             $vars->inject([
                 'RAFTER_QUEUE' => $this->environment->queueName(),

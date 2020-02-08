@@ -11,7 +11,7 @@
         name="{{ $name }}"
         value="{{ old($name) }}"
         rows="10"
-        {{ $required ? 'required' : ''}}></textarea>
+        {{ ($required ?? false) ? 'required' : ''}}>{{ $value ?? '' }}</textarea>
 
     @error($name)
         <p class="text-red-500 text-xs italic mt-4">

@@ -120,9 +120,7 @@ class Environment extends Model
      */
     public function setInitialEnvironmentVariables()
     {
-        $vars = new EnvVars([
-            'IS_RAFTER' => 'true',
-        ]);
+        $vars = new EnvVars();
 
         if ($this->project->isLaravel()) {
             $appKey = 'base64:' . base64_encode(Encrypter::generateKey(config('app.cipher')));
