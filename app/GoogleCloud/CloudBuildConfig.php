@@ -100,7 +100,7 @@ class CloudBuildConfig
     {
         return [
             'name' => 'gcr.io/cloud-builders/git',
-            'args' => ['clone', '--depth=1', "https://x-access-token:{$this->deployment->sourceProvider()->client()->token()}@github.com/{$this->deployment->repository()}.git"],
+            'args' => ['clone', '--depth=1', $this->deployment->cloneUrl()],
         ];
 
         // TODO: Get tarball working, as it will be much smaller

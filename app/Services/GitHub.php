@@ -112,6 +112,21 @@ class GitHub implements SourceProviderClient
     }
 
     /**
+     * Get the clone URL with a token.
+     *
+     * @param Deployment $deployment
+     * @return string
+     */
+    public function cloneUrl(Deployment $deployment)
+    {
+        return sprintf(
+            "https://x-access-token:%s@github.com/%s.git",
+            $this->token(),
+            $deployment->repository()
+        );
+    }
+
+    /**
      * Get the commit hash from the given hook payload.
      *
      * @param  array  $payload
@@ -176,7 +191,7 @@ class GitHub implements SourceProviderClient
     /**
      * Get the access token for the given SourceProvider.
      */
-    public function token() {
+    protected function token() {
         return $this->source->meta['token'];
     }
 }

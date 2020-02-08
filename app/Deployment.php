@@ -70,6 +70,16 @@ class Deployment extends Model
     }
 
     /**
+     * Get the Git clone URL with a token.
+     *
+     * @return string
+     */
+    public function cloneUrl()
+    {
+        return $this->sourceProvider()->client()->cloneUrl($this);
+    }
+
+    /**
      * Mark a deployment as in progress
      */
     public function markAsInProgress()
