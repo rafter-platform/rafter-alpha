@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+
+@include('components.flash')
+
 <!-- TODO: Conditionally show form based on whether user has connected GitHub -->
 @component('components.card')
-    @include('components.flash')
 
     @slot('title')
         <h1>Create a Project</h1>
