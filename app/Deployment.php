@@ -202,7 +202,7 @@ class Deployment extends Model
         $cloudRunConfig = (new CloudRunConfig($this))
             ->forWorker();
 
-        $this->client()->createCloudRunService($cloudRunConfig);
+        $this->client()->replaceCloudRunService($cloudRunConfig);
     }
 
     /**
