@@ -7,7 +7,8 @@
 @endcomponent
 
 <p class="text-gray-800 mb-4">
-    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magnam, dignissimos blanditiis reprehenderit repellendus ad ex eligendi tenetur explicabo laborum veritatis quo a omnis ut facilis asperiores corporis natus nobis cumque.
+    Database instances represent <a href="https://console.cloud.google.com/sql/instances">Cloud SQL instances</a> in your Google Project.
+    You can create new instances or manage existing instances inside Rafter.
 </p>
 
 <div class="mb-6">
