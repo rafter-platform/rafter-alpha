@@ -3,10 +3,12 @@
 namespace App\Rafter\Queue;
 
 use App\Rafter\Rafter;
+use Google\Auth\ApplicationDefaultCredentials;
 use Google\Cloud\Tasks\V2beta3\CloudTasksClient;
 use Google\Cloud\Tasks\V2beta3\HttpMethod;
 use Google\Cloud\Tasks\V2beta3\Task;
 use Google\Cloud\Tasks\V2beta3\HttpRequest;
+use Google\Cloud\Tasks\V2beta3\OidcToken;
 use Google\Protobuf\Timestamp;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue;
@@ -131,6 +133,12 @@ class RafterQueue extends Queue implements QueueContract
         $httpRequest->setHttpMethod(HttpMethod::POST);
         $httpRequest->setBody(base64_encode($payload));
 
+        // Secure the payload
+        $token = new OidcToken([
+            'service_account_email' => $this->getServiceAccountEmail(),
+        ]);
+        $httpRequest->setOidcToken($token);
+
         $task->setHttpRequest($httpRequest);
 
         $response = $this->tasks->createTask($queueName, $task);
@@ -207,5 +215,17 @@ class RafterQueue extends Queue implements QueueContract
 		$timestamp = new Timestamp();
 		$timestamp->fromDateTime($time);
 		$task->setScheduleTime($timestamp);
-	}
+    }
+
+    /**
+     * Get the service account email used by the default JSON
+     *
+     * @return string
+     */
+    protected function getServiceAccountEmail()
+    {
+        $creds = ApplicationDefaultCredentials::getCredentials();
+
+        return $creds->getClientName();
+    }
 }

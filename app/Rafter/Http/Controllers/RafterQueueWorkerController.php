@@ -4,6 +4,7 @@ namespace App\Rafter\Http\Controllers;
 
 use App\Rafter\Queue\RafterJob;
 use App\Rafter\Queue\RafterWorker;
+use Google_Client;
 use Illuminate\Http\Request;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;

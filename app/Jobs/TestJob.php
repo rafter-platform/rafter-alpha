@@ -36,6 +36,6 @@ class TestJob implements ShouldQueue
     {
         Log::info("Hello, job! Attempts: {$this->attempts()}");
 
-        $this->release(5);
+        // $this->release(5);
     }
 }
