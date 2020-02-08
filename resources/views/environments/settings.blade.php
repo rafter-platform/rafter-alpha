@@ -17,18 +17,15 @@
 
             <form action="{{ route('projects.environments.settings.store', [$project, $environment]) }}" method="POST">
                 @csrf
-                <div>
                 @include('components.form.textarea', [
                     'name' => 'environmental_variables',
                     'label' => 'Environment Variables',
                     'classes' => 'font-mono',
                     'value' => $environment->environmental_variables
                 ])
-                </div>
-
                 <div class="text-right">
                     @component('components.button')
-                        Update Environment Variables
+                        Update Environment Variables and Deploy
                     @endcomponent
                 </div>
             </form>

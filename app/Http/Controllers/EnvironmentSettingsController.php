@@ -15,4 +15,19 @@ class EnvironmentSettingsController extends Controller
             'project' => $project,
         ]);
     }
+
+    public function store(Request $request, Project $project, Environment $environment)
+    {
+        $this->validate($request, [
+            'environmental_variables' => ['string'],
+        ]);
+
+        if (! empty($request->environmental_variables)) {
+            $environment->update(['environmental_variables' => $request->environmental_variables]);
+
+            // TODO: Kick off redeploy
+        }
+
+        return back()->with('status', 'Settings updated');
+    }
 }
