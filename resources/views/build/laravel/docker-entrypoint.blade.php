@@ -3,6 +3,8 @@ set -e
 
 # Set up Laravel project
 php artisan event:cache
+php artisan config:cache
+php artisan view:cache
 
 if [ -z "$DB_DATABASE" ]
 then
