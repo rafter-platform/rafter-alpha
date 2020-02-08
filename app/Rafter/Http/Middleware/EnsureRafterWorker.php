@@ -15,7 +15,7 @@ class EnsureRafterWorker
      */
     public function handle($request, Closure $next)
     {
-        if (! env('IS_RAFTER_WORK', false)) {
+        if (! env('IS_RAFTER_WORKER', false)) {
             return response('Not a valid worker service', 403);
         }
 
