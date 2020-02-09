@@ -34,9 +34,13 @@ class EnableProjectApis implements ShouldQueue
      */
     public function handle()
     {
-        $operation = $this->googleProject->client()->enableApis(GoogleProject::REQUIRED_APIS);
+        try {
+            $operation = $this->googleProject->client()->enableApis(GoogleProject::REQUIRED_APIS);
 
-        $this->googleProject->update(['operation_name' => $operation['name']]);
+            $this->googleProject->update(['operation_name' => $operation['name']]);
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
     }
 
     public function failed(Throwable $exception)

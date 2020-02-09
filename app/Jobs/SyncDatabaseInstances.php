@@ -39,7 +39,7 @@ class SyncDatabaseInstances implements ShouldQueue
         try {
             $instances = $this->googleProject->client()->getDatabaseInstances();
 
-            foreach ($instances['items'] as $instance) {
+            foreach ($instances['items'] ?? [] as $instance) {
                 $db = $this->googleProject->databaseInstances()->create([
                     'name' => $instance['name'],
                     'version' => $instance['databaseVersion'],
@@ -53,7 +53,7 @@ class SyncDatabaseInstances implements ShouldQueue
 
                 $databases = $this->googleProject->client()->getDatabases($db);
 
-                foreach ($databases['items'] as $database) {
+                foreach ($databases['items'] ?? [] as $database) {
                     $db->databases()->create([
                         'name' => $database['name'],
                         'status' => Database::STATUS_ACTIVE,

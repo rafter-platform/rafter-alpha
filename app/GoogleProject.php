@@ -13,7 +13,12 @@ use Illuminate\Database\Eloquent\Model;
 class GoogleProject extends Model
 {
     const REQUIRED_APIS = [
+        // To enable APIs
+        'servicemanagement.googleapis.com',
+        'cloudresourcemanager.googleapis.com',
+        // Cloud Run
         'run.googleapis.com',
+        // Cloud Build
         'cloudbuild.googleapis.com',
         // for DB support
         'sqladmin.googleapis.com',
@@ -69,8 +74,7 @@ class GoogleProject extends Model
      */
     public function provision()
     {
-        DetermineProjectNumber::withChain([
-            new EnableProjectApis($this),
+        EnableProjectApis::withChain([
             new WaitForProjectApisToBeEnabled($this),
             new CreateAppEngineShellApp($this),
             new SyncDatabaseInstances($this),

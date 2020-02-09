@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DatabaseInstance;
 use App\GoogleProject;
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -59,22 +60,30 @@ class DatabaseInstanceController extends Controller
             'region' => ['required', Rule::in(array_keys(GoogleProject::REGIONS))],
         ]);
 
-        try {
-            $instance = auth()->user()->currentTeam->databaseInstances()->create([
-                'google_project_id' => $request->google_project_id,
-                'name' => $request->name,
-                'google_project_id' => $request->google_project_id,
-                'type' => $request->type,
-                'version' => $request->version,
-                'tier' => $request->tier,
-                'size' => $request->size,
-                'region' => $request->region,
-            ]);
+        $instance = auth()->user()->currentTeam->databaseInstances()->create([
+            'google_project_id' => $request->google_project_id,
+            'name' => $request->name,
+            'google_project_id' => $request->google_project_id,
+            'type' => $request->type,
+            'version' => $request->version,
+            'tier' => $request->tier,
+            'size' => $request->size,
+            'region' => $request->region,
+        ]);
 
+        try {
             $instance->provision();
 
             return redirect()->route('database-instances.show', [$instance])->with('status', 'Database is being created.');
+        } catch (ClientException $e) {
+            if ($e->getCode() == 409) {
+                $instance->delete();
+                return back()->with('status', "This database name is already in use or was used too recently.")->withInput();
+            }
+
+            throw $e;
         } catch (Exception $e) {
+            $instance->delete();
             return back()->with('status', $e->getMessage())->withInput();
         }
     }

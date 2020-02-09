@@ -17,6 +17,7 @@ use App\GoogleCloud\QueueConfig;
 use App\GoogleProject;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Log;
 
 class GoogleApi
 {
@@ -49,7 +50,7 @@ class GoogleApi
     public function enableApis($apis = [])
     {
         return $this->request(
-            "https://serviceusage.googleapis.com/v1/projects/{$this->googleProject->project_number}/services:batchEnable",
+            "https://serviceusage.googleapis.com/v1/projects/{$this->googleProject->project_id}/services:batchEnable",
             "POST",
             [
                 'serviceIds' => $apis,
@@ -75,8 +76,6 @@ class GoogleApi
             $res = $this->request(
                 "https://appengine.googleapis.com/v1/apps/{$this->googleProject->project_id}"
             );
-
-            dump($res);
 
             return true;
         } catch (ClientException $e) {
@@ -312,7 +311,7 @@ class GoogleApi
 
             return json_decode((string) $response->getBody(), true);
         } catch (ClientException $exception) {
-            dump($exception->getResponse()->getBody()->getContents());
+            Log::error($exception->getResponse()->getBody()->getContents());
 
             throw $exception;
         }

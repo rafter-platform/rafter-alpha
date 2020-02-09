@@ -36,14 +36,18 @@ class WaitForProjectApisToBeEnabled implements ShouldQueue
      */
     public function handle()
     {
-        $operation = $this->project->client()->getEnableApisOperation($this->project->operation_name);
+        try {
+            $operation = $this->project->client()->getEnableApisOperation($this->project->operation_name);
 
-        if ($operation->isInProgress()) {
-            $this->release(10);
-            return;
+            if ($operation->isInProgress()) {
+                $this->release(10);
+                return;
+            }
+
+            $this->project->setReady();
+        } catch (Throwable $e) {
+            $this->fail($e);
         }
-
-        $this->project->setReady();
     }
 
     public function failed(Throwable $exception)
