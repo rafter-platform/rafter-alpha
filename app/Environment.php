@@ -28,11 +28,6 @@ class Environment extends Model
         'environmental_variables',
     ];
 
-    public function getRouteKeyName()
-    {
-        return 'name';
-    }
-
     public function project()
     {
         return $this->belongsTo('App\Project');
