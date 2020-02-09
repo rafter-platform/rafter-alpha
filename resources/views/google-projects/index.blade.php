@@ -66,7 +66,8 @@
             @slot('helper')
                 <p>
                     Create a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts">service account</a> for your project.
-                    Important: You must give the service account the <b>Project Owner</b> role in order for Rafter to function properly.
+                    Important: You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
+                    On the final step, click <b>Create Key</b> and download a JSON-formatted key. Paste the contents of the key below.
                 </p>
             @endslot
         @endcomponent
@@ -78,7 +79,7 @@
         <p class="text-sm text-gray-600 w-full mb-2">
             <b>Important</b>: In order for Rafter to manage APIs in your Google Project, you must first enable the
             <a class="font-bold" href="https://console.developers.google.com/apis/library/cloudresourcemanager.googleapis.com" target="_blank">Resource Management API</a>
-            in your project. Visit the link below, and click <b>Enable API</b>.
+            in your project. Visit the link below, and click <b>Enable</b>.
         </p>
 
         <p class="text-sm text-gray-600 w-full mb-2">Return to this page and click "Add Project" once the API is enabled.</p>
