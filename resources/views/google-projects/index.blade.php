@@ -64,10 +64,33 @@
             'required' => true,
         ])
             @slot('helper')
-                <p>
+                <p class="mb-4">
                     Create a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts">service account</a> for your project.
                     Important: You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
                     On the final step, click <b>Create Key</b> and download a JSON-formatted key. Paste the contents of the key below.
+                </p>
+
+                <p class="mb-4">
+                    <label for="service_account_json_file" class="block text-gray-700 text-sm mb-2">
+                        Upload the Service Account JSON Key:
+                    </label>
+                    <input class="form-input w-full" type="file" id="service_account_json_file" accept="application/json">
+                </p>
+
+                <script>
+                    document.querySelector('#service_account_json_file').addEventListener('change', event => {
+                        if (! event.target.files[0]) return;
+
+                        var file = event.target.files[0];
+                        var textarea = document.querySelector('#service_account_json');
+                        var reader = new FileReader();
+                        reader.onload = () => textarea.value = reader.result;
+                        reader.readAsText(file);
+                    });
+                </script>
+
+                <p>
+                    Or paste the contents below:
                 </p>
             @endslot
         @endcomponent
