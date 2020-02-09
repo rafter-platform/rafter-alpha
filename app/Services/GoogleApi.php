@@ -65,6 +65,44 @@ class GoogleApi
     }
 
     /**
+     * Whether this project has an app engine app associated yet.
+     *
+     * @return boolean
+     */
+    public function hasAppEngineApp()
+    {
+        try {
+            $res = $this->request(
+                "https://appengine.googleapis.com/v1/apps/{$this->googleProject->project_id}"
+            );
+
+            dump($res);
+
+            return true;
+        } catch (ClientException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Create a shell AppEngine app to be able to use Cloud Tasks.
+     * Hopefully temporary.
+     *
+     * @return array
+     */
+    public function createAppEngineApp()
+    {
+        return $this->request(
+            "https://appengine.googleapis.com/v1/apps",
+            "POST",
+            [
+                'id' => $this->googleProject->project_id,
+                'locationId' => 'us-central',
+            ]
+        );
+    }
+
+    /**
      * Takes a CloudBuild configuration and sends it to Cloud Build to create an image.
      */
     public function createImageForBuild(CloudBuildConfig $cloudBuild)

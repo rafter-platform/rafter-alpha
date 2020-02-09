@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Jobs\CreateAppEngineShellApp;
 use App\Jobs\DetermineProjectNumber;
 use App\Jobs\EnableProjectApis;
 use App\Jobs\SyncDatabaseInstances;
@@ -20,6 +21,7 @@ class GoogleProject extends Model
         'compute.googleapis.com',
         // for queue support
         'cloudtasks.googleapis.com',
+        'appengine.googleapis.com',
     ];
 
     const REGIONS = [
@@ -70,6 +72,7 @@ class GoogleProject extends Model
         DetermineProjectNumber::withChain([
             new EnableProjectApis($this),
             new WaitForProjectApisToBeEnabled($this),
+            new CreateAppEngineShellApp($this),
             new SyncDatabaseInstances($this),
         ])->dispatch($this);
     }
