@@ -111,7 +111,7 @@ class RafterQueueWorkerController extends Controller
         });
 
         app('events')->listen(JobProcessed::class, function ($event) {
-            Log::info("Job success: {$event->job->resolveName()}");
+            Log::info("Job processed: {$event->job->resolveName()}");
         });
 
         app('events')->listen(JobFailed::class, function ($event) {
