@@ -113,6 +113,16 @@ class CloudRunService
     }
 
     /**
+     * Dump out the service, for debugging
+     *
+     * @return array
+     */
+    public function service()
+    {
+        return $this->service;
+    }
+
+    /**
      * Dump out the service to JSON for testing purposes.
      *
      * @return string
