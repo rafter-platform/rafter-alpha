@@ -210,6 +210,28 @@ class GoogleApi
     }
 
     /**
+     * Get the authorized domains for a project
+     *
+     * @param string $region
+     * @return array
+     */
+    public function getCloudRunAuthorizedDomains($region)
+    {
+        return $this->request("https://{$region}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/authorizeddomains");
+    }
+
+    /**
+     * Get the authorized domains for a project
+     *
+     * @param string $region
+     * @return array
+     */
+    public function getCloudRunDomainMappings($region)
+    {
+        return $this->request("https://{$region}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/domainmappings");
+    }
+
+    /**
      * Create a Database Instance on Google Cloud.
      */
     public function createDatabaseInstance(DatabaseInstanceConfig $databaseInstanceConfig)
