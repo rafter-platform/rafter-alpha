@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GitHubApp;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -12,15 +13,10 @@ class SourceProviderController extends Controller
         $code = $request->code;
         $installationId = $request->installation_id;
 
-        $source = $request->user()->sourceProviders()->create([
-            'name' => 'GitHub',
-            'type' => 'GitHub',
-            'installation_id' => $installationId,
-            'meta' => [],
-        ]);
-
         // Exchange the code for an access token for the user, and store it
-        $response = $source->client()->exchangeCodeForAccessToken($code);
+        // TODO: Extract this to a GitHub specific request or controller,
+        // so we can eventually support BitBucket et al.
+        $response = GitHubApp::exchangeCodeForAccessToken($code);
 
         if (empty($response['access_token'])) {
             throw ValidationException::withMessages([
@@ -28,8 +24,12 @@ class SourceProviderController extends Controller
             ]);
         }
 
-        $meta = ['token' => $response['access_token']];
-        $source->update(['meta' => $meta]);
+        $source = $request->user()->sourceProviders()->create([
+            'name' => 'GitHub',
+            'type' => 'GitHub',
+            'installation_id' => $installationId,
+            'meta' => ['token' => $response['access_token']],
+        ]);
 
         if (! $source->client()->valid()) {
             $source->delete();

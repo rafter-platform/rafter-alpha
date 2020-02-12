@@ -137,55 +137,22 @@ class GitHub implements SourceProviderClient
         return $payload['head_commit']['id'] ?? null;
     }
 
-    /**
-     * Get an access token from a code during a user's OAuth flow.
-     */
-    public function exchangeCodeForAccessToken($code)
-    {
-        $response = $this->request(
-            "login/oauth/access_token",
-            "POST",
-            [
-                "client_id" => config('services.github.client_id'),
-                "client_secret" => config('services.github.client_secret'),
-                "code" => $code,
-            ],
-            true,
-            "https://github.com/"
-        );
-
-        $result = [];
-
-        // The result is returned in a query-string format:
-        // access_token=xyz&other_thing=xyz
-        parse_str($response, $result);
-
-        return $result;
-    }
-
-    protected function request($endpoint, $method = 'get', $data = [], $isLogin = false, $base = 'https://api.github.com/')
+    protected function request($endpoint, $method = 'get', $data = [])
     {
         $options = [
             'timeout' => 15,
-        ];
-
-        if (! $isLogin) {
-            $options['headers'] = [
+            'headers' = [
                 'Authorization' => "Bearer {$this->token()}",
-            ];
-        }
+            ],
+        ];
 
         if (! empty($data)) {
             $options['json'] = $data;
         }
 
-        $response = (new Client)->request($method, $base . $endpoint, $options);
+        $response = (new Client)->request($method, 'https://api.github.com/' . $endpoint, $options);
 
-        if ($isLogin) {
-            return $response->getBody()->getContents();
-        } else {
-            return json_decode((string) $response->getBody(), true);
-        }
+        return json_decode((string) $response->getBody(), true);
     }
 
     /**
