@@ -23,6 +23,11 @@ class WaitForCloudRunServiceToDeploy extends DeploymentStepJob
         // if the first service isn't ready, so the same job isn't released into the queue
         // multiple times.
         $ready = collect([$webService, $workerService])->every(function ($service) {
+            if (! $service->hasStatus()) {
+                $this->release(10);
+                return false;
+            }
+
             if (! $service->isReady() && ! $service->hasErrors()) {
                 $this->release(10);
                 return false;

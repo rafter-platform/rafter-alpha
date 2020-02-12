@@ -19,7 +19,17 @@ class CloudRunService
      */
     public function status()
     {
-        return $this->service['status'];
+        return $this->service['status'] ?? [];
+    }
+
+    /**
+     * Whether the service has a status yet
+     *
+     * @return boolean
+     */
+    public function hasStatus()
+    {
+        return ! empty($this->status());
     }
 
     /**
