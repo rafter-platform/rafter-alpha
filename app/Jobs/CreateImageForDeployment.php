@@ -19,7 +19,6 @@ class CreateImageForDeployment extends DeploymentStepJob
 
             $operation = $this->deployment->submitBuild($build);
 
-            $this->deployment->markAsInProgress();
             $this->deployment->update(['operation_name' => $operation['name']]);
 
             return true;

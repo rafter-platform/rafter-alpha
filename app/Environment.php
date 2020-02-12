@@ -7,6 +7,7 @@ use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
+use App\Jobs\StartDeployment;
 use App\Jobs\UpdateCloudRunService;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
@@ -172,7 +173,8 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
-        (new CreateImageForDeployment($deployment))->withDeploymentChain([
+        (new StartDeployment($deployment))->withDeploymentChain([
+            new CreateImageForDeployment($deployment),
             new ConfigureQueues($deployment),
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
@@ -198,7 +200,8 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        (new CreateImageForDeployment($deployment))->withDeploymentChain([
+        (new StartDeployment($deployment))->withDeploymentChain([
+            new CreateImageForDeployment($deployment),
             new ConfigureQueues($deployment),
             new WaitForImageToBeBuilt($deployment),
             new UpdateCloudRunService($deployment),
@@ -226,7 +229,8 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        (new ConfigureQueues($deployment))->withDeploymentChain([
+        (new StartDeployment($deployment))->withDeploymentChain([
+            new ConfigureQueues($deployment),
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
