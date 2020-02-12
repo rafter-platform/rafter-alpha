@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 
 class GitHubApp
 {
@@ -45,5 +46,21 @@ class GitHubApp
         parse_str($response, $result);
 
         return $result;
+    }
+
+    /**
+     * Verify whether an incoming payload matches a SHA1 webhook secret signature
+     *
+     * @param string $payload
+     * @param string $signature
+     * @return boolean
+     */
+    public static function verifyWebhookPayload(Request $request)
+    {
+        $payload = $request->instance()->getContent();
+        $signature = $request->header('X-Hub-Signature');
+        $hash = 'sha1=' . hash_hmac('sha1', $payload, config('services.github.webhook_secret'));
+
+        return $hash === $signature;
     }
 }

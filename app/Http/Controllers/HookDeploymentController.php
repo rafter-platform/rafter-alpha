@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Environment;
+use App\Services\GitHubApp;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,10 @@ class HookDeploymentController extends Controller
     {
         if ($request->header('X-GitHub-Event') !== 'push') {
             return response('', 200);
+        }
+
+        if (! GitHubApp::verifyWebhookPayload($request)) {
+            return response('', 403);
         }
 
         // Log::info($request->all());
@@ -37,7 +42,7 @@ class HookDeploymentController extends Controller
             })
             ->get();
 
-        $environments->forEach(function ($environment) use ($senderEmail, $hash, $message) {
+        $environments->each(function ($environment) use ($senderEmail, $hash, $message) {
             $user = User::where('email', $senderEmail)->first();
             $initiatorId = null;
 
