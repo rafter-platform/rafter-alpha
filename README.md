@@ -37,6 +37,8 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 
 ### Cloud Firestore (cache and session drivers)
 
+**UPDATE**: This... doesn't work great, due to a number of factors. Looking into alternatives.
+
 [Official Documentation](https://cloud.google.com/firestore)
 
 - NoSQL database to support key-value caching and session management
@@ -60,6 +62,16 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 - Object storage, similar to S3
 - Automatically handles uploaded artifacts from Cloud Build
 - Integrated into application helpers based on project type to handle user uploads
+
+## Roadmap
+
+Here are things I'd like to work on next:
+
+- Support other projects: Node, WordPress, Rails, Go, custom Dockerfile
+- Email driver support (does Google offer this as part of GCP?)
+- Integration of Secret Manager
+- Better Database operations
+- Lots of UI upgrades: Log viewer, database information, user profile/settings
 
 ## Development notes
 
