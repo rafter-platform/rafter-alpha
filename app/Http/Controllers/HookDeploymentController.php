@@ -24,7 +24,7 @@ class HookDeploymentController extends Controller
         $message = $request->head_commit['message'];
         $senderEmail = $request->pusher['email'] ?? null;
 
-        $environment = Environment::query()
+        $environments = Environment::query()
             ->where('branch', $branch)
             ->whereHas('project.sourceProvider', function ($query) use ($installationId, $type) {
                 $query->where([
@@ -35,9 +35,9 @@ class HookDeploymentController extends Controller
             ->whereHas('project', function ($query) use ($repository) {
                 $query->where('repository', $repository);
             })
-            ->first();
+            ->get();
 
-        if ($environment) {
+        $environments->forEach(function ($environment) use ($senderEmail, $hash, $message) {
             $user = User::where('email', $senderEmail)->first();
             $initiatorId = null;
 
@@ -46,7 +46,7 @@ class HookDeploymentController extends Controller
             }
 
             $environment->deploy($hash, $message, $initiatorId);
-        }
+        });
 
         return response('', 200);
     }
