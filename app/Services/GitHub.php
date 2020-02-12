@@ -141,7 +141,7 @@ class GitHub implements SourceProviderClient
     {
         $options = [
             'timeout' => 15,
-            'headers' = [
+            'headers' => [
                 'Authorization' => "Bearer {$this->token()}",
             ],
         ];
