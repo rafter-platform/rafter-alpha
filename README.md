@@ -72,6 +72,7 @@ Here are things I'd like to work on next:
 - Support other projects: Node, WordPress, Rails, Go, custom Dockerfile
 - Email driver support (does Google offer this as part of GCP?)
 - Integration of Secret Manager
+- Integration of commands (via PubSub)
 - Integration of GCS for better uploads with Laravel
 - Better Database operations
 - Leverage GitHub Deployment API to mark when a branch has been deployed
