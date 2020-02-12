@@ -30,7 +30,6 @@ class CloudRunService
      */
     public function hasStatus()
     {
-        Log::info($this->service());
         return ! empty($this->status());
     }
 
