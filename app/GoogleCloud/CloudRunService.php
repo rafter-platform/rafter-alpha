@@ -3,6 +3,7 @@
 namespace App\GoogleCloud;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CloudRunService
 {
@@ -29,6 +30,7 @@ class CloudRunService
      */
     public function hasStatus()
     {
+        Log::info($this->service());
         return ! empty($this->status());
     }
 
