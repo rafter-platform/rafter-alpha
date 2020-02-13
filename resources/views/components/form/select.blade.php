@@ -9,7 +9,7 @@
         name="{{ $name }}"
         value="{{ old($name) }}"
         {{ ($required ?? false) ? 'required' : ''}}
-        {{ ($xModel ?? false) ? 'x-model="' . $xModel .'"' : '' }}>
+        {{ ($xModel ?? false) ? 'x-model=' . $xModel : '' }}>
         @foreach ($options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach

@@ -11,6 +11,7 @@ class Project extends Model
      */
     const TYPES = [
         'laravel' => "Laravel",
+        'nodejs' => "Node.js",
     ];
 
     protected $fillable = [
