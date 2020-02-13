@@ -5,8 +5,9 @@
 @include('components.flash')
 
 @component('components.card')
-@slot('title')
-    <h1>Edit GitHub Installation</h1>
+    @slot('title')
+        <h1>Edit GitHub Installation</h1>
+    @endslot
 
     <form action="{{ route('source-providers.update', [$source]) }}" method="POST">
         @csrf
@@ -28,7 +29,7 @@
             'disabled' => true,
             'value' => $source->installation_id
         ])
-        @include('components.form.textarea', [
+        @component('components.form.textarea', [
             'name' => 'repos',
             'label' => 'Available Repositories',
             'disabled' => true,
@@ -36,16 +37,18 @@
                 ->map(function ($repo) {
                     return $repo['full_name'];
                 })
-                ->join('\n'),
+                ->join("\r\n"),
         ])
+            @slot('helper')
+                <p>Want to add or remove available repositories? <a href="{{ \App\Services\GitHubApp::installationUrl($source->installation_id) }}" target="_blank">Edit this installation</a>
+            @endslot
+        @endcomponent
         <div class="text-right">
             @component('components.button')
                 Update
             @endcomponent
         </div>
     </form>
-@endslot
-
 @endcomponent
 
 @endsection

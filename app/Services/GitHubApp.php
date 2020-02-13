@@ -12,9 +12,9 @@ class GitHubApp
      *
      * @return string
      */
-    public static function installationUrl(): string
+    public static function installationUrl($installationId = null): string
     {
-        return "https://github.com/apps/" . config('services.github.app_name') . "/installations/new";
+        return "https://github.com/apps/" . config('services.github.app_name') . "/installations/" . ($installationId ?: 'new');
     }
 
     /**

@@ -20,4 +20,8 @@
             @endslot
         @endcomponent
     @endforeach
+
+    <div class="mt-8">
+        <a href="{{ \App\Services\GitHubApp::installationUrl() }}" class="button">Create New GitHub Installation</a>
+    </div>
 @endsection
