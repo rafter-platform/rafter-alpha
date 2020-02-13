@@ -25,7 +25,7 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 
 - Docker images are created when code is pushed to GitHub
 - Dockerfile is automatically provided based on type of project
-- Currently supported: **Laravel**
+- Currently supported: **Laravel, Node.js**
 
 ### Cloud SQL (database)
 
@@ -69,7 +69,12 @@ Here are things I'd like to work on next:
 
 - Extract laravel-rafter-core into a package
 - Laravel Stackdriver log driver
-- Support other projects: Node, WordPress, Rails, Go, custom Dockerfile
+- Support other projects:
+  - [x] Node
+  - [ ] WordPress
+  - [ ] Rails
+  - [ ] Go
+  - [ ] Custom Dockerfile
 - Email driver support (does Google offer this as part of GCP?)
 - Integration of Secret Manager
 - Integration of commands (via PubSub)
