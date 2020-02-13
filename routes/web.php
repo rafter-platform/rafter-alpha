@@ -20,6 +20,7 @@ if (app()->environment('local')) {
 
 // GitHub authorization flow
 Route::get('auth/github', 'SourceProviderController@store');
+Route::get('source-providers', 'SourceProviderController@index')->name('source-providers.index');
 Route::get('source-providers/{sourceProvider}/edit', 'SourceProviderController@edit')->name('source-providers.edit');
 Route::put('source-providers/{sourceProvider}', 'SourceProviderController@update')->name('source-providers.update');
 

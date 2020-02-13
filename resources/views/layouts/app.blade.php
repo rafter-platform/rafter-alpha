@@ -44,7 +44,8 @@
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Manage</div>
                     <ul class="mt-4 mb-8">
                         <li class="mb-2"><a href="{{ route('database-instances.index') }}">Databases</a></li>
-                        <li><a href="{{ route('google-projects.index') }}">Google Projects</a></li>
+                        <li><a class="mb-2" href="{{ route('google-projects.index') }}">Google Projects</a></li>
+                        <li><a href="{{ route('source-providers.index') }}">Source Providers</a></li>
                     </ul>
                 </div>
             </div>

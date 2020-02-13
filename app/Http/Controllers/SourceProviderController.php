@@ -9,6 +9,13 @@ use Illuminate\Validation\ValidationException;
 
 class SourceProviderController extends Controller
 {
+    public function index()
+    {
+        return view('source-providers.index', [
+            'sources' => auth()->user()->sourceProviders,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $code = $request->code;
