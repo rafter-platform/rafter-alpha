@@ -137,12 +137,23 @@ class GitHub implements SourceProviderClient
         return $payload['head_commit']['id'] ?? null;
     }
 
+    /**
+     * Get repositories available for this installation
+     *
+     * @return array
+     */
+    public function getRepositories()
+    {
+        return $this->request("user/installations/{$this->source->installation_id}/repositories");
+    }
+
     protected function request($endpoint, $method = 'get', $data = [])
     {
         $options = [
             'timeout' => 15,
             'headers' => [
                 'Authorization' => "Bearer {$this->token()}",
+                'Accept' => "application/vnd.github.machine-man-preview+json",
             ],
         ];
 

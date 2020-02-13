@@ -9,9 +9,11 @@
         id="{{ $name }}"
         class="form-textarea w-full @error($name) border-red-500 @enderror {{ $classes ?? '' }}"
         name="{{ $name }}"
-        value="{{ old($name) }}"
+        value="{{ $value ?? old($name) }}"
         rows="10"
-        {{ ($required ?? false) ? 'required' : ''}}>{{ $value ?? '' }}</textarea>
+        {{ ($required ?? false) ? 'required' : ''}}
+        {{ ($disabled ?? false) ? 'disabled' : ''}}
+    >{{ $value ?? '' }}</textarea>
 
     @error($name)
         <p class="text-red-500 text-xs italic mt-4">

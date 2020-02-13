@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\GitHubApp;
+use App\SourceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -39,6 +40,27 @@ class SourceProviderController extends Controller
             ]);
         }
 
-        return redirect()->route('projects.create')->with('status', 'GitHub has been connected. Now create your first Rafter project.');
+        return redirect()->route('source-providers.edit', [$source])->with('status', 'Rafter has been installed to a new set of GitHub projects. Please choose a unique name for this installation below.');
+    }
+
+    public function edit(Request $request, SourceProvider $sourceProvider)
+    {
+        return view('source-providers.edit', [
+            'source' => $sourceProvider,
+            'repos' => $sourceProvider->client()->getRepositories()['repositories'],
+        ]);
+    }
+
+    public function update(Request $request, SourceProvider $sourceProvider)
+    {
+        $this->validate($request, [
+            'name' => ['string', 'required'],
+        ]);
+
+        $sourceProvider->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('projects.create')->with('status', 'GitHub installation has been updated.');
     }
 }

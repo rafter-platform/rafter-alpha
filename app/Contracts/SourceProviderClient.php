@@ -47,4 +47,6 @@ interface SourceProviderClient
      * @return string
      */
     public function tarballUrl(Deployment $deployment);
+
+    public function getRepositories();
 }

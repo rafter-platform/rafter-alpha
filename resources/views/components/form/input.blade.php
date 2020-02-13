@@ -11,7 +11,8 @@
         class="form-input w-full @error($name) border-red-500 @enderror"
         name="{{ $name }}"
         value="{{ old($name) ?? $value ?? '' }}"
-        {{ $required ? 'required' : ''}}
+        {{ ($required ?? false) ? 'required' : ''}}
+        {{ ($disabled ?? false) ? 'disabled' : ''}}
         {{ $min ?? false ? 'min=' . $min : '' }}
         {{ $max ?? false ? 'max=' . $max : '' }}
     />
