@@ -11,7 +11,7 @@
         <h1>Create a Project</h1>
     @endslot
 
-    <form action="{{ route('projects.store') }}" method="POST">
+    <form action="{{ route('projects.store') }}" method="POST" x-data="{ type: 'laravel' }">
         @csrf
         @include('components.form.input', [
             'name' => 'name',
@@ -31,8 +31,12 @@
             'name' => 'type',
             'label' => 'Project Type',
             'required' => true,
-            'options' => $types
+            'options' => $types,
+            'xModel' => 'type'
         ])
+        <div x-show="type === 'laravel'" class="text-sm text-gray-600 mb-4">
+            For Laravel projects, be sure add Rafter's core package with <code class="bg-gray-200 p-1">composer install rafter-platform/laravel-rafter-core</code> before deploying.
+        </div>
         @include('components.form.select', [
             'name' => 'region',
             'label' => 'Region',
