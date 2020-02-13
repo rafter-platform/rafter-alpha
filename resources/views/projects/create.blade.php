@@ -57,6 +57,9 @@
             'label' => 'GitHub Repository',
             'required' => true,
         ])
+        <div x-show="type === 'laravel'" class="text-sm text-gray-600 mb-4">
+            Can't find the repository you're looking for? Be sure to <a href="{{ \App\Services\GitHubApp::installationUrl() }}" target="_blank">grant Rafter access to it in GitHub</a>.
+        </div>
         <div class="text-right">
             @component('components.button')
             Create Project
