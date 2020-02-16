@@ -76,6 +76,7 @@ Here are things I'd like to work on next:
   - [ ] Go
   - [ ] Custom Dockerfile
 - Email driver support (does Google offer this as part of GCP?)
+- Integration of Scheduler (cron)
 - Integration of Secret Manager
 - Integration of commands (via PubSub)
 - Integration of GCS for better uploads with Laravel
