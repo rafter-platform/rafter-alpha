@@ -10,8 +10,6 @@
     "require": {
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
-        "firevel/firestore-cache-driver": "^1.0",
-        "firevel/firestore-session-driver": "^1.0",
         "google/apiclient": "^2.0",
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "^6.2",
