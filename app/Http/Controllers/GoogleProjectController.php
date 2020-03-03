@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class GoogleProjectController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource('App\GoogleProject');
+    }
+
     /**
      * Display a listing of the resource.
      *

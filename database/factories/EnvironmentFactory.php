@@ -7,6 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Environment::class, function (Faker $faker) {
     return [
-        //
+        'project_id' => factory('App\Project'),
+        'name' => $faker->slug(),
     ];
 });

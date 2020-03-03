@@ -18,12 +18,6 @@ if (app()->environment('local')) {
     Auth::loginUsingId(1);
 }
 
-// GitHub authorization flow
-Route::get('auth/github', 'SourceProviderController@store');
-Route::get('source-providers', 'SourceProviderController@index')->name('source-providers.index');
-Route::get('source-providers/{sourceProvider}/edit', 'SourceProviderController@edit')->name('source-providers.edit');
-Route::put('source-providers/{sourceProvider}', 'SourceProviderController@update')->name('source-providers.update');
-
 // Dynamic Dockerfiles and entrypoints for Cloud Build
 Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
@@ -69,4 +63,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Database Instances
     Route::resource('database-instances', 'DatabaseInstanceController');
+
+    // Source Providers
+    Route::resource('source-providers', 'SourceProviderController');
+
+    // Inbound Source Provider Authorizations
+    Route::get('auth/github', 'SourceProviderController@store');
 });
