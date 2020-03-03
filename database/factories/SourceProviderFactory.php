@@ -9,7 +9,7 @@ use Faker\Generator as Faker;
 $factory->define(SourceProvider::class, function (Faker $faker) {
     return [
         'user_id' => factory('App\User'),
-        'name' => 'GitHub',
+        'name' => 'GitHub ' . $faker->name(),
         'type' => 'GitHub',
         'installation_id' => $faker->randomNumber(),
         'meta' => ['some' => 'stuff'],

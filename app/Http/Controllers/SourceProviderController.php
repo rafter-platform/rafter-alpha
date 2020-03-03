@@ -9,6 +9,10 @@ use Illuminate\Validation\ValidationException;
 
 class SourceProviderController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource('App\SourceProvider');
+    }
+
     public function index()
     {
         return view('source-providers.index', [
