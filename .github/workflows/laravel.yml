@@ -5,6 +5,8 @@ on: [push]
 jobs:
   laravel-tests:
     runs-on: ubuntu-latest
+    env:
+      APP_ENV: testing
     steps:
     - uses: actions/checkout@v2
     - name: Copy .env
