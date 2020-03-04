@@ -14,5 +14,5 @@
         </form>
     </div>
 
-    @livewire('deployment-status', $deployment)
+    @livewire('deployment-status', ['deployment' => $deployment])
 @endsection
