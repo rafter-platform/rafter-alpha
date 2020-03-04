@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Dotenv\Lines;
-use Dotenv\Parser;
+use Dotenv\Loader\Lines;
+use Dotenv\Loader\Parser;
 
 class EnvVars
 {
@@ -39,7 +39,7 @@ class EnvVars
         foreach ($entries as $entry) {
             [$key, $value] = Parser::parse($entry);
 
-            $self->set($key, $value);
+            $self->set($key, $value->getChars());
         }
 
         return $self;
