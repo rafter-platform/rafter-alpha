@@ -1,18 +1,14 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layout>
     @include('environments._header')
-    @include('components.flash')
+    <x-flash />
 
     <div class="flex justify-between">
-        @include('components.subtitle', ['title' => 'Deployment Details'])
+        <x-subtitle>Deployment Details</x-subtitle>
         <form action="{{ route('projects.environments.deployments.redeploy', [$project, $environment, $deployment]) }}" method="POST">
             @csrf
-            @component('components.button')
-                Redeploy
-            @endcomponent
+            <x-button>Redeploy</x-button>
         </form>
     </div>
 
-    @livewire('deployment-status', ['deployment' => $deployment])
-@endsection
+    <livewire:deployment-status :deployment="$deployment" />
+</x-layout>
