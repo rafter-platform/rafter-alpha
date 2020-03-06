@@ -1,4 +1,4 @@
-@include('environments._header')
+<x-environment-header :project="$project" :environment="$environment" />
 
 <div class="flex">
     <nav class="w-40 flex-shrink-0 text-gray-700 leading-loose">
@@ -11,10 +11,10 @@
 
     <div class="ml-4">
         @if ($title ?? false)
-            @include('components.subtitle', ['title' => $title])
+            <x-subtitle>{{ $title }}</x-subtitle>
         @endif
 
-        @include('components.flash')
+        <x-flash></x-flash>
 
         {{ $slot }}
     </div>

@@ -6,10 +6,8 @@
     <select
         id="{{ $name }}"
         class="form-select w-full @error($name) border-red-500 @enderror"
-        name="{{ $name }}"
         value="{{ old($name) }}"
-        {{ ($required ?? false) ? 'required' : ''}}
-        {{ ($xModel ?? false) ? 'x-model=' . $xModel : '' }}>
+        {{ $attributes->except('options') }}>
         @foreach ($options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach

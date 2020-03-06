@@ -1,9 +1,5 @@
-@extends('layouts.app')
-
-@section('content')
-    @component('components.title')
-        <h1>Source Providers</h1>
-    @endcomponent
+<x-layout>
+    <x-title><h1>Source Providers</h1></x-title>
 
     <p class="mb-4 text-gray-600">
         Source Providers like GitHub allow Rafter to connect to your code and deploy it to the cloud. View existing source provider
@@ -11,17 +7,13 @@
     </p>
 
     @foreach ($sources as $source)
-        @component('components.item', ['link' => route('source-providers.edit', [$source])])
-            @slot('title')
-                {{ $source->name }}
-            @endslot
-            @slot('status')
-                Created {{ $source->created_at->diffForHumans() }}
-            @endslot
-        @endcomponent
+        <x-item :link="route('source-providers.edit', [$source])">
+            <x-slot name="title">{{ $source->name }}</x-slot>
+            <x-slot name="status">Created {{ $source->created_at->diffForHumans() }}</x-slot>
+        </x-item>
     @endforeach
 
     <div class="mt-8">
-        <a href="{{ \App\Services\GitHubApp::installationUrl() }}" class="button">Create New GitHub Installation</a>
+        <x-button :href="\App\Services\GitHubApp::installationUrl()">Create New GitHub Installation</x-button>
     </div>
-@endsection
+</x-layout>

@@ -1,31 +1,27 @@
-@extends('layouts.app')
-
-@section('content')
-    @component('environments._content', ['project' => $project, 'environment' => $environment])
-        @slot('title')
-            Deployments
-        @endslot
+<x-layout>
+    <x-environment :project="$project" :environment="$environment">
+        <x-slot name="title">Deployments</x-slot>
 
         <p class="mb-4 text-gray-600">Every time you push code, Rafter will automatically deploy a revision of your application to this environment. You can optionally disable auto-deploy or change the branch that is deployed under Settings.</p>
 
         @foreach ($environment->deployments as $deployment)
-            @component('components.item', [
-                'link' => route('projects.environments.deployments.show', [$project, $environment, $deployment]),
-                'list' => true
-            ])
-                @slot('title')
+            <x-item
+                :link="route('projects.environments.deployments.show', [$project, $environment, $deployment])"
+                list="true"
+            >
+                <x-slot name="title">
                     <div class="flex justify-start">
                         <span class="mr-4">{{ $deployment->commit_message }}</span>
                         @include('components.status', ['status' => $deployment->status])
                     </div>
-                @endslot
-                @slot('meta')
+                </x-slot>
+                <x-slot name="meta">
                     Deployed to <b>{{ $environment->name }}</b> by <b>{{ $deployment->initiator->name }}</b>
-                @endslot
-                @slot('status')
+                </x-slot>
+                <x-slot name="status">
                     {{ $deployment->created_at->diffForHumans() }}
-                @endslot
-            @endcomponent
+                </x-slot>
+            </x-item>
         @endforeach
-    @endcomponent
-@endsection
+    </x-environment>
+</x-layout>

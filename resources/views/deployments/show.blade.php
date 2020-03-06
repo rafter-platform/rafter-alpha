@@ -1,5 +1,5 @@
 <x-layout>
-    @include('environments._header')
+    <x-environment-header :project="$project" :environment="$environment" />
     <x-flash />
 
     <div class="flex justify-between">
