@@ -6,12 +6,12 @@
 
         <form action="{{ route('projects.store') }}" method="POST" x-data="{ type: 'laravel' }">
             @csrf
-            <x-form.input
+            <x-input
                 name="name"
                 label="Project Name"
                 required="true"
             />
-            <x-form.select
+            <x-select
                 name="google_project_id"
                 label="Google Project"
                 required="true"
@@ -20,7 +20,7 @@
                     return $memo;
                 }, [])"
             />
-            <x-form.select
+            <x-select
                 name="type"
                 label="Project Type"
                 required="true"
@@ -30,13 +30,13 @@
             <div x-show="type === 'laravel'" class="text-sm text-gray-600 mb-4">
                 For Laravel projects, be sure add Rafter's core package with <code class="bg-gray-200 p-1">composer install rafter-platform/laravel-rafter-core</code> before deploying.
             </div>
-            <x-form.select
+            <x-select
                 name="region"
                 label="Region"
                 required="true"
                 :options="$regions"
             />
-            <x-form.select
+            <x-select
                 name="source_provider_id"
                 label="Deployment Source"
                 required="true"
@@ -45,7 +45,7 @@
                     return $memo;
                 }, [])"
             />
-            <x-form.input
+            <x-input
                 name="repository"
                 label="GitHub Repository"
                 required="true"

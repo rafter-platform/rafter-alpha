@@ -27,7 +27,7 @@
         <form action="{{ route('google-projects.store') }}" method="POST">
             @csrf
 
-            <x-form.input
+            <x-input
                 name="name"
                 label="Project Name"
                 required="true"
@@ -35,8 +35,8 @@
                 <x-slot name="helper">
                     <p>Enter a project name. It can contain numbers, letters and spaces.</p>
                 </x-slot>
-            </x-form.input>
-            <x-form.input
+            </x-input>
+            <x-input
                 name="project_id"
                 label="Project ID"
                 required="true"
@@ -47,8 +47,8 @@
                         Find it by clicking the Project selector dropdown in the Google Cloud web console.
                     </p>
                 </x-slot>
-            </x-form.input>
-            <x-form.textarea
+            </x-input>
+            <x-textarea
                 name="service_account_json"
                 label="Service Account JSON"
                 class="font-mono text-sm"
@@ -84,7 +84,7 @@
                         Or paste the contents below:
                     </p>
                 </x-slot>
-            </x-form.textarea>
+            </x-textarea>
             <div class="text-right">
                 <x-button>Add project</x-button>
             </div>

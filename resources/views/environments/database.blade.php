@@ -38,7 +38,7 @@
                         </label>
                     </div>
 
-                    <x-form.select
+                    <x-select
                         x-show="method === 'new'"
                         name="database_instance_id"
                         label="Database Instance"
@@ -47,7 +47,7 @@
                         })"
                     />
 
-                    <x-form.select
+                    <x-select
                         x-show="method === 'existing'"
                         name="database_id"
                         label="Database"

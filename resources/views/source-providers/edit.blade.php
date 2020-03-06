@@ -7,7 +7,7 @@
             @csrf
             @method('PUT')
 
-            <x-form.input
+            <x-input
                 name="name"
                 label="Installation Name"
                 required="true"
@@ -16,14 +16,14 @@
                 <x-slot name="helper">
                     <p>Be sure to give your installation a unique name, e.g. <b>Acme Co. GitHub</b> or <b>Personal GitHub</b>.</p>
                 </x-slot>
-            </x-form.input>
-            <x-form.input
+            </x-input>
+            <x-input
                 name="installation_id"
                 label="Installation ID"
                 disabled="true"
                 :value="$source->installation_id"
             />
-            <x-form.textarea
+            <x-textarea
                 name="repos"
                 label="Available Repositories"
                 disabled="true"
@@ -32,7 +32,7 @@
                 <x-slot name="helper">
                     <p>Want to add or remove available repositories? <a href="{{ \App\Services\GitHubApp::installationUrl($source->installation_id) }}" target="_blank">Edit this installation</a>
                 </x-slot>
-            </x-form.textarea>
+            </x-textarea>
             <div class="text-right">
                 <x-button>Update</x-button>
             </div>

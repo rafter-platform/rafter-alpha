@@ -11,7 +11,7 @@
 
             <form action="{{ route('projects.environments.settings.store', [$project, $environment]) }}" method="POST">
                 @csrf
-                <x-form.textarea
+                <x-textarea
                     name="environmental_variables"
                     label="Environment Variables"
                     classes="font-mono"
