@@ -12,7 +12,7 @@
                 <x-slot name="title">
                     <div class="flex justify-start">
                         <span class="mr-4">{{ $deployment->commit_message }}</span>
-                        @include('components.status', ['status' => $deployment->status])
+                        <x-status :status="$deployment->status" />
                     </div>
                 </x-slot>
                 <x-slot name="meta">

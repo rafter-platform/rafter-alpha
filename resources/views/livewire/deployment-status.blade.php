@@ -3,7 +3,7 @@
         <div class="p-4 border-b">
             <div class="flex items-center mb-1">
                 <h1 class="text-xl mr-4">{{ $deployment->commit_message }}</h1>
-                @include('components.status', ['status' => $deployment->status])
+                <x-status :status="$deployment->status" />
             </div>
             <p class="text-sm text-gray-600">
                 Deployed to <b>{{ $deployment->environment->name }}</b> by <b>{{ $deployment->initiator->name }}</b>
@@ -16,7 +16,7 @@
 
                 <div class="flex items-center">
                     <span class="text-sm mr-2 text-gray-600">{{ $step->duration() }}</span>
-                    @include('components.status', ['status' => $step->status])
+                    <x-status :status="$step->status" />
                 </div>
             </div>
         @endforeach
