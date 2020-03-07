@@ -265,8 +265,6 @@ class Environment extends Model
 
         $this->worker_url = $url;
         $this->save();
-
-        $this->addEnvVar('RAFTER_WORKER_URL', $this->worker_url);
     }
 
     /**

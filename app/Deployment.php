@@ -229,6 +229,7 @@ class Deployment extends Model
         $vars = EnvVars::fromString($this->environment->environmental_variables);
 
         $vars->set('IS_RAFTER', 'true');
+        $vars->set('RAFTER_WORKER_URL', $this->environment->worker_url);
 
         if ($this->project()->isLaravel()) {
             $vars->inject([
