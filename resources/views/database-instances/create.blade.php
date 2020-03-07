@@ -1,80 +1,74 @@
-@extends('layouts.app')
+<x-layout>
+    <x-title>
+        <h2>Create a Database Instance</h2>
+    </x-title>
 
-@section('content')
-@component('components.title')
-    <h2>Create a Database Instance</h2>
-@endcomponent
+    <x-flash />
 
-@include('components.flash')
+    <x-card>
+        <form action="{{ route('database-instances.store') }}" method="POST">
+            @csrf
 
-@component('components.card')
+            <x-select
+                name="google_project_id"
+                label="Google Project"
+                required
+                :options="$googleProjects->reduce(function ($memo, $p) {
+                    $memo[$p->id] = $p->name;
+                    return $memo;
+                }, [])"
+            />
 
-<form action="{{ route('database-instances.store') }}" method="POST">
-    @csrf
+            <x-input
+                name="name"
+                label="Database Instance Name"
+                required
+            >
+                <x-slot name="helper">
+                    Name may only contain lowercase letters and hyphens.
+                </x-slot>
+            </x-input>
 
-    @include('components.form.select', [
-        'name' => 'google_project_id',
-        'label' => 'Google Project',
-        'required' => true,
-        'options' => $googleProjects->reduce(function ($memo, $p) {
-            $memo[$p->id] = $p->name;
-            return $memo;
-        }, [])
-    ])
+            <x-select
+                name="type"
+                label="Database Type"
+                required
+                :options="$types"
+            />
 
-    @component('components.form.input', [
-        'name' => 'name',
-        'label' => 'Database Instance Name',
-        'required' => true,
-    ])
-        @slot('helper')
-            Name may only contain lowercase letters and hyphens.
-        @endslot
-    @endcomponent
+            <x-select
+                name="version"
+                label="Database Version"
+                required
+                :options="$versions"
+            />
 
-    @include('components.form.select', [
-        'name' => 'type',
-        'label' => 'Database Type',
-        'required' => true,
-        'options' => $types,
-    ])
+            <x-select
+                name="tier"
+                label="Database Instance Tier"
+                required
+                :options="$tiers['mysql']"
+            />
 
-    @include('components.form.select', [
-        'name' => 'version',
-        'label' => 'Database Version',
-        'required' => true,
-        'options' => $versions,
-    ])
+            <x-input
+                name="size"
+                label="Database Disk Size (GB)"
+                value="10"
+                min="10"
+                type="number"
+                required
+            />
 
-    @include('components.form.select', [
-        'name' => 'tier',
-        'label' => 'Database Instance Tier',
-        'required' => true,
-        'options' => $tiers['mysql'],
-    ])
+            <x-select
+                name="region"
+                label="Region"
+                required
+                :options="$regions"
+            />
 
-    @include('components.form.input', [
-        'name' => 'size',
-        'label' => 'Database Disk Size (GB)',
-        'required' => true,
-        'value' => 10,
-        'min' => 10,
-        'type' => 'number'
-    ])
-
-    @include('components.form.select', [
-        'name' => 'region',
-        'label' => 'Region',
-        'required' => true,
-        'options' => $regions,
-    ])
-
-    <div class="text-right">
-        @component('components.button')
-            Create Database Instance
-        @endcomponent
-    </div>
-</form>
-@endcomponent
-
-@endsection
+            <div class="text-right">
+                <x-button>Create Database Instance</x-button>
+            </div>
+        </form>
+    </x-card>
+</x-layout>
