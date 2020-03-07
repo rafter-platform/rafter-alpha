@@ -26,7 +26,7 @@
                     <h3 class="font-bold">
                         <a href="{{ route('google-projects.index') }}">Connect your Google Cloud project</a>
                     </h3>
-                    @include('components.status', ['status' => auth()->user()->currentTeam->googleProjects()->count() ? 'Done' : 'Not Started'])
+                    <x-status :status="auth()->user()->currentTeam->googleProjects()->count() ? 'Done' : 'Not Started'"></x-status>
                 </div>
                 <p>By connecting your Google Cloud project, Rafter can enable APIs and start preparing to deploy your first application.</p>
             </li>
@@ -35,7 +35,7 @@
                     <h3 class="font-bold">
                         <a href="{{ $githubAppUrl }}">Connect your GitHub Account</a>
                     </h3>
-                    @include('components.status', ['status' => auth()->user()->sourceProviders()->count() ? 'Done' : 'Not Started'])
+                    <x-status :status="auth()->user()->sourceProviders()->count() ? 'Done' : 'Not Started'"></x-status>
                 </div>
                 <p>By connecting your GitHub account, Rafter can deploy your application source code quickly and securely.</p>
             </li>
@@ -44,7 +44,7 @@
                     <h3 class="font-bold">
                         <a href="{{ route('projects.create') }}">Create your first Rafter project</a>
                     </h3>
-                    @include('components.status', ['status' => 'Not Started'])
+                    <x-status status="Not Started"></x-status>
                 </div>
                 <p>When you're ready, create your first Rafter project to deploy your app to Google Cloud.</p>
             </li>
