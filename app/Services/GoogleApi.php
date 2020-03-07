@@ -17,6 +17,8 @@ use App\GoogleCloud\QueueConfig;
 use App\GoogleProject;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GoogleApi
@@ -296,22 +298,13 @@ class GoogleApi
      */
     protected function request($endpoint, $method = 'GET', $data = [])
     {
-        $options = [
-            'headers' => [
-                'Authorization' => "Bearer {$this->token()}",
-            ],
-        ];
-
-        if (! empty($data)) {
-            $options['json'] = $data;
-        }
-
         try {
-            $response = (new Client())->request($method, $endpoint, $options);
-
-            return json_decode((string) $response->getBody(), true);
-        } catch (ClientException $exception) {
-            Log::error($exception->getResponse()->getBody()->getContents());
+            return Http::withToken($this->token())
+                ->{$method}($endpoint, $data)
+                ->throw()
+                ->json();
+        } catch (RequestException $exception) {
+            Log::error($exception->response->body());
 
             throw $exception;
         }

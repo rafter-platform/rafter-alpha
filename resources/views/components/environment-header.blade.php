@@ -1,4 +1,4 @@
-@component('components.title')
+<x-title>
     <div class="flex items-center justify-between pb-4 border-b-2">
         <div>
             <h1 class="mb-2">
@@ -9,4 +9,4 @@
             <a class="text-gray-800 text-sm" href="{{ $environment->url }}" target="_blank">{{ $environment->url }}</a>
         </div>
     </div>
-@endcomponent
+</x-title>

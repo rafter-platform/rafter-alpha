@@ -8,6 +8,7 @@ use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Http;
 
 class GitHub implements SourceProviderClient
 {
@@ -149,21 +150,12 @@ class GitHub implements SourceProviderClient
 
     protected function request($endpoint, $method = 'get', $data = [])
     {
-        $options = [
-            'timeout' => 15,
-            'headers' => [
-                'Authorization' => "Bearer {$this->token()}",
+        return Http::withToken($this->token())
+            ->withHeaders([
                 'Accept' => "application/vnd.github.machine-man-preview+json",
-            ],
-        ];
-
-        if (! empty($data)) {
-            $options['json'] = $data;
-        }
-
-        $response = (new Client)->request($method, 'https://api.github.com/' . $endpoint, $options);
-
-        return json_decode((string) $response->getBody(), true);
+            ])
+            ->{$method}('https://api.github.com/' . $endpoint, $data)
+            ->json();
     }
 
     /**

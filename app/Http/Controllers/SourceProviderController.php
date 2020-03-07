@@ -58,7 +58,11 @@ class SourceProviderController extends Controller
     {
         return view('source-providers.edit', [
             'source' => $sourceProvider,
-            'repos' => $sourceProvider->client()->getRepositories()['repositories'],
+            'repos' => collect($sourceProvider->client()->getRepositories()['repositories'])
+                ->map(function ($repo) {
+                    return $repo['full_name'];
+                })
+                ->join("\r\n"),
         ]);
     }
 

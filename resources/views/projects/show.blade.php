@@ -1,19 +1,16 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layout>
     <div class="mb-8 flex items-center justify-between border-b border-b-2 pb-4">
-        @component('components.title', ['margin' => 'mb-0'])
+        <x-title class="mb-0">
             <h1>{{ $project->name }}</h1>
-        @endcomponent
+        </x-title>
 
         <span class="text-sm uppercase text-gray-600">
             {{ $project->googleProject->name }} - {{ $project->region }}
         </span>
     </div>
 
-    @include('components.flash')
-
-    @include('components.subtitle', ['title' => 'Environments'])
+    <x-flash />
+    <x-subtitle>Environments</x-subtitle>
 
     <p class="mb-4 text-gray-600">
         By default, production and staging environments are automatically created for your project. You can add additional environments and
@@ -21,16 +18,14 @@
     </p>
 
     @foreach ($project->environments as $environment)
-        @component('components.item', ['link' => route('projects.environments.show', [$project, $environment])])
-            @slot('title')
-                {{ $environment->name}}
-            @endslot
-            @slot('meta')
-                {{ $environment->url ?? 'URL not yet available' }}
-            @endslot
-            @slot('status')
+        <x-item
+            :link="route('projects.environments.show', [$project, $environment])"
+        >
+            <x-slot name="title">{{ $environment->name}}</x-slot>
+            <x-slot name="meta">{{ $environment->url ?? 'URL not yet available' }}</x-slot>
+            <x-slot name="status">
                 Last deployed {{ $environment->deployments()->latest()->first()->created_at->diffForHumans() }}
-            @endslot
-        @endcomponent
+            </x-slot>
+        </x-item>
     @endforeach
-@endsection
+</x-layout>
