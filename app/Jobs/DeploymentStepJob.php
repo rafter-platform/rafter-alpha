@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Deployment;
+use App\Environment;
 use App\PendingDeployChain;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -45,7 +46,7 @@ abstract class DeploymentStepJob implements ShouldQueue
 
     public function __construct(Deployment $deployment) {
         $this->deployment = $deployment;
-        $this->deployment = $deployment->environment;
+        $this->environment = $deployment->environment;
 
         // When the job is instantiated, create the step record
         $this->step = $this->deployment->steps()->create([
