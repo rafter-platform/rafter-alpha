@@ -6,6 +6,6 @@ class StartScheduler extends DeploymentStepJob
 {
     public function execute()
     {
-        //
+        $this->environment->startScheduler();
     }
 }

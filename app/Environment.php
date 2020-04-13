@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\GoogleCloud\SchedulerJobConfig;
 use App\Jobs\ConfigureQueues;
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
@@ -113,6 +114,31 @@ class Environment extends Model
         return $this->project->googleProject->project_id;
     }
 
+    /**
+     * Get the Service Account Email to be used for interactions with the API.
+     *
+     * @return string
+     */
+    public function serviceAccountEmail(): string
+    {
+        return $this->project->googleProject->service_account_json['client_email'];
+    }
+
+    /**
+     * The region/location used for the given environment.
+     *
+     * @return string
+     */
+    public function region(): string
+    {
+        return $this->project->region;
+    }
+
+    /**
+     * Provision an environment for the first time.
+     *
+     * @return void
+     */
     public function provision()
     {
         $this->setInitialEnvironmentVariables();
@@ -297,6 +323,16 @@ class Environment extends Model
     {
         $this->worker_service_name = $name;
         $this->save();
+    }
+
+    /**
+     * Start the scheduler job for every minute, on the minute.
+     *
+     * @return array
+     */
+    public function startScheduler()
+    {
+        return $this->client()->createSchedulerJob(new SchedulerJobConfig($this));
     }
 
     public function client(): GoogleApi

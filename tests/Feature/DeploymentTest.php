@@ -47,14 +47,7 @@ class DeploymentTest extends TestCase
             '*' => Http::response('Hello World', 200, ['Headers']),
         ]);
 
-        $environment = factory('App\Environment')->create([
-            'project_id' => factory('App\Project')
-                ->state('laravel')
-                ->create([
-                    'repository' => 'rafter/rafter',
-                ])
-                ->id,
-        ]);
+        $environment = factory('App\Environment')->state('laravel')->create();
 
         $deployment = $environment->createInitialDeployment();
 

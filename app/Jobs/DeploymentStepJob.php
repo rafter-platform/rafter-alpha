@@ -30,6 +30,13 @@ abstract class DeploymentStepJob implements ShouldQueue
     public Deployment $deployment;
 
     /**
+     * The environment associated with the job.
+     *
+     * @var \App\Deployment
+     */
+    public Environment $environment;
+
+    /**
      * Deployment step tied to this job.
      *
      * @var \App\DeploymentStep
@@ -38,6 +45,7 @@ abstract class DeploymentStepJob implements ShouldQueue
 
     public function __construct(Deployment $deployment) {
         $this->deployment = $deployment;
+        $this->deployment = $deployment->environment;
 
         // When the job is instantiated, create the step record
         $this->step = $this->deployment->steps()->create([

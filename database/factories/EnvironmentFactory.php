@@ -11,3 +11,15 @@ $factory->define(Environment::class, function (Faker $faker) {
         'name' => $faker->slug(),
     ];
 });
+
+$factory->state(Environment::class, 'laravel', function ($faker) {
+    return [
+        'project_id' => factory('App\Project')->state('laravel'),
+    ];
+});
+
+$factory->state(Environment::class, 'nodejs', function ($faker) {
+    return [
+        'project_id' => factory('App\Project')->state('nodejs'),
+    ];
+});

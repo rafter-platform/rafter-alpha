@@ -14,6 +14,7 @@ use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\QueueConfig;
+use App\GoogleCloud\SchedulerJobConfig;
 use App\GoogleProject;
 use Google_Client;
 use GuzzleHttp\Exception\ClientException;
@@ -285,6 +286,21 @@ class GoogleApi
             "https://cloudtasks.googleapis.com/v2beta3/{$queueConfig->name()}",
             "PATCH",
             $queueConfig->config()
+        );
+    }
+
+    /**
+     * Create a Google Cloud Scheduler job
+     *
+     * @param SchedulerJobConfig $schedulerJobConfig
+     * @return array
+     */
+    public function createSchedulerJob(SchedulerJobConfig $schedulerJobConfig)
+    {
+        $this->request(
+            "https://cloudscheduler.googleapis.com/v1/projects/{$schedulerJobConfig->projectId()}/locations/{$schedulerJobConfig->location()}/jobs",
+            "POST",
+            $schedulerJobConfig->config()
         );
     }
 

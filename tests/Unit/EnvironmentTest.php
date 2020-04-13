@@ -12,9 +12,11 @@ use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
 use App\Jobs\WaitForImageToBeBuilt;
-use App\Project;
+use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
+use Tests\Support\FakeGoogleApiClient;
 use Tests\TestCase;
 
 class EnvironmentTest extends TestCase
@@ -25,12 +27,7 @@ class EnvironmentTest extends TestCase
     {
         Queue::fake();
 
-        $environment = factory('App\Environment')->create([
-            'project_id' => factory('App\Project')
-                ->state('laravel')
-                ->create()
-                ->id,
-        ]);
+        $environment = factory('App\Environment')->state('laravel')->create();
 
         $environment->createInitialDeployment();
 
@@ -50,12 +47,7 @@ class EnvironmentTest extends TestCase
 
     public function test_create_initial_deployment_enqueues_expected_jobs_for_nodejs()
     {
-        $environment = factory('App\Environment')->create([
-            'project_id' => factory('App\Project')
-                ->state('nodejs')
-                ->create()
-                ->id,
-        ]);
+        $environment = factory('App\Environment')->state('nodejs')->create();
 
         Queue::fake();
 
@@ -72,5 +64,28 @@ class EnvironmentTest extends TestCase
             EnsureAppIsPublic::class,
             FinalizeDeployment::class,
         ]);
+    }
+
+    public function test_scheduler_is_started()
+    {
+        Http::fake();
+
+        $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
+
+        $environment = factory('App\Environment')->state('laravel')->create([
+            'worker_url' => 'https://some.a.run.app',
+        ]);
+
+        $environment->startScheduler();
+
+        Http::assertSent(function ($request) use ($environment) {
+            return $request->method() === 'POST'
+            && $request->url() == "https://cloudscheduler.googleapis.com/v1/projects/{$environment->projectId()}/locations/{$environment->region()}/jobs"
+            && $request['name'] == $environment->slug() . '-run-schedule'
+            && $request['schedule'] == '* * * * *'
+            && $request['httpTarget']['uri'] == $environment->worker_url . '/_rafter/schedule/run'
+            && $request['httpTarget']['httpMethod'] == 'POST'
+            && $request['httpTarget']['oidcToken']['serviceAccountEmail'] == 'rafter@rafter.service.account.com';
+        });
     }
 }
