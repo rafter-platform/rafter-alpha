@@ -15,7 +15,7 @@ use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\QueueConfig;
 use App\GoogleProject;
-use GuzzleHttp\Client;
+use Google_Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
@@ -28,7 +28,7 @@ class GoogleApi
 
     public function __construct(GoogleProject $googleProject) {
         $this->googleProject = $googleProject;
-        $this->googleClient = new \Google_Client();
+        $this->googleClient = app(Google_Client::class);
         $this->googleClient->setAuthConfig($googleProject->service_account_json);
         $this->googleClient->addScope('https://www.googleapis.com/auth/cloud-platform');
     }

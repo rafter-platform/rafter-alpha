@@ -70,4 +70,9 @@ class FakeSourceProviderClient implements SourceProviderClient
             'repositories' => []
         ];
     }
+
+    public function cloneUrl(Deployment $deployment)
+    {
+        return 'https://some.url';
+    }
 }

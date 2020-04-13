@@ -184,7 +184,7 @@ class Environment extends Model
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
-            // Deploy the service another time, since we now have URL env vars set
+            // // Deploy the service another time, since we now have URL env vars set
             new UpdateCloudRunServiceWithUrls($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
