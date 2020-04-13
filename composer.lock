@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "09eece975608dc3263527c7c224613c2",
+    "content-hash": "dd7cfded65319649060da9494756745a",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2369,16 +2369,10 @@
         {
             "name": "rafter-platform/laravel-rafter-core",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rafter-platform/laravel-rafter-core.git",
-                "reference": "09fa71ac3093811cf7fbfd78fa29ab81d64fdbdf"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rafter-platform/laravel-rafter-core/zipball/09fa71ac3093811cf7fbfd78fa29ab81d64fdbdf",
-                "reference": "09fa71ac3093811cf7fbfd78fa29ab81d64fdbdf",
-                "shasum": ""
+                "type": "path",
+                "url": "../laravel-rafter-core",
+                "reference": "09fa71ac3093811cf7fbfd78fa29ab81d64fdbdf"
             },
             "require": {
                 "google/cloud-tasks": "^1.5",
@@ -2406,7 +2400,19 @@
                     "Rafter\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Rafter\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -2423,8 +2429,7 @@
             "keywords": [
                 "laravel-rafter-core",
                 "rafter-platform"
-            ],
-            "time": "2020-02-12T14:30:49+00:00"
+            ]
         },
         {
             "name": "ralouphie/getallheaders",

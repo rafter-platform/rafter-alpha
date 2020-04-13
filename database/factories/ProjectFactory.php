@@ -15,3 +15,11 @@ $factory->define(Project::class, function (Faker $faker) {
         'region' => 'us-central1',
     ];
 });
+
+$factory->state(Project::class, 'laravel', [
+    'type' => 'laravel',
+]);
+
+$factory->state(Project::class, 'nodejs', [
+    'type' => 'nodejs',
+]);
