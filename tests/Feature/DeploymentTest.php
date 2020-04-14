@@ -55,4 +55,22 @@ class DeploymentTest extends TestCase
 
         $this->assertEquals('in_progress', $deployment->status);
     }
+
+    public function test_deployment_is_marked_as_failed_if_a_job_fails()
+    {
+        $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
+
+        Http::fake([
+            // CreateImageForDeployment
+            'cloudbuild.googleapis.com/v1/projects/*/builds' => Http::response(['something' => 'unexpected'], 200),
+        ]);
+
+        $environment = factory('App\Environment')->state('laravel')->create();
+
+        $deployment = $environment->createInitialDeployment();
+
+        $deployment->refresh();
+
+        $this->assertEquals('failed', $deployment->status);
+    }
 }

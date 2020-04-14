@@ -64,12 +64,16 @@ abstract class DeploymentStepJob implements ShouldQueue
     {
         $this->step->markAsStarted();
 
-        $response = $this->execute();
+        try {
+            $response = $this->execute();
 
-        // If the response is true, then we can assume
-        // the step has been completed.
-        if ($response) {
-            $this->step->markAsFinished();
+            // If the response is true, then we can assume
+            // the step has been completed.
+            if ($response) {
+                $this->step->markAsFinished();
+            }
+        } catch (Throwable $e) {
+            $this->fail($e);
         }
     }
 
