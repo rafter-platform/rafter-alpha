@@ -16,7 +16,7 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "livewire/livewire": "^1.0",
-        "rafter-platform/laravel-rafter-core": "dev-master"
+        "rafter-platform/laravel-rafter-core": "^1.0@beta"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -63,10 +63,5 @@
             "@php artisan key:generate --ansi"
         ]
     },
-    "repositories": {
-        "local": {
-            "type": "path",
-            "url": "../laravel-rafter-core"
-        }
-    }
+    "repositories": {}
 }

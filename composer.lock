@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd7cfded65319649060da9494756745a",
+    "content-hash": "f75f632d9c390da48c32a8d2ef9a1c7e",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1017,6 +1017,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -1063,6 +1064,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
@@ -2368,13 +2370,20 @@
         },
         {
             "name": "rafter-platform/laravel-rafter-core",
-            "version": "dev-master",
+            "version": "v1.0.0-beta-2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rafter-platform/laravel-rafter-core.git",
+                "reference": "7966f31812c4dd93daf01710bd9621ac9be86eca"
+            },
             "dist": {
-                "type": "path",
-                "url": "../laravel-rafter-core",
-                "reference": "09fa71ac3093811cf7fbfd78fa29ab81d64fdbdf"
+                "type": "zip",
+                "url": "https://api.github.com/repos/rafter-platform/laravel-rafter-core/zipball/7966f31812c4dd93daf01710bd9621ac9be86eca",
+                "reference": "7966f31812c4dd93daf01710bd9621ac9be86eca",
+                "shasum": ""
             },
             "require": {
+                "google/apiclient": "^2.4",
                 "google/cloud-tasks": "^1.5",
                 "illuminate/cache": "~5.8.35|^6.0|^7.0",
                 "illuminate/contracts": "~5.8.35|^6.0|^7.0",
@@ -2400,19 +2409,7 @@
                     "Rafter\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Rafter\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2429,7 +2426,8 @@
             "keywords": [
                 "laravel-rafter-core",
                 "rafter-platform"
-            ]
+            ],
+            "time": "2020-04-14T16:32:54+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -6090,7 +6088,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "rafter-platform/laravel-rafter-core": 20
+        "rafter-platform/laravel-rafter-core": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,
