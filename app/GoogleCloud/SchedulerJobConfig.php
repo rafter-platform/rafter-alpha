@@ -39,7 +39,12 @@ class SchedulerJobConfig
      */
     protected function name(): string
     {
-        return $this->environment->slug() . '-run-schedule';
+        return sprintf(
+            "projects/%s/locations/%s/jobs/%s",
+            $this->projectId(),
+            $this->location(),
+            $this->environment->slug() . '-run-schedule'
+        );
     }
 
     /**

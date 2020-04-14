@@ -81,7 +81,7 @@ class EnvironmentTest extends TestCase
         Http::assertSent(function ($request) use ($environment) {
             return $request->method() === 'POST'
             && $request->url() == "https://cloudscheduler.googleapis.com/v1/projects/{$environment->projectId()}/locations/{$environment->region()}/jobs"
-            && $request['name'] == $environment->slug() . '-run-schedule'
+            && $request['name'] == "projects/{$environment->projectId()}/locations/{$environment->region()}/jobs/{$environment->slug()}-run-schedule"
             && $request['schedule'] == '* * * * *'
             && $request['httpTarget']['uri'] == $environment->worker_url . '/_rafter/schedule/run'
             && $request['httpTarget']['httpMethod'] == 'POST'
