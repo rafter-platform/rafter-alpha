@@ -67,8 +67,8 @@ EOD;
         ]);
 
         $string = <<<EOD
-HELLO=world
-IT=me
+HELLO='world'
+IT='me'
 EOD;
         $this->assertEquals($string, $vars->toString());
         $this->assertEquals($string, (string) $vars);
@@ -90,5 +90,37 @@ EOD;
             'JOB' => 'Developer',
             'FOOD' => 'Pizza',
         ], $vars->get());
+    }
+
+    public function test_it_handles_word_breaks()
+    {
+        $vars = new EnvVars([
+            'NAME' => 'Josh Larson',
+        ]);
+
+        $string = $vars->toString();
+
+        $newVars = EnvVars::fromString($string);
+
+        $this->assertEquals([
+            'NAME' => 'Josh Larson',
+        ], $newVars->get());
+    }
+
+    public function test_it_handles_booleans()
+    {
+        $vars = new EnvVars([
+            'enabled' => true,
+        ]);
+
+        $this->assertEquals([
+            'enabled' => true,
+        ], $vars->get());
+
+        /**
+         * This is odd. But it seems to be expected, and I assume most applications
+         * consuming a boolean value will also accept `1` or cast it to `true`, etc.
+         */
+        $this->assertEquals("enabled='1'", $vars->toString());
     }
 }
