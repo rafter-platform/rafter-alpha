@@ -6,7 +6,7 @@ use App\Environment;
 use App\Project;
 use Illuminate\Http\Request;
 
-class LogController extends Controller
+class EnvironmentLogController extends Controller
 {
     public function __invoke(Project $project, Environment $environment)
     {

@@ -62,7 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
         ->name('projects.environments.deployments.redeploy');
 
     // Logs
-    Route::get('projects/{project}/environments/{environment}/logs', 'LogController')
+    Route::get('projects/{project}/environments/{environment}/logs', 'EnvironmentLogController')
         ->name('projects.environments.logs');
 
     // Database Instances
