@@ -63,6 +63,12 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 - Automatically handles uploaded artifacts from Cloud Build
 - Integrated into application helpers based on project type to handle user uploads
 
+### Cloud Scheduler
+
+[Official Documentation](https://cloud.google.com/scheduler)
+
+- Used for firing cron events in e.g. Laravel
+
 ## Roadmap
 
 Here are things I'd like to work on next:
@@ -76,7 +82,6 @@ Here are things I'd like to work on next:
   - [ ] Go
   - [ ] Custom Dockerfile
 - Email driver support (does Google offer this as part of GCP?)
-- Integration of Scheduler (cron)
 - Integration of Secret Manager
 - Integration of commands (via PubSub)
 - Integration of GCS for better uploads with Laravel
