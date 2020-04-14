@@ -10,6 +10,9 @@ $factory->define(GoogleProject::class, function (Faker $faker) {
         'team_id' => factory('App\Team'),
         'project_id' => $faker->slug(),
         'name' => $faker->name(),
-        'service_account_json' => ['some' => 'secrets'],
+        'service_account_json' => [
+            'some' => 'secrets',
+            'client_email' => 'rafter@rafter.service.account.com',
+        ],
     ];
 });

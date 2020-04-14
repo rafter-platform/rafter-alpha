@@ -20,7 +20,9 @@ class EnvVars
      * @param array $vars
      */
     public function __construct(array $vars = []) {
-        $this->vars = $vars;
+        foreach ($vars as $key => $value) {
+            $this->set($key, $value);
+        }
     }
 
     /**
@@ -54,7 +56,7 @@ class EnvVars
      */
     public function set($key, $value)
     {
-        $this->vars[$key] = $value;
+        $this->vars[$key] = (string) $value;
 
         return $this;
     }
@@ -67,7 +69,9 @@ class EnvVars
      */
     public function inject(array $addition)
     {
-        $this->vars += $addition;
+        foreach ($addition as $key => $value) {
+            $this->set($key, $value);
+        }
 
         return $this;
     }
@@ -117,7 +121,7 @@ class EnvVars
         $string = "";
 
         foreach ($this->vars as $key => $value) {
-            $string .= "$key=$value\n";
+            $string .= "$key='$value'\n";
         }
 
         return trim($string);

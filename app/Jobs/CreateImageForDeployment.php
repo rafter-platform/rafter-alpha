@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\GoogleCloud\CloudBuildConfig;
-use Exception;
 
 class CreateImageForDeployment extends DeploymentStepJob
 {
@@ -14,16 +13,12 @@ class CreateImageForDeployment extends DeploymentStepJob
      */
     public function execute()
     {
-        try {
-            $build = new CloudBuildConfig($this->deployment);
+        $build = new CloudBuildConfig($this->deployment);
 
-            $operation = $this->deployment->submitBuild($build);
+        $operation = $this->deployment->submitBuild($build);
 
-            $this->deployment->update(['operation_name' => $operation['name']]);
+        $this->deployment->update(['operation_name' => $operation['name']]);
 
-            return true;
-        } catch (Exception $e) {
-            $this->fail($e);
-        }
+        return true;
     }
 }

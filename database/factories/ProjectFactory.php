@@ -12,6 +12,15 @@ $factory->define(Project::class, function (Faker $faker) {
         'team_id' => factory('App\Team'),
         'google_project_id' => factory('App\GoogleProject'),
         'source_provider_id' => factory('App\SourceProvider'),
+        'repository' => 'rafter/rafter',
         'region' => 'us-central1',
     ];
 });
+
+$factory->state(Project::class, 'laravel', [
+    'type' => 'laravel',
+]);
+
+$factory->state(Project::class, 'nodejs', [
+    'type' => 'nodejs',
+]);

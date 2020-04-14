@@ -2,12 +2,14 @@
 
 namespace App;
 
+use App\GoogleCloud\SchedulerJobConfig;
 use App\Jobs\ConfigureQueues;
 use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
 use App\Jobs\StartDeployment;
+use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunService;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
@@ -15,6 +17,7 @@ use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
 class Environment extends Model
@@ -111,6 +114,31 @@ class Environment extends Model
         return $this->project->googleProject->project_id;
     }
 
+    /**
+     * Get the Service Account Email to be used for interactions with the API.
+     *
+     * @return string
+     */
+    public function serviceAccountEmail(): string
+    {
+        return $this->project->googleProject->service_account_json['client_email'];
+    }
+
+    /**
+     * The region/location used for the given environment.
+     *
+     * @return string
+     */
+    public function region(): string
+    {
+        return $this->project->region;
+    }
+
+    /**
+     * Provision an environment for the first time.
+     *
+     * @return void
+     */
     public function provision()
     {
         $this->setInitialEnvironmentVariables();
@@ -173,18 +201,24 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
+        // TODO: Make this a responsibility of... something else?
+        // especially the per-project-type stuff
+        $jobs = [
+            new StartDeployment($deployment),
             new CreateImageForDeployment($deployment),
             new ConfigureQueues($deployment),
             new WaitForImageToBeBuilt($deployment),
             new CreateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
-            // Deploy the service another time, since we now have URL env vars set
+            // // Deploy the service another time, since we now have URL env vars set
             new UpdateCloudRunServiceWithUrls($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
             new EnsureAppIsPublic($deployment),
+            $this->project->isLaravel() ? new StartScheduler($deployment) : false,
             new FinalizeDeployment($deployment),
-        ])->dispatch();
+        ];
+
+        Bus::dispatchChain(array_filter($jobs));
 
         return $deployment;
     }
@@ -289,6 +323,16 @@ class Environment extends Model
     {
         $this->worker_service_name = $name;
         $this->save();
+    }
+
+    /**
+     * Start the scheduler job for every minute, on the minute.
+     *
+     * @return array
+     */
+    public function startScheduler()
+    {
+        return $this->client()->createSchedulerJob(new SchedulerJobConfig($this));
     }
 
     public function client(): GoogleApi

@@ -14,8 +14,9 @@ use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\QueueConfig;
+use App\GoogleCloud\SchedulerJobConfig;
 use App\GoogleProject;
-use GuzzleHttp\Client;
+use Google_Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
@@ -28,7 +29,7 @@ class GoogleApi
 
     public function __construct(GoogleProject $googleProject) {
         $this->googleProject = $googleProject;
-        $this->googleClient = new \Google_Client();
+        $this->googleClient = app(Google_Client::class);
         $this->googleClient->setAuthConfig($googleProject->service_account_json);
         $this->googleClient->addScope('https://www.googleapis.com/auth/cloud-platform');
     }
@@ -285,6 +286,21 @@ class GoogleApi
             "https://cloudtasks.googleapis.com/v2beta3/{$queueConfig->name()}",
             "PATCH",
             $queueConfig->config()
+        );
+    }
+
+    /**
+     * Create a Google Cloud Scheduler job
+     *
+     * @param SchedulerJobConfig $schedulerJobConfig
+     * @return array
+     */
+    public function createSchedulerJob(SchedulerJobConfig $schedulerJobConfig)
+    {
+        $this->request(
+            "https://cloudscheduler.googleapis.com/v1/projects/{$schedulerJobConfig->projectId()}/locations/{$schedulerJobConfig->location()}/jobs",
+            "POST",
+            $schedulerJobConfig->config()
         );
     }
 
