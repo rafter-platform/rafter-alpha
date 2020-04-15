@@ -7,6 +7,7 @@
             <li><a href="{{ route('projects.environments.logs', [$project, $environment]) }}">Logs</a></li>
             <li><a href="{{ route('projects.environments.database.index', [$project, $environment]) }}">Databases</a></li>
             <li><a href="{{ route('projects.environments.settings.index', [$project, $environment]) }}">Settings</a></li>
+            <li><a href="{{ route('projects.environments.domains', [$project, $environment]) }}">Domains</a></li>
         </ul>
     </nav>
 
