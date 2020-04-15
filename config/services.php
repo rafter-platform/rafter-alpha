@@ -34,7 +34,8 @@ return [
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'redirect' => 'https://rafter.ngrok.io/auth/github',
-        'app_name' => 'rafter-platform',
+        'app_name' => env('GITHUB_APP_NAME'),
+        'webhook_secret' => env('GITHUB_WEBHOOK_SECRET'),
     ],
 
 ];

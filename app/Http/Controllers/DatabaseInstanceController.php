@@ -11,6 +11,10 @@ use Illuminate\Validation\Rule;
 
 class DatabaseInstanceController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource('App\DatabaseInstance');
+    }
+
     /**
      * Display a listing of the resource.
      *

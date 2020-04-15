@@ -18,9 +18,10 @@
     <div id="app">
         <div class="flex">
             <div class="min-h-screen flex flex-col">
-                <div class="bg-blue-900 p-4">
-                    <a href="{{ url('/home') }}" class="text-lg font-semibold text-gray-100 no-underline">
-                        {{ config('app.name', 'Laravel') }}
+                <div class="bg-blue-900 p-2 px-4">
+                    <a href="{{ url('/home') }}" class="block text-lg font-semibold text-gray-100 no-underline">
+                        <span class="mr-2 inline-block">@include('logo', ['width' => 40, 'height' => 40])</span>
+                        <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
                     </a>
                 </div>
                 <div class="p-4 bg-blue-800 text-blue-100 w-64 flex-1">
@@ -43,7 +44,8 @@
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Manage</div>
                     <ul class="mt-4 mb-8">
                         <li class="mb-2"><a href="{{ route('database-instances.index') }}">Databases</a></li>
-                        <li><a href="{{ route('google-projects.index') }}">Google Projects</a></li>
+                        <li class="mb-2"><a href="{{ route('google-projects.index') }}">Google Projects</a></li>
+                        <li><a href="{{ route('source-providers.index') }}">Source Providers</a></li>
                     </ul>
                 </div>
             </div>

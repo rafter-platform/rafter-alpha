@@ -3,6 +3,7 @@
 namespace App\GoogleCloud;
 
 use App\Deployment;
+use Illuminate\Support\Facades\URL;
 
 class CloudBuildConfig
 {
@@ -50,26 +51,6 @@ class CloudBuildConfig
     public function isGitBased()
     {
         return ! $this->isManual();
-    }
-
-    /**
-     * Get the name of the blank (public) bucket hosting the blank ZIP for Git builds.
-     *
-     * @return string
-     */
-    protected function blankBucket()
-    {
-        return 'rafter-dockerfiles';
-    }
-
-    /**
-     * Get the name of the blank ZIP file to be used to start Git builds.
-     *
-     * @return string
-     */
-    protected function blankZip()
-    {
-        return 'blank.tar.gz';
     }
 
     /**
@@ -138,6 +119,8 @@ class CloudBuildConfig
      */
     protected function buildInstructions($file)
     {
+        URL::forceRootUrl(config('app.url'));
+
         return route('build-instructions', [
             'type' => $this->projectType(),
             'file' => $file

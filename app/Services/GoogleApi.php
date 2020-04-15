@@ -14,9 +14,14 @@ use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\QueueConfig;
+use App\GoogleCloud\SchedulerJobConfig;
 use App\GoogleProject;
-use GuzzleHttp\Client;
+use Google\Cloud\Logging\LoggingClient;
+use Google_Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GoogleApi
@@ -26,7 +31,7 @@ class GoogleApi
 
     public function __construct(GoogleProject $googleProject) {
         $this->googleProject = $googleProject;
-        $this->googleClient = new \Google_Client();
+        $this->googleClient = app(Google_Client::class);
         $this->googleClient->setAuthConfig($googleProject->service_account_json);
         $this->googleClient->addScope('https://www.googleapis.com/auth/cloud-platform');
     }
@@ -309,6 +314,74 @@ class GoogleApi
     }
 
     /**
+     * Create a Google Cloud Scheduler job
+     *
+     * @param SchedulerJobConfig $schedulerJobConfig
+     * @return array
+     */
+    public function createSchedulerJob(SchedulerJobConfig $schedulerJobConfig)
+    {
+        $this->request(
+            "https://cloudscheduler.googleapis.com/v1/projects/{$schedulerJobConfig->projectId()}/locations/{$schedulerJobConfig->location()}/jobs",
+            "POST",
+            $schedulerJobConfig->config()
+        );
+    }
+
+    /**
+     * Get Cloud Logs for a given service
+     *
+     * @param array $config
+     * @return array
+     */
+    public function getLogsForService(array $config): array
+    {
+        $projectId = $config['projectId'];
+        $serviceName = $config['serviceName'];
+        $location = $config['location'];
+        $logType = $config['logType'];
+
+        $logging = new LoggingClient([
+            'keyFile' => $this->googleProject->service_account_json,
+            'projectId' => $projectId,
+        ]);
+
+        $logName = '';
+
+        if ($logType == 'app') {
+            $logName = 'logName = "projects/' . $projectId . '/logs/run.googleapis.com%2F%2Fdev%2Flog" AND ';
+        }
+
+        $logs = [];
+        $oneDayAgo = Carbon::now()->subDay()->toRfc3339String();
+        $filter = sprintf(
+            'resource.type = "cloud_run_revision" AND resource.labels.service_name = "%s" AND resource.labels.location = "%s" AND timestamp >= "%s"',
+            $serviceName,
+            $location,
+            $oneDayAgo
+        );
+
+        if ($logName) {
+            $filter = $logName . $filter;
+        }
+
+        $entries = $logging->entries([
+            'pageSize' => 30,
+            'resultLimit' => 30,
+            'filter' => $filter,
+            'orderBy' => 'timestamp desc',
+        ]);
+
+        foreach ($entries as $entry) {
+            $info = $entry->info();
+
+            $logs[] = $info;
+        }
+
+        return $logs;
+    }
+
+    /**
      * Request data from the Google Cloud API.
      *
      * @param string $endpoint
@@ -318,22 +391,13 @@ class GoogleApi
      */
     protected function request($endpoint, $method = 'GET', $data = [])
     {
-        $options = [
-            'headers' => [
-                'Authorization' => "Bearer {$this->token()}",
-            ],
-        ];
-
-        if (! empty($data)) {
-            $options['json'] = $data;
-        }
-
         try {
-            $response = (new Client())->request($method, $endpoint, $options);
-
-            return json_decode((string) $response->getBody(), true);
-        } catch (ClientException $exception) {
-            Log::error($exception->getResponse()->getBody()->getContents());
+            return Http::withToken($this->token())
+                ->{$method}($endpoint, $data)
+                ->throw()
+                ->json();
+        } catch (RequestException $exception) {
+            Log::error($exception->response->body());
 
             throw $exception;
         }

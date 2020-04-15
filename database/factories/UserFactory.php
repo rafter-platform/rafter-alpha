@@ -26,3 +26,12 @@ $factory->define(User::class, function (Faker $faker) {
         'remember_token' => Str::random(10),
     ];
 });
+
+$factory->afterCreating(User::class, function ($user, $faker) {
+    $team = $user->ownedTeams()->create([
+        'name' => 'Personal',
+        'personal_team' => true,
+    ]);
+
+    $user->setCurrentTeam($team);
+});

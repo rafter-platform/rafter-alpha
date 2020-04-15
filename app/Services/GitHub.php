@@ -8,6 +8,7 @@ use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Http;
 
 class GitHub implements SourceProviderClient
 {
@@ -138,54 +139,23 @@ class GitHub implements SourceProviderClient
     }
 
     /**
-     * Get an access token from a code during a user's OAuth flow.
+     * Get repositories available for this installation
+     *
+     * @return array
      */
-    public function exchangeCodeForAccessToken($code)
+    public function getRepositories()
     {
-        $response = $this->request(
-            "login/oauth/access_token",
-            "POST",
-            [
-                "client_id" => config('services.github.client_id'),
-                "client_secret" => config('services.github.client_secret'),
-                "code" => $code,
-            ],
-            true,
-            "https://github.com/"
-        );
-
-        $result = [];
-
-        // The result is returned in a query-string format:
-        // access_token=xyz&other_thing=xyz
-        parse_str($response, $result);
-
-        return $result;
+        return $this->request("user/installations/{$this->source->installation_id}/repositories");
     }
 
-    protected function request($endpoint, $method = 'get', $data = [], $isLogin = false, $base = 'https://api.github.com/')
+    protected function request($endpoint, $method = 'get', $data = [])
     {
-        $options = [
-            'timeout' => 15,
-        ];
-
-        if (! $isLogin) {
-            $options['headers'] = [
-                'Authorization' => "Bearer {$this->token()}",
-            ];
-        }
-
-        if (! empty($data)) {
-            $options['json'] = $data;
-        }
-
-        $response = (new Client)->request($method, $base . $endpoint, $options);
-
-        if ($isLogin) {
-            return $response->getBody()->getContents();
-        } else {
-            return json_decode((string) $response->getBody(), true);
-        }
+        return Http::withToken($this->token())
+            ->withHeaders([
+                'Accept' => "application/vnd.github.machine-man-preview+json",
+            ])
+            ->{$method}('https://api.github.com/' . $endpoint, $data)
+            ->json();
     }
 
     /**

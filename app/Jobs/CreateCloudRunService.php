@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use Throwable;
-
 class CreateCloudRunService extends DeploymentStepJob
 {
     /**
@@ -13,13 +11,9 @@ class CreateCloudRunService extends DeploymentStepJob
      */
     public function execute()
     {
-        try {
-            $this->deployment->createCloudRunService();
-            $this->deployment->createCloudRunWorkerService();
+        $this->deployment->createCloudRunService();
+        $this->deployment->createCloudRunWorkerService();
 
-            return true;
-        } catch (Throwable $exception) {
-            $this->fail($exception);
-        }
+        return true;
     }
 }

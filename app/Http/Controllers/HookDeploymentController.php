@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Environment;
+use App\Services\GitHubApp;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,10 @@ class HookDeploymentController extends Controller
             return response('', 200);
         }
 
+        if (! GitHubApp::verifyWebhookPayload($request)) {
+            return response('', 403);
+        }
+
         // Log::info($request->all());
 
         $installationId = $request->installation['id'];
@@ -24,7 +29,7 @@ class HookDeploymentController extends Controller
         $message = $request->head_commit['message'];
         $senderEmail = $request->pusher['email'] ?? null;
 
-        $environment = Environment::query()
+        $environments = Environment::query()
             ->where('branch', $branch)
             ->whereHas('project.sourceProvider', function ($query) use ($installationId, $type) {
                 $query->where([
@@ -35,9 +40,9 @@ class HookDeploymentController extends Controller
             ->whereHas('project', function ($query) use ($repository) {
                 $query->where('repository', $repository);
             })
-            ->first();
+            ->get();
 
-        if ($environment) {
+        $environments->each(function ($environment) use ($senderEmail, $hash, $message) {
             $user = User::where('email', $senderEmail)->first();
             $initiatorId = null;
 
@@ -46,7 +51,7 @@ class HookDeploymentController extends Controller
             }
 
             $environment->deploy($hash, $message, $initiatorId);
-        }
+        });
 
         return response('', 200);
     }

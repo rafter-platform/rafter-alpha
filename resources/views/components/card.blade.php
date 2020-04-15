@@ -1,4 +1,4 @@
-<div class="card break-words bg-white border border-2 rounded shadow mb-4 p-4 {{ $classes ?? '' }}">
+<div {{ $attributes->merge(['class' => "card break-words bg-white border border-2 rounded shadow mb-4 p-4"]) }}">
     @unless (empty($title))
     <div class="text-xl mb-4">
         {{ $title }}

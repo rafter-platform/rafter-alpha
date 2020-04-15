@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GitHubApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,7 @@ class HomeController extends Controller
     public function index()
     {
         return view('home', [
-            'githubAppUrl' => "https://github.com/apps/" . config('services.github.app_name') . "/installations/new",
+            'githubAppUrl' => GitHubApp::installationUrl(),
         ]);
     }
 }

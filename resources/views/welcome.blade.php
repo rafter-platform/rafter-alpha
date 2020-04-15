@@ -31,6 +31,7 @@
     <div class="min-h-screen flex items-center justify-center">
         <div class="flex flex-col justify-around h-full">
             <div>
+                <div class="text-blue-400 mb-8 text-center">@include('logo', ['width' => 100, 'height' => 100])</div>
                 <h1 class="text-gray-600 text-center font-light tracking-wider text-5xl mb-6">
                     {{ config('app.name', 'Laravel') }}
                 </h1>

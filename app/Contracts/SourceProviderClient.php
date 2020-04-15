@@ -47,4 +47,18 @@ interface SourceProviderClient
      * @return string
      */
     public function tarballUrl(Deployment $deployment);
+
+    /**
+     * Get the repositories available to the user.
+     *
+     * @return array
+     */
+    public function getRepositories();
+
+    /**
+     * Get the URL to clone a given repository.
+     *
+     * @return string
+     */
+    public function cloneUrl(Deployment $deployment);
 }

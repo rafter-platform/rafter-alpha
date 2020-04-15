@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Deployment;
+use App\Environment;
 use App\PendingDeployChain;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,6 +31,13 @@ abstract class DeploymentStepJob implements ShouldQueue
     public Deployment $deployment;
 
     /**
+     * The environment associated with the job.
+     *
+     * @var \App\Deployment
+     */
+    public Environment $environment;
+
+    /**
      * Deployment step tied to this job.
      *
      * @var \App\DeploymentStep
@@ -38,6 +46,7 @@ abstract class DeploymentStepJob implements ShouldQueue
 
     public function __construct(Deployment $deployment) {
         $this->deployment = $deployment;
+        $this->environment = $deployment->environment;
 
         // When the job is instantiated, create the step record
         $this->step = $this->deployment->steps()->create([
@@ -55,12 +64,16 @@ abstract class DeploymentStepJob implements ShouldQueue
     {
         $this->step->markAsStarted();
 
-        $response = $this->execute();
+        try {
+            $response = $this->execute();
 
-        // If the response is true, then we can assume
-        // the step has been completed.
-        if ($response) {
-            $this->step->markAsFinished();
+            // If the response is true, then we can assume
+            // the step has been completed.
+            if ($response) {
+                $this->step->markAsFinished();
+            }
+        } catch (Throwable $e) {
+            $this->fail($e);
         }
     }
 

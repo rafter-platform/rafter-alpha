@@ -1,14 +1,9 @@
-@php
-    $color = $color ?? 'blue';
-    $classes = "bg-$color-500 text-gray-100 font-bold py-2 px-4 rounded inline-block hover:bg-$color-700 focus:outline-none focus:shadow-outline";
-@endphp
-
-@if ($link ?? false)
-<a href="{{ $link }}" class="{{ $classes }}">
+@if ($attributes['href'] ?? false)
+<a {{ $attributes->merge(['class' => $classList]) }}>
     {{ $slot }}
 </a>
 @else
-<button type="submit" class="{{ $classes }}">
+<button {{ $attributes->merge(['class' => $classList, 'type' => 'submit']) }}">
     {{ $slot }}
 </button>
 @endif

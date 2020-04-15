@@ -229,13 +229,14 @@ class Deployment extends Model
         $vars = EnvVars::fromString($this->environment->environmental_variables);
 
         $vars->set('IS_RAFTER', 'true');
+        $vars->set('RAFTER_WORKER_URL', $this->environment->worker_url);
 
         if ($this->project()->isLaravel()) {
             $vars->inject([
                 'RAFTER_QUEUE' => $this->environment->queueName(),
                 'RAFTER_PROJECT_ID' => $this->environment->projectId(),
                 'RAFTER_REGION' => $this->project()->region,
-                'CACHE_DRIVER' => 'firestore',
+                'CACHE_DRIVER' => 'file',
                 'QUEUE_CONNECTION' => 'rafter',
                 'SESSION_DRIVER' => 'cookie',
                 'LOG_CHANNEL' => 'syslog',

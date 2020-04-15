@@ -1,19 +1,15 @@
-@extends('layouts.app')
+<x-layout>
+    <x-card>
+        <x-slot name="title">Projects</x-slot>
 
-@section('content')
-@component('components.card')
-    @slot('title')
-        Projects
-    @endslot
+        @foreach ($projects as $project)
+            <div>
+                <a href="{{ route('projects.show', [$project]) }}">{{ $project->name }}</a>
+            </div>
+        @endforeach
 
-    @foreach ($projects as $project)
-        <div>
-            <a href="{{ route('projects.show', [$project]) }}">{{ $project->name }}</a>
+        <div class="mt-4">
+            <a href="{{ route('projects.create') }}">Create new project</a>
         </div>
-    @endforeach
-
-    <div class="mt-4">
-        <a href="{{ route('projects.create') }}">Create new project</a>
-    </div>
-@endcomponent
-@endsection
+    </x-card>
+</x-layout>

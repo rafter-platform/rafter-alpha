@@ -18,9 +18,6 @@ if (app()->environment('local')) {
     Auth::loginUsingId(1);
 }
 
-// GitHub authorization flow
-Route::get('auth/github', 'SourceProviderController@store');
-
 // Dynamic Dockerfiles and entrypoints for Cloud Build
 Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
@@ -64,6 +61,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('projects/{project}/environments/{environment}/deployments/{deployment}/redeploy', 'DeploymentController@redeploy')
         ->name('projects.environments.deployments.redeploy');
 
+    // Logs
+    Route::get('projects/{project}/environments/{environment}/logs', 'EnvironmentLogController')
+        ->name('projects.environments.logs');
+
     // Database Instances
     Route::resource('database-instances', 'DatabaseInstanceController');
+
+    // Source Providers
+    Route::resource('source-providers', 'SourceProviderController');
+
+    // Inbound Source Provider Authorizations
+    Route::get('auth/github', 'SourceProviderController@store');
 });
