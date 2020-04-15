@@ -69,12 +69,18 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 
 - Used for firing cron events in e.g. Laravel
 
+### Cloud Logging
+
+[Official Documentation](https://cloud.google.com/logging)
+
+- HTTP requests, stdout and app logs displayed inside Rafter log viewer
+
 ## Roadmap
 
 Here are things I'd like to work on next:
 
-- Extract laravel-rafter-core into a package
-- Laravel Stackdriver log driver
+- [x] Extract laravel-rafter-core into a package
+- [ ] Laravel Stackdriver log driver
 - Support other projects:
   - [x] Node
   - [ ] WordPress
@@ -82,12 +88,15 @@ Here are things I'd like to work on next:
   - [ ] Go
   - [ ] Custom Dockerfile
 - Email driver support (does Google offer this as part of GCP?)
-- Integration of Secret Manager
-- Integration of commands (via PubSub)
-- Integration of GCS for better uploads with Laravel
-- Better Database operations
-- Leverage GitHub Deployment API to mark when a branch has been deployed
-- Lots of UI upgrades: Log viewer, database information, user profile/settings
+- [ ] Integration of Secret Manager
+- [ ] Integration of commands (via PubSub)
+- [ ] Integration of GCS for better uploads with Laravel
+- [ ] Better Database operations
+- [ ] Leverage GitHub Deployment API to mark when a branch has been deployed
+- Lots of UI upgrades:
+  - [x] Log viewer
+  - [ ] Database information
+  - [ ] User profile/settings
 
 ## Development notes
 
@@ -99,3 +108,4 @@ Here are things I'd like to work on next:
 ## Inspiration
 
 - [Laravel Vapor](https://vapor.laravel.com/) and [Laravel Forge](https://forge.laravel.com/)
+- [Heroku](https://heroku.com)
