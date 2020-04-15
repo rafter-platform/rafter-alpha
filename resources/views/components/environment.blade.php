@@ -10,7 +10,7 @@
         </ul>
     </nav>
 
-    <div class="ml-4">
+    <div class="ml-4 flex-1">
         @if ($title ?? false)
             <x-subtitle>{{ $title }}</x-subtitle>
         @endif

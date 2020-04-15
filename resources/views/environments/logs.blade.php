@@ -4,6 +4,6 @@
 
         <p class="mb-4 text-gray-600">View the logs from your service.</p>
 
-
+        <livewire:log-viewer :environment="$environment" />
     </x-environment>
 </x-layout>
