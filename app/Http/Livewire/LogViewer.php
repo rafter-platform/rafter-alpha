@@ -50,13 +50,9 @@ class LogViewer extends Component
         $rawLogs = $this->environment->logs($this->service, $this->logType);
 
         foreach ($rawLogs as $log) {
-            $text = '';
-
-
-
             $logs[] = [
                 'timestamp' => $log['timestamp'],
-                'text' => $text,
+                'text' => $this->getTextFromLog($log),
             ];
         }
 
