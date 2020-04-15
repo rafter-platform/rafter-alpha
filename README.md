@@ -87,7 +87,7 @@ Here are things I'd like to work on next:
   - [ ] Rails
   - [ ] Go
   - [ ] Custom Dockerfile
-- Email driver support (does Google offer this as part of GCP?)
+- [ ] Email driver support (does Google offer this as part of GCP?)
 - [ ] Integration of Secret Manager
 - [ ] Integration of commands (via PubSub)
 - [ ] Integration of GCS for better uploads with Laravel
@@ -97,6 +97,14 @@ Here are things I'd like to work on next:
   - [x] Log viewer
   - [ ] Database information
   - [ ] User profile/settings
+- Better Cloud Build optimization
+  - [ ] Clone using ZIP instead of Git
+  - [ ] Use secrets rather than plain text tokens for security
+  - [ ] Consider adding multistage builds for Nodejs, Composer building steps
+- [ ] Implement Custom Domain assignment and onboarding
+- [ ] Implement an environment deletion workflow to delete resources/schedulers/etc
+- [ ] Allow users to clone a public project without having to connect a source provider
+- [ ] Create a CLI to allow users to push a local project without connecting a source provider
 
 ## Development notes
 
