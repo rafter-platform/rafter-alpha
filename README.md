@@ -80,7 +80,7 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 Here are things I'd like to work on next:
 
 - [x] Extract laravel-rafter-core into a package
-- [ ] Laravel Stackdriver log driver
+- [ ] Inject Laravel Stackdriver log driver config
 - Support other projects:
   - [x] Node
   - [ ] WordPress
