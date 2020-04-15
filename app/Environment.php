@@ -335,6 +335,25 @@ class Environment extends Model
         return $this->client()->createSchedulerJob(new SchedulerJobConfig($this));
     }
 
+    /**
+     * Get logs for the service.
+     *
+     * @return array
+     */
+    public function logs($serviceName = 'web', $logType = 'all'): array
+    {
+        $serviceNameProperty = "{$serviceName}_service_name";
+
+        $config = [
+            'projectId' => $this->projectId(),
+            'serviceName' => $this->$serviceNameProperty,
+            'location' => $this->region(),
+            'logType' => $logType,
+        ];
+
+        return $this->client()->getLogsForService($config);
+    }
+
     public function client(): GoogleApi
     {
         return $this->project->googleProject->client();
