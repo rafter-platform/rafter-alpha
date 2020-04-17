@@ -12,6 +12,7 @@ use App\GoogleCloud\CloudRunService;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
+use App\GoogleCloud\DomainMappingConfig;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\QueueConfig;
 use App\GoogleCloud\SchedulerJobConfig;
@@ -234,6 +235,21 @@ class GoogleApi
     public function getCloudRunDomainMappings($region)
     {
         return $this->request("https://{$region}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/domainmappings");
+    }
+
+    /**
+     * Add a domain mapping to the given Cloud Run service.
+     *
+     * @param DomainMappingConfig $mappingConfig
+     * @return array
+     */
+    public function addCloudRunDomainMapping(DomainMappingConfig $mappingConfig)
+    {
+        return $this->request(
+            "https://{$mappingConfig->region()}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/domainmappings",
+            "POST",
+            $mappingConfig->config()
+        );
     }
 
     /**

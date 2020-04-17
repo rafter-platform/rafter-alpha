@@ -52,6 +52,11 @@ class Environment extends Model
         return $this->project->sourceProvider;
     }
 
+    public function domainMappings()
+    {
+        return $this->hasMany('App\DomainMapping');
+    }
+
     /**
      * Get the active deployment
      *
@@ -352,6 +357,19 @@ class Environment extends Model
         ];
 
         return $this->client()->getLogsForService($config);
+    }
+
+    /**
+     * Add a domain mapping.
+     *
+     * @param array $data Input data
+     * @return
+     */
+    public function addDomainMapping($data): DomainMapping
+    {
+        return tap($this->domainMappings()->create($data), function ($mapping) {
+            $mapping->provision();
+        });
     }
 
     public function client(): GoogleApi
