@@ -1,8 +1,6 @@
 <x-layout>
+    <x-slot name="title">{{ $project->name }}</x-slot>
     <div class="mb-8 flex items-center justify-between border-b border-b-2 pb-4">
-        <x-title class="mb-0">
-            <h1>{{ $project->name }}</h1>
-        </x-title>
 
         <span class="text-sm uppercase text-gray-600">
             {{ $project->googleProject->name }} - {{ $project->region }}
