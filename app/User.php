@@ -71,4 +71,12 @@ class User extends Authenticatable
         $this->current_team_id = $team->id;
         $this->save();
     }
+
+    public function avatarUrl(): string
+    {
+        return sprintf(
+            'https://www.gravatar.com/avatar/%s.jpg',
+            md5($this->email)
+        );
+    }
 }
