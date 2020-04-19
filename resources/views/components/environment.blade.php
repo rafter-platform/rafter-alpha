@@ -17,7 +17,24 @@
     <x-white-button>View</x-white-button>
 </x-slot>
 
-<h2 class="text-lg font-bold mb-4">{{ ucfirst($environment->name) }}</h2>
+<div class="flex justify-between items-center">
+    <h2 class="text-lg font-bold mb-4">{{ ucfirst($environment->name) }}</h2>
+    <x-dropdown-menu
+        label="Switch Environment"
+        :items="[
+            ...$project->environments->map(function ($environment) use ($project) {
+                return [
+                    'url' => route('projects.environments.show', [$project, $environment]),
+                    'text' => ucfirst($environment->name),
+                ];
+            }),
+            [
+                'url' => '#',
+                'text' => 'Add Environment'
+            ],
+        ]"
+    />
+</div>
 
 <div class="mb-8">
     <div class="sm:hidden">
