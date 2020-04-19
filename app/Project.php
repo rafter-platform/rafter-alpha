@@ -68,11 +68,20 @@ class Project extends Model
         return $this->type === 'laravel';
     }
 
-    public function productionUrl()
+    public function production()
     {
         return $this->environments()
             ->where('name', 'production')
-            ->first()
-            ->url;
+            ->first();
+    }
+
+    public function productionUrl()
+    {
+        return $this->production()->url ?? '';
+    }
+
+    public function typeLabel(): string
+    {
+        return static::TYPES[$this->type];
     }
 }
