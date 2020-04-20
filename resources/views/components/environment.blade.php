@@ -12,6 +12,10 @@
         <x:heroicon-o-location-marker class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
         {{ $project->region }}
     </x-header-meta>
+    <x-header-meta>
+        <x-github-icon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
+        {{ $project->repository }}
+    </x-header-meta>
 </x-slot>
 <x-slot name="actions">
     <x-white-button>View</x-white-button>
