@@ -22,7 +22,13 @@
 </x-slot>
 
 <div class="flex justify-between items-center">
-    <h2 class="text-lg font-bold mb-4">{{ ucfirst($environment->name) }}</h2>
+    <div class="flex items-center mb-4">
+        <h2 class="text-lg font-bold mr-8">{{ ucfirst($environment->name) }}</h2>
+        <x-github-icon class="flex-shrink-0 mr-1.5 h-4 w-4 inline align-middle" />
+        <p class="text-xs">
+            Automatically deploys from <code>{{ $environment->branch }}</code>
+        </p>
+    </div>
     <x-dropdown-menu
         label="Switch Environment"
         :items="[
