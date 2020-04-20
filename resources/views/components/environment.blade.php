@@ -29,21 +29,7 @@
             Automatically deploys from <code>{{ $environment->branch }}</code>
         </p>
     </div>
-    <x-dropdown-menu
-        label="Switch Environment"
-        :items="[
-            ...$project->environments->map(function ($environment) use ($project) {
-                return [
-                    'url' => route('projects.environments.show', [$project, $environment]),
-                    'text' => ucfirst($environment->name),
-                ];
-            }),
-            [
-                'url' => '#',
-                'text' => 'Add Environment'
-            ],
-        ]"
-    />
+    <x-environment-switcher :project="$project" />
 </div>
 
 <div class="mb-8">
