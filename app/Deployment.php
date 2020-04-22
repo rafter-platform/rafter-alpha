@@ -257,6 +257,11 @@ class Deployment extends Model
         return $vars;
     }
 
+    public function getRoute(): string
+    {
+        return route('projects.environments.deployments.show', [$this->project(), $this->environment, $this]);
+    }
+
     public function client(): GoogleApi
     {
         return $this->environment->client();
