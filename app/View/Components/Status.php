@@ -70,7 +70,7 @@ class Status extends Component
      */
     public function classList()
     {
-        return "uppercase tracking-wide text-xs text-{$this->color()}-600 bg-{$this->color()}-200 rounded p-1 px-2";
+        return "inline-block uppercase tracking-wide text-xs text-{$this->color()}-600 bg-{$this->color()}-200 rounded p-1 px-2";
     }
 
     public function statusDisplay()
