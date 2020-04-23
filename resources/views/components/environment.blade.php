@@ -21,7 +21,7 @@
     <x-white-button>View</x-white-button>
 </x-slot>
 
-<div class="flex justify-between items-center">
+<div class="mb-4 sm:mb-0 sm:flex justify-between items-center ">
     <div class="flex items-center mb-4">
         <h2 class="text-lg font-bold mr-8">{{ ucfirst($environment->name) }}</h2>
         <x-github-icon class="flex-shrink-0 mr-1.5 h-4 w-4 inline align-middle" />
@@ -32,6 +32,7 @@
     <x-environment-switcher :project="$project" />
 </div>
 
+{{-- TODO: Extract into component and auto-generate dropdown --}}
 <div class="mb-8">
     <div class="sm:hidden">
         <select aria-label="Selected tab" class="mt-1 form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5 transition ease-in-out duration-150">
