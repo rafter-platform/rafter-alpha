@@ -57,6 +57,18 @@ class DeploymentPolicy
     }
 
     /**
+     * Determine whether the user can update the deployment.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Deployment  $deployment
+     * @return mixed
+     */
+    public function redeploy(User $user, Deployment $deployment)
+    {
+        return $user->currentTeam->is($deployment->environment->project->team);
+    }
+
+    /**
      * Determine whether the user can delete the deployment.
      *
      * @param  \App\User  $user

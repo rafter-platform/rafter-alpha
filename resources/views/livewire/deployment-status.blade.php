@@ -10,7 +10,7 @@
             </p>
         </div>
         @foreach ($deployment->steps as $step)
-            <div class="flex justify-between items-center p-2 border-b">
+            <div class="flex justify-between items-center p-2 px-4 border-b">
                 {{-- LOL, how is this not easier? --}}
                 <span class="text-gray-700 text-sm">{{ str_replace('-', ' ', Str::title(Str::kebab($step->name))) }}</span>
 
