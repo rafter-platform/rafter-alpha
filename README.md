@@ -9,6 +9,8 @@ Rafter is a serverless deployment platform powered by [Google Cloud](https://clo
 🚀 Spin up multiple environments available at vanity URLs at the click of a button<br>
 ✨ No Dockerfiles required
 
+⚠️ **_Rafter is still very much a work-in-progress!_** ⚠️
+
 ## Google Cloud Services
 
 ### Cloud Run (web service)
