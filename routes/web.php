@@ -58,7 +58,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Deployments
     Route::resource('projects.environments.deployments', 'DeploymentController');
-    Route::post('projects/{project}/environments/{environment}/deployments/{deployment}/redeploy', 'DeploymentController@redeploy')
+    Route::post('projects/{project}/environments/{environment}/deployments/{deployment}/redeploy', 'RedeployDeploymentController')
         ->name('projects.environments.deployments.redeploy');
 
     // Logs

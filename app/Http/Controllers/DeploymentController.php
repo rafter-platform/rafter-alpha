@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class DeploymentController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->authorizeResource('App\Deployment');
     }
 
@@ -91,23 +92,5 @@ class DeploymentController extends Controller
     public function destroy(Deployment $deployment)
     {
         //
-    }
-
-    /**
-     * Redeploy a given deployment
-     *
-     * @param Project $project
-     * @param Environment $environment
-     * @param Deployment $deployment
-     * @return Response
-     */
-    public function redeploy(Project $project, Environment $environment, Deployment $deployment)
-    {
-        $this->authorize('update');
-
-        $newDeployment = $deployment->redeploy(auth()->user()->id);
-
-        return redirect()->route('projects.environments.deployments.show', [$project, $environment, $newDeployment])
-            ->with('status', 'Deployment has been redeployed');
     }
 }
