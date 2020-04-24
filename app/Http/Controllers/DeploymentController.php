@@ -93,20 +93,4 @@ class DeploymentController extends Controller
     {
         //
     }
-
-    /**
-     * Redeploy a given deployment
-     *
-     * @param Project $project
-     * @param Environment $environment
-     * @param Deployment $deployment
-     * @return Response
-     */
-    public function redeploy(Project $project, Environment $environment, Deployment $deployment)
-    {
-        $newDeployment = $deployment->redeploy(auth()->user()->id);
-
-        return redirect()->route('projects.environments.deployments.show', [$project, $environment, $newDeployment])
-            ->with('status', 'Deployment has been redeployed');
-    }
 }
