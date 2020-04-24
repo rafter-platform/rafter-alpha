@@ -101,12 +101,13 @@
             </div>
         </nav>
 
+        @if ($title ?? false)
         <header class="bg-white shadow">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div class="lg:flex lg:items-center lg:justify-between">
                     <div class="flex-1 min-w-0">
                         <h1 class="text-2xl sm:text-3xl leading-7 sm:leading-9 sm:truncate font-bold leading-tight text-gray-900">
-                            {{ $title ?? 'No Title' }}
+                            {{ $title }}
                         </h1>
                         @if ($meta ?? false)
                         <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
@@ -120,17 +121,20 @@
                         </div>
                     @endif
                 </div>
-            </header>
-            <main>
-                <div class="max-w-7xl mx-auto py-6 px-6 lg:px-8">
-                    <x-flash />
+            </div>
+        </header>
+        @endif
+        <main>
+            <div class="max-w-7xl mx-auto py-6 px-6 lg:px-8">
+                <x-flash />
 
-                    {{ $slot }}
-                </div>
-            </main>
-        </div>
-        <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}"></script>
-        @livewireScripts
-    </body>
-    </html>
+                {{ $slot }}
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ mix('js/app.js') }}"></script>
+    @livewireScripts
+</body>
+</html>
