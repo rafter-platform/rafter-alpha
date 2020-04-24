@@ -32,27 +32,7 @@
     <x-environment-switcher :project="$project" />
 </div>
 
-{{-- TODO: Extract into component and auto-generate dropdown --}}
-<div class="mb-8">
-    <div class="sm:hidden">
-        <select aria-label="Selected tab" class="mt-1 form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5 transition ease-in-out duration-150">
-            <option>My Account</option>
-            <option>Company</option>
-            <option selected>Team Members</option>
-            <option>Billing</option>
-        </select>
-    </div>
-    <div class="hidden sm:block">
-        <div class="border-b border-gray-200">
-            <nav class="-mb-px flex">
-                <x-tab-item :href="route('projects.environments.show', [$project, $environment])">Overview</x-tab-item>
-                <x-tab-item class="ml-8" :href="route('projects.environments.logs', [$project, $environment])">Logs</x-tab-item>
-                <x-tab-item class="ml-8" :href="route('projects.environments.database.index', [$project, $environment])">Databases</x-tab-item>
-                <x-tab-item class="ml-8" :href="route('projects.environments.settings.index', [$project, $environment])">Settings</x-tab-item>
-            </nav>
-        </div>
-    </div>
-</div>
+<x-environment-subnav :environment="$environment" />
 
 @if ($title ?? false)
 <x-subtitle>{{ $title }}</x-subtitle>
