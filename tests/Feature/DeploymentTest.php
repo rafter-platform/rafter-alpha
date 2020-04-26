@@ -41,7 +41,20 @@ class DeploymentTest extends TestCase
                 ],
             ], 200),
 
-            // TODO: Add other HTTP responses to ensure we get all the way to a successful deployment
+            // WaitForCloudRunServiceToDeploy
+            'us-central1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/*/services/*' => Http::response($this->loadStub('cloud-run-service'), 200),
+
+            // EnsureAppIsPublic
+            'https://us-central1-run.googleapis.com/v1/projects/*/locations/*/services/*:getIamPolicy' => Http::response([
+                'bindings' => [
+                    [
+                        'role' => 'roles/run.invoker',
+                        'members' => [
+                            'allUsers',
+                        ],
+                    ],
+                ],
+            ], 200),
 
             // Stub a string response for all other endpoints...
             '*' => Http::response('Hello World', 200, ['Headers']),
@@ -51,9 +64,11 @@ class DeploymentTest extends TestCase
 
         $deployment = $environment->createInitialDeployment();
 
+        $environment->refresh();
         $deployment->refresh();
 
-        $this->assertEquals('in_progress', $deployment->status);
+        $this->assertEquals('successful', $deployment->status);
+        $this->assertTrue($environment->activeDeployment->is($deployment));
     }
 
     public function test_deployment_is_marked_as_failed_if_a_job_fails()

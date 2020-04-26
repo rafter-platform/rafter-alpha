@@ -59,8 +59,7 @@ class Environment extends Model
      */
     public function activeDeployment()
     {
-        // TODO: Update logic to actually set an active_deployment_id when a deployment is active
-        return $this->deployments()->first();
+        return $this->belongsTo('App\Deployment', 'active_deployment_id');
     }
 
     /**
@@ -279,7 +278,7 @@ class Environment extends Model
      */
     public function setUrl($url)
     {
-        if (! empty($this->url)) return;
+        if (!empty($this->url)) return;
 
         $this->url = $url;
         $this->save();
@@ -295,7 +294,7 @@ class Environment extends Model
      */
     public function setWorkerUrl($url)
     {
-        if (! empty($this->worker_url)) return;
+        if (!empty($this->worker_url)) return;
 
         $this->worker_url = $url;
         $this->save();

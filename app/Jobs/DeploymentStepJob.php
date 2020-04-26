@@ -33,7 +33,7 @@ abstract class DeploymentStepJob implements ShouldQueue
     /**
      * The environment associated with the job.
      *
-     * @var \App\Deployment
+     * @var \App\Environment
      */
     public Environment $environment;
 
@@ -44,7 +44,8 @@ abstract class DeploymentStepJob implements ShouldQueue
      */
     public $step;
 
-    public function __construct(Deployment $deployment) {
+    public function __construct(Deployment $deployment)
+    {
         $this->deployment = $deployment;
         $this->environment = $deployment->environment;
 

@@ -8,6 +8,9 @@ class FinalizeDeployment extends DeploymentStepJob
     {
         $this->deployment->markAsSuccessful();
 
+        $this->environment->activeDeployment()->associate($this->deployment);
+        $this->environment->save();
+
         return true;
     }
 }
