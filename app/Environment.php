@@ -134,6 +134,16 @@ class Environment extends Model
     }
 
     /**
+     * Whether this environment has been successfully deployed at least once.
+     *
+     * @return boolean
+     */
+    public function hasBeenDeployedSuccessfully()
+    {
+        return $this->activeDeployment()->exists();
+    }
+
+    /**
      * Provision an environment for the first time.
      *
      * @return void
@@ -261,12 +271,34 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
-            new ConfigureQueues($deployment),
-            new UpdateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new FinalizeDeployment($deployment),
-        ])->dispatch();
+        if ($this->hasBeenDeployedSuccessfully()) {
+            Bus::dispatchChain(
+                new StartDeployment($deployment),
+                new ConfigureQueues($deployment),
+                new UpdateCloudRunService($deployment),
+                new WaitForCloudRunServiceToDeploy($deployment),
+                new FinalizeDeployment($deployment),
+            );
+        } else {
+            // TODO: Make this a responsibility of... something else?
+            // especially the per-project-type stuff
+            $jobs = [
+                new StartDeployment($deployment),
+                new CreateImageForDeployment($deployment),
+                new ConfigureQueues($deployment),
+                new WaitForImageToBeBuilt($deployment),
+                new CreateCloudRunService($deployment),
+                new WaitForCloudRunServiceToDeploy($deployment),
+                // // Deploy the service another time, since we now have URL env vars set
+                new UpdateCloudRunServiceWithUrls($deployment),
+                new WaitForCloudRunServiceToDeploy($deployment),
+                new EnsureAppIsPublic($deployment),
+                $this->project->isLaravel() ? new StartScheduler($deployment) : false,
+                new FinalizeDeployment($deployment),
+            ];
+
+            Bus::dispatchChain(array_filter($jobs));
+        }
 
         return $deployment;
     }

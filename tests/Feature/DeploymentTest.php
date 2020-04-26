@@ -240,4 +240,34 @@ class DeploymentTest extends TestCase
             $this->assertTrue($deploymentStep->hasFinished());
         }
     }
+
+    public function test_redeploy_performs_initial_deploy_if_no_successful_deployment_exists()
+    {
+        $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
+
+        $environment = factory('App\Environment')->state('laravel')->create();
+
+        $failedDeployment = factory('App\Deployment')->create([
+            'environment_id' => $environment->id,
+            'status' => 'failed',
+        ]);
+
+        $deployment = $failedDeployment->redeploy();
+
+        $steps = [
+            'StartDeployment',
+            'CreateImageForDeployment',
+            'ConfigureQueues',
+            'WaitForImageToBeBuilt',
+            'CreateCloudRunService',
+            'WaitForCloudRunServiceToDeploy',
+            'UpdateCloudRunServiceWithUrls',
+            'WaitForCloudRunServiceToDeploy',
+            'EnsureAppIsPublic',
+            'StartScheduler',
+            'FinalizeDeployment',
+        ];
+
+        $this->assertCount(count($steps), $deployment->steps);
+    }
 }
