@@ -210,24 +210,11 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
-        // TODO: Make this a responsibility of... something else?
-        // especially the per-project-type stuff
-        $jobs = [
-            new StartDeployment($deployment),
-            new CreateImageForDeployment($deployment),
-            new ConfigureQueues($deployment),
-            new WaitForImageToBeBuilt($deployment),
-            new CreateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            // // Deploy the service another time, since we now have URL env vars set
-            new UpdateCloudRunServiceWithUrls($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            $this->project->isLaravel() ? new StartScheduler($deployment) : false,
-            new FinalizeDeployment($deployment),
-        ];
+        $jobs = DeploymentSteps::for($deployment)
+            ->initialDeployment()
+            ->get();
 
-        Bus::dispatchChain(array_filter($jobs));
+        Bus::dispatchChain($jobs);
 
         return $deployment;
     }
@@ -243,14 +230,7 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
-            new CreateImageForDeployment($deployment),
-            new ConfigureQueues($deployment),
-            new WaitForImageToBeBuilt($deployment),
-            new UpdateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new FinalizeDeployment($deployment),
-        ])->dispatch();
+        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
 
         return $deployment;
     }
@@ -264,43 +244,24 @@ class Environment extends Model
      */
     public function redeploy(Deployment $deployment, $initiatorId)
     {
-        $deployment = $this->deployments()->create([
+        $newDeployment = $this->deployments()->create([
             'commit_hash' => $deployment->commit_hash,
             'commit_message' => $deployment->commit_message,
             'image' => $deployment->image,
             'initiator_id' => $initiatorId,
         ]);
 
-        if ($this->hasBeenDeployedSuccessfully()) {
-            Bus::dispatchChain(
-                new StartDeployment($deployment),
-                new ConfigureQueues($deployment),
-                new UpdateCloudRunService($deployment),
-                new WaitForCloudRunServiceToDeploy($deployment),
-                new FinalizeDeployment($deployment),
-            );
-        } else {
-            // TODO: Make this a responsibility of... something else?
-            // especially the per-project-type stuff
-            $jobs = [
-                new StartDeployment($deployment),
-                new CreateImageForDeployment($deployment),
-                new ConfigureQueues($deployment),
-                new WaitForImageToBeBuilt($deployment),
-                new CreateCloudRunService($deployment),
-                new WaitForCloudRunServiceToDeploy($deployment),
-                // // Deploy the service another time, since we now have URL env vars set
-                new UpdateCloudRunServiceWithUrls($deployment),
-                new WaitForCloudRunServiceToDeploy($deployment),
-                new EnsureAppIsPublic($deployment),
-                $this->project->isLaravel() ? new StartScheduler($deployment) : false,
-                new FinalizeDeployment($deployment),
-            ];
+        $steps = DeploymentSteps::for($newDeployment);
 
-            Bus::dispatchChain(array_filter($jobs));
+        if ($this->hasBeenDeployedSuccessfully()) {
+            $steps->redeploy();
+        } else {
+            $steps->initialDeployment();
         }
 
-        return $deployment;
+        Bus::dispatchChain($steps->get());
+
+        return $newDeployment;
     }
 
     /**

@@ -269,5 +269,6 @@ class DeploymentTest extends TestCase
         ];
 
         $this->assertCount(count($steps), $deployment->steps);
+        $this->assertEquals($steps, $deployment->steps()->pluck('name')->toArray());
     }
 }
