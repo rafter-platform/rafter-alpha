@@ -3,17 +3,6 @@
 namespace App;
 
 use App\GoogleCloud\SchedulerJobConfig;
-use App\Jobs\ConfigureQueues;
-use App\Jobs\CreateCloudRunService;
-use App\Jobs\CreateImageForDeployment;
-use App\Jobs\EnsureAppIsPublic;
-use App\Jobs\FinalizeDeployment;
-use App\Jobs\StartDeployment;
-use App\Jobs\StartScheduler;
-use App\Jobs\UpdateCloudRunService;
-use App\Jobs\UpdateCloudRunServiceWithUrls;
-use App\Jobs\WaitForCloudRunServiceToDeploy;
-use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
