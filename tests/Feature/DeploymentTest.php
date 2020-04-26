@@ -69,6 +69,26 @@ class DeploymentTest extends TestCase
 
         $this->assertEquals('successful', $deployment->status);
         $this->assertTrue($environment->activeDeployment->is($deployment));
+
+        $steps = [
+            'StartDeployment',
+            'CreateImageForDeployment',
+            'ConfigureQueues',
+            'WaitForImageToBeBuilt',
+            'CreateCloudRunService',
+            'WaitForCloudRunServiceToDeploy',
+            'UpdateCloudRunServiceWithUrls',
+            'WaitForCloudRunServiceToDeploy',
+            'EnsureAppIsPublic',
+            'StartScheduler',
+            'FinalizeDeployment',
+        ];
+
+        foreach ($steps as $step) {
+            $deploymentStep = $deployment->steps()->where('name', $step)->first();
+            $this->assertTrue($deploymentStep->exists());
+            $this->assertTrue($deploymentStep->hasFinished());
+        }
     }
 
     public function test_deployment_is_marked_as_failed_if_a_job_fails()
