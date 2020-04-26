@@ -239,7 +239,6 @@ class Environment extends Model
             new WaitForImageToBeBuilt($deployment),
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
             new FinalizeDeployment($deployment),
         ])->dispatch();
 
@@ -266,7 +265,6 @@ class Environment extends Model
             new ConfigureQueues($deployment),
             new UpdateCloudRunService($deployment),
             new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
             new FinalizeDeployment($deployment),
         ])->dispatch();
 

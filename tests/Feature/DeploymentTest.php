@@ -84,6 +84,8 @@ class DeploymentTest extends TestCase
             'FinalizeDeployment',
         ];
 
+        $this->assertCount(count($steps), $deployment->steps);
+
         foreach ($steps as $step) {
             $deploymentStep = $deployment->steps()->where('name', $step)->first();
             $this->assertTrue($deploymentStep->exists());
@@ -107,5 +109,135 @@ class DeploymentTest extends TestCase
         $deployment->refresh();
 
         $this->assertEquals('failed', $deployment->status);
+    }
+
+    public function test_standard_deployment_works_as_expected()
+    {
+        $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
+
+        Http::fake([
+            // CreateImageForDeployment
+            'cloudbuild.googleapis.com/v1/projects/*/builds' => Http::response(['name' => 'bar'], 200),
+
+            // WaitForImageToBeBuilt
+            'cloudbuild.googleapis.com/v1/bar' => Http::response([
+                'done' => true,
+                'metadata' => [
+                    'build' => [
+                        'id' => 'foo',
+                    ],
+                ],
+            ], 200),
+
+            'cloudbuild.googleapis.com/v1/projects/*/builds/foo' => Http::response([
+                'results' => [
+                    'images' => [
+                        [
+                            'name' => 'some/build',
+                            'digest' => 'foo',
+                        ],
+                    ],
+                ],
+            ], 200),
+
+            // WaitForCloudRunServiceToDeploy
+            'us-central1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/*/services/*' => Http::response($this->loadStub('cloud-run-service'), 200),
+
+            // Stub a string response for all other endpoints...
+            '*' => Http::response('Hello World', 200, ['Headers']),
+        ]);
+
+        $environment = factory('App\Environment')->state('laravel')->create();
+
+        $deployment = $environment->deploy('abc123', 'commit message', null);
+
+        $environment->refresh();
+        $deployment->refresh();
+
+        $this->assertEquals('successful', $deployment->status);
+        $this->assertTrue($environment->activeDeployment->is($deployment));
+
+        $steps = [
+            'StartDeployment',
+            'CreateImageForDeployment',
+            'ConfigureQueues',
+            'WaitForImageToBeBuilt',
+            'UpdateCloudRunService',
+            'WaitForCloudRunServiceToDeploy',
+            'FinalizeDeployment',
+        ];
+
+        $this->assertCount(count($steps), $deployment->steps);
+
+        foreach ($steps as $step) {
+            $deploymentStep = $deployment->steps()->where('name', $step)->first();
+            $this->assertTrue($deploymentStep->exists());
+            $this->assertTrue($deploymentStep->hasFinished());
+        }
+    }
+
+    public function test_deployment_can_be_redeployed()
+    {
+        $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
+
+        Http::fake([
+            // CreateImageForDeployment
+            'cloudbuild.googleapis.com/v1/projects/*/builds' => Http::response(['name' => 'bar'], 200),
+
+            // WaitForImageToBeBuilt
+            'cloudbuild.googleapis.com/v1/bar' => Http::response([
+                'done' => true,
+                'metadata' => [
+                    'build' => [
+                        'id' => 'foo',
+                    ],
+                ],
+            ], 200),
+
+            'cloudbuild.googleapis.com/v1/projects/*/builds/foo' => Http::response([
+                'results' => [
+                    'images' => [
+                        [
+                            'name' => 'some/build',
+                            'digest' => 'foo',
+                        ],
+                    ],
+                ],
+            ], 200),
+
+            // WaitForCloudRunServiceToDeploy
+            'us-central1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/*/services/*' => Http::response($this->loadStub('cloud-run-service'), 200),
+
+            // Stub a string response for all other endpoints...
+            '*' => Http::response('Hello World', 200, ['Headers']),
+        ]);
+
+        $environment = factory('App\Environment')->state('laravel')->create();
+
+        $deployment = $environment->deploy('abc123', 'commit message', null);
+
+        $environment->refresh();
+        $deployment->refresh();
+
+        $this->assertEquals('successful', $deployment->status);
+        $this->assertTrue($environment->activeDeployment->is($deployment));
+
+        $newDeployment = $deployment->redeploy();
+
+        $steps = [
+            'StartDeployment',
+            'ConfigureQueues',
+            'UpdateCloudRunService',
+            'WaitForCloudRunServiceToDeploy',
+            'FinalizeDeployment',
+        ];
+
+        $this->assertCount(count($steps), $newDeployment->steps);
+
+        foreach ($steps as $step) {
+            $deploymentStep = $newDeployment->steps()->where('name', $step)->first();
+            $this->assertTrue($deploymentStep->exists());
+            $this->assertTrue($deploymentStep->hasFinished());
+        }
     }
 }
