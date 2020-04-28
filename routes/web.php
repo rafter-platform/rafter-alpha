@@ -65,6 +65,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('projects/{project}/environments/{environment}/logs', 'EnvironmentLogController')
         ->name('projects.environments.logs');
 
+    // Commands
+    Route::get('projects/{project}/environments/{environment}/commands', function (\App\Project $project, \App\Environment $environment) {
+        return view('environments.commands', [
+            'project' => $project,
+            'environment' => $environment,
+        ]);
+    })
+        ->name('projects.environments.commands.index');
+
     // Database Instances
     Route::resource('database-instances', 'DatabaseInstanceController');
 
