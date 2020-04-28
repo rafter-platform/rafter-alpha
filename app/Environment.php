@@ -3,17 +3,6 @@
 namespace App;
 
 use App\GoogleCloud\SchedulerJobConfig;
-use App\Jobs\ConfigureQueues;
-use App\Jobs\CreateCloudRunService;
-use App\Jobs\CreateImageForDeployment;
-use App\Jobs\EnsureAppIsPublic;
-use App\Jobs\FinalizeDeployment;
-use App\Jobs\StartDeployment;
-use App\Jobs\StartScheduler;
-use App\Jobs\UpdateCloudRunService;
-use App\Jobs\UpdateCloudRunServiceWithUrls;
-use App\Jobs\WaitForCloudRunServiceToDeploy;
-use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
@@ -59,8 +48,7 @@ class Environment extends Model
      */
     public function activeDeployment()
     {
-        // TODO: Update logic to actually set an active_deployment_id when a deployment is active
-        return $this->deployments()->first();
+        return $this->belongsTo('App\Deployment', 'active_deployment_id');
     }
 
     /**
@@ -135,6 +123,16 @@ class Environment extends Model
     }
 
     /**
+     * Whether this environment has been successfully deployed at least once.
+     *
+     * @return boolean
+     */
+    public function hasBeenDeployedSuccessfully()
+    {
+        return $this->activeDeployment()->exists();
+    }
+
+    /**
      * Provision an environment for the first time.
      *
      * @return void
@@ -201,24 +199,11 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
-        // TODO: Make this a responsibility of... something else?
-        // especially the per-project-type stuff
-        $jobs = [
-            new StartDeployment($deployment),
-            new CreateImageForDeployment($deployment),
-            new ConfigureQueues($deployment),
-            new WaitForImageToBeBuilt($deployment),
-            new CreateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            // // Deploy the service another time, since we now have URL env vars set
-            new UpdateCloudRunServiceWithUrls($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            $this->project->isLaravel() ? new StartScheduler($deployment) : false,
-            new FinalizeDeployment($deployment),
-        ];
+        $jobs = DeploymentSteps::for($deployment)
+            ->initialDeployment()
+            ->get();
 
-        Bus::dispatchChain(array_filter($jobs));
+        Bus::dispatchChain($jobs);
 
         return $deployment;
     }
@@ -234,15 +219,7 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
-            new CreateImageForDeployment($deployment),
-            new ConfigureQueues($deployment),
-            new WaitForImageToBeBuilt($deployment),
-            new UpdateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            new FinalizeDeployment($deployment),
-        ])->dispatch();
+        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
 
         return $deployment;
     }
@@ -256,22 +233,24 @@ class Environment extends Model
      */
     public function redeploy(Deployment $deployment, $initiatorId)
     {
-        $deployment = $this->deployments()->create([
+        $newDeployment = $this->deployments()->create([
             'commit_hash' => $deployment->commit_hash,
             'commit_message' => $deployment->commit_message,
             'image' => $deployment->image,
             'initiator_id' => $initiatorId,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
-            new ConfigureQueues($deployment),
-            new UpdateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            new FinalizeDeployment($deployment),
-        ])->dispatch();
+        $steps = DeploymentSteps::for($newDeployment);
 
-        return $deployment;
+        if ($this->hasBeenDeployedSuccessfully()) {
+            $steps->redeploy();
+        } else {
+            $steps->initialDeployment();
+        }
+
+        Bus::dispatchChain($steps->get());
+
+        return $newDeployment;
     }
 
     /**
@@ -279,7 +258,7 @@ class Environment extends Model
      */
     public function setUrl($url)
     {
-        if (! empty($this->url)) return;
+        if (!empty($this->url)) return;
 
         $this->url = $url;
         $this->save();
@@ -295,7 +274,7 @@ class Environment extends Model
      */
     public function setWorkerUrl($url)
     {
-        if (! empty($this->worker_url)) return;
+        if (!empty($this->worker_url)) return;
 
         $this->worker_url = $url;
         $this->save();

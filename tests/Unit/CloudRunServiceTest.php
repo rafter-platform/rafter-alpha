@@ -50,15 +50,4 @@ class CloudRunServiceTest extends TestCase
             $service->getError()
         );
     }
-
-    /**
-     * Load a stub
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function loadStub($name)
-    {
-        return json_decode(file_get_contents(__DIR__ . "/../stubs/{$name}.json"), true);
-    }
 }
