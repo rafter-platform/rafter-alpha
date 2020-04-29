@@ -36,7 +36,11 @@ class EnvironmentSubnav extends Component
     public function items()
     {
         return [
-            'Overview' => route('projects.environments.show', [$this->project, $this->environment]),
+            [
+                'label' => 'Overview',
+                'url' => route('projects.environments.show', [$this->project, $this->environment]),
+                'exact' => true,
+            ],
             'Logs' => route('projects.environments.logs', [$this->project, $this->environment]),
             'Databases' => route('projects.environments.database.index', [$this->project, $this->environment]),
             'Settings' => route('projects.environments.settings.index', [$this->project, $this->environment]),
