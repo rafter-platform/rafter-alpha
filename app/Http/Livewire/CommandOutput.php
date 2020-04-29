@@ -21,17 +21,12 @@ class CommandOutput extends Component
         ]);
     }
 
-    public function getLabelProperty(): string
+    public function getBackLinkProperty(): string
     {
-        if ($this->command->isRunning()) {
-            return 'Started running';
-        } elseif ($this->command->isFinished()) {
-            return 'Ran';
-        } elseif ($this->command->isFailed()) {
-            return 'Failed';
-        }
-
-        return 'Created';
+        return route('projects.environments.commands.index', [
+            $this->command->environment->project,
+            $this->command->environment
+        ]);
     }
 
     public function getOutput(): string
