@@ -9,6 +9,8 @@ class CommandsList extends Component
 {
     public $environment;
 
+    public $newCommand;
+
     public function mount(Environment $environment)
     {
         $this->environment = $environment;
@@ -17,5 +19,10 @@ class CommandsList extends Component
     public function render()
     {
         return view('livewire.commands-list');
+    }
+
+    public function runCommand()
+    {
+        // TODO: Run command, and redirect
     }
 }
