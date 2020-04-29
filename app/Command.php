@@ -81,6 +81,12 @@ class Command extends Model
         }
     }
 
+    /**
+     * Re-run a given command, returning a new instance of a model with
+     * the command copied into it.
+     *
+     * @return Command
+     */
     public function reRun(): Command
     {
         $command = static::create([
