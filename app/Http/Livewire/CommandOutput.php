@@ -16,7 +16,9 @@ class CommandOutput extends Component
 
     public function render()
     {
-        return view('livewire.command-output');
+        return view('livewire.command-output', [
+            'output' => $this->getOutput(),
+        ]);
     }
 
     public function getLabelProperty(): string
@@ -30,5 +32,10 @@ class CommandOutput extends Component
         }
 
         return 'Created';
+    }
+
+    public function getOutput(): string
+    {
+        return "$ php artisan {$this->command->command}\r\n\r\n{$this->command->output}";
     }
 }

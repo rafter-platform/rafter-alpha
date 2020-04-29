@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Jobs\DispatchCommand;
 use Exception;
 use Google\Auth\Credentials\ServiceAccountCredentials;
 use Google\Auth\Middleware\AuthTokenMiddleware;
@@ -23,9 +24,14 @@ class Command extends Model
         return $this->belongsTo('App\Environment');
     }
 
+    /**
+     * Dispatch the command asynchronously.
+     *
+     * @return void
+     */
     public function dispatch()
     {
-        # code...
+        DispatchCommand::dispatch($this);
     }
 
     /**
@@ -113,6 +119,6 @@ class Command extends Model
      */
     public function elapsedTime(): string
     {
-        return $this->updated_at->longAbsoluteDiffForHumans($this->created_at);
+        return $this->updated_at->shortAbsoluteDiffForHumans($this->created_at);
     }
 }
