@@ -76,6 +76,19 @@ class Command extends Model
         }
     }
 
+    public function reRun(): Command
+    {
+        $command = static::create([
+            'command' => $this->command,
+            'user_id' => $this->user_id,
+            'environment_id' => $this->environment_id,
+        ]);
+
+        $command->dispatch();
+
+        return $command;
+    }
+
     public function markRunning()
     {
         $this->update(['status' => static::STATUS_RUNNING]);
