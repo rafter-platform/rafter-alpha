@@ -10,5 +10,7 @@
             <x-status :status="$command->status" />
         </span>
     </div>
-    <div class="font-mono p-4 text-sm bg-white">{{ $command->output }}</div>
+    <div class="font-mono p-4 text-sm bg-white">
+        <pre>{{ $command->output }}</pre>
+    </div>
 </div>
