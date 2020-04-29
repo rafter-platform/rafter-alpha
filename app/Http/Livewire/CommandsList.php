@@ -3,13 +3,16 @@
 namespace App\Http\Livewire;
 
 use App\Environment;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class CommandsList extends Component
 {
+    use AuthorizesRequests;
+
     public $environment;
 
-    public $newCommand;
+    public $command;
 
     public function mount(Environment $environment)
     {
@@ -23,6 +26,23 @@ class CommandsList extends Component
 
     public function runCommand()
     {
-        // TODO: Run command, and redirect
+        $this->authorize('update', $this->environment);
+
+        $this->validate([
+            'command' => ['required', 'string'],
+        ]);
+
+        $command = $this->environment->commands()->create([
+            'command' => $this->command,
+            'user_id' => request()->user()->id,
+        ]);
+
+        $command->dispatch();
+
+        return redirect()->route('projects.environments.commands.show', [
+            $this->environment->project,
+            $this->environment,
+            $command
+        ]);
     }
 }

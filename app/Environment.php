@@ -36,6 +36,11 @@ class Environment extends Model
         return $this->belongsTo('App\Database');
     }
 
+    public function commands()
+    {
+        return $this->hasMany('App\Command');
+    }
+
     public function sourceProvider()
     {
         return $this->project->sourceProvider;
