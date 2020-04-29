@@ -22,7 +22,7 @@
             </span>
         </div>
     </div>
-    <div class="font-mono p-4 text-sm bg-white border">
+    <div class="font-mono p-4 text-sm bg-white border overflow-auto">
         <pre>{{ $output }}</pre>
     </div>
 </div>

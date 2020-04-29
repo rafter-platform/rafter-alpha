@@ -39,37 +39,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-gray-50">
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                <a href="#"><code>php artisan migrate:rollback</code></a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                <x-status status="Finished"></x-status>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                A few seconds ago
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                Josh Larson
-                            </td>
-                        </tr>
-                        <tr class="bg-white">
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                <a href="#"><code>php artisan migrate</code></a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                <x-status status="Failed"></x-status>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                One minute ago
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                Josh Larson
-                            </td>
-                            <td></td>
-                        </tr>
+                        @foreach ($commands as $idx => $command)
+                            <tr class="{{ $idx % 2 == 0 ? 'bg-white' : 'bg-gray-50' }}">
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
+                                    <a href="{{ $command->url() }}"><code>php artisan {{ $command->command }}</code></a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    <x-status :status="$command->status"></x-status>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    {{ $command->created_at->diffForHumans() }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    {{ $command->user->name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm text-right leading-5 font-medium text-gray-900">
+                                    <a class="text-indigo-600 hover:text-indigo-900" href="{{ $command->url() }}">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
+                {{ $commands->links('pagination') }}
             </div>
         </div>
     </div>

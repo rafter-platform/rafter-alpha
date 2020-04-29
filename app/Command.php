@@ -24,6 +24,11 @@ class Command extends Model
         return $this->belongsTo('App\Environment');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     /**
      * Dispatch the command asynchronously.
      *
@@ -39,7 +44,7 @@ class Command extends Model
      *
      * @return string
      */
-    public function runCommandOnWorker(): string
+    public function runCommandOnWorker()
     {
         $workerUrl = $this->environment->worker_url . '/_rafter/command/run';
         $jsonKey = $this->environment->project->googleProject->service_account_json;
@@ -133,5 +138,19 @@ class Command extends Model
     public function elapsedTime(): string
     {
         return $this->updated_at->shortAbsoluteDiffForHumans($this->created_at);
+    }
+
+    /**
+     * The URL to this command.
+     *
+     * @return string
+     */
+    public function url(): string
+    {
+        return route('projects.environments.commands.show', [
+            $this->environment->project,
+            $this->environment,
+            $this
+        ]);
     }
 }

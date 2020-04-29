@@ -42,7 +42,7 @@ class Environment extends Model
 
     public function commands()
     {
-        return $this->hasMany('App\Command');
+        return $this->hasMany('App\Command')->latest();
     }
 
     public function sourceProvider()

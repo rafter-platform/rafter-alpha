@@ -5,10 +5,11 @@ namespace App\Http\Livewire;
 use App\Environment;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class CommandsList extends Component
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, WithPagination;
 
     public $environment;
 
@@ -21,7 +22,9 @@ class CommandsList extends Component
 
     public function render()
     {
-        return view('livewire.commands-list');
+        return view('livewire.commands-list', [
+            'commands' => $this->environment->commands()->paginate(10),
+        ]);
     }
 
     public function runCommand()
