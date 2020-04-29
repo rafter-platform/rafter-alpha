@@ -15,6 +15,10 @@ class Environment extends Model
         'production',
     ];
 
+    protected $hidden = [
+        'environmental_variables',
+    ];
+
     protected $fillable = [
         'name',
         'url',
