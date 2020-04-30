@@ -24,7 +24,7 @@
                         @foreach ($deployments as $idx => $deployment)
                             <tr class="{{ $idx % 2 == 0 ? 'bg-white' : 'bg-gray-50' }}">
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                    <a href="{{ route('projects.environments.deployments.show', [$environment->project, $environment, $deployment]) }}">{{ $deployment->commit_message }}</a>
+                                    <a href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
                                     <x-status :status="$deployment->status" />
@@ -36,7 +36,7 @@
                                     {{ $deployment->initiator->name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                    <a href="{{ $deployment->getRoute() }}" class="text-indigo-600 hover:text-indigo-900">View</a>
                                 </td>
                             </tr>
                         @endforeach
