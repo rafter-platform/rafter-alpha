@@ -7,6 +7,9 @@ use Faker\Generator as Faker;
 
 $factory->define(Command::class, function (Faker $faker) {
     return [
-        //
+        'command' => $faker->text(12),
+        'user_id' => factory('App\User'),
+        'environment_id' => factory('App\Environment'),
+        'status' => 'pending',
     ];
 });

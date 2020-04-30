@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class CommandController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource('App\Command');
+    }
+
     /**
      * Display a listing of the resource.
      *
