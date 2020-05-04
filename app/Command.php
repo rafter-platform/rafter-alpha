@@ -46,34 +46,48 @@ class Command extends Model
      */
     public function runCommandOnWorker()
     {
-        $workerUrl = $this->environment->worker_url . '/_rafter/command/run';
+        // $workerUrl = $this->environment->worker_url . '/_rafter/command/run';
+        // $workerUrl = 'http://rafter-example-laravel.test/_rafter/command/run';
+        // $workerUrl = 'http://127.0.0.1:8001/command';
+        $workerUrl = 'http://rafter-example-laravel.test/command';
         $jsonKey = $this->environment->project->googleProject->service_account_json;
 
         /**
          * Google helps us out by creating a middleware to sign the outgoing request to the
          * worker service with an OIDC token based on the audience (which is the $workerUrl).
          */
-        $creds = new ServiceAccountCredentials(null, $jsonKey, null, $workerUrl);
-        $middleware = new AuthTokenMiddleware($creds);
+        // $creds = new ServiceAccountCredentials(null, $jsonKey, null, $workerUrl);
+        // $middleware = new AuthTokenMiddleware($creds);
 
-        $stack = HandlerStack::create();
-        $stack->push($middleware);
+        // $stack = HandlerStack::create();
+        // $stack->push($middleware);
 
         $client = new Client([
-            'handler' => $stack,
-            'auth' => 'google_auth'
+            // 'handler' => $stack,
+            // 'auth' => 'google_auth'
         ]);
 
         try {
-            $response = $client->post($workerUrl, [
-                'form_params' => [
+            $response = $client->get($workerUrl, [
+                // 'form_params' => [
+                'query' => [
                     'command' => $this->command,
                 ],
+                'stream' => true,
             ]);
 
-            $output = $response->getBody()->getContents();
+            $body = $response->getBody();
+            $output = '';
 
-            $this->markFinished($output);
+            while (!$body->eof()) {
+                $chunk = $body->read(1024);
+                echo $chunk;
+                $output .= $chunk;
+                $this->update(['output' => $output]);
+            }
+            // $output = $response->getBody()->getContents();
+
+            $this->markFinished();
 
             return $output;
         } catch (Exception $e) {
@@ -105,11 +119,11 @@ class Command extends Model
         $this->update(['status' => static::STATUS_RUNNING]);
     }
 
-    public function markFinished(string $output)
+    public function markFinished()
     {
         $this->update([
             'status' => static::STATUS_FINISHED,
-            'output' => $output,
+            // 'output' => $output,
         ]);
     }
 
