@@ -98,4 +98,9 @@ class Project extends Model
 
         return '';
     }
+
+    public function usesCommands(): bool
+    {
+        return $this->type == 'laravel';
+    }
 }
