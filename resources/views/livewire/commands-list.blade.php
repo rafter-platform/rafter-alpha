@@ -6,7 +6,7 @@
             </label>
             <div class="mt-1 flex rounded-l-md shadow-sm">
                 <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 border-r-0">
-                    php artisan
+                    {{ $environment->project->commandPrefix() }}
                 </span>
                 <input wire:model="command" id="command" class="form-input flex-1 block w-full px-3 py-2 rounded-none sm:leading-5 autofocus" placeholder="command" />
                 <span class="inline-flex rounded-r-md shadow-sm">
@@ -42,7 +42,7 @@
                         @foreach ($commands as $idx => $command)
                             <tr class="{{ $idx % 2 == 0 ? 'bg-white' : 'bg-gray-50' }}">
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                    <a href="{{ $command->url() }}"><code>php artisan {{ $command->command }}</code></a>
+                                    <a href="{{ $command->url() }}"><code>{{ $command->prefix() }} {{ $command->command }}</code></a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
                                     <x-status :status="$command->status"></x-status>

@@ -159,4 +159,9 @@ class Command extends Model
             $this
         ]);
     }
+
+    public function prefix(): string
+    {
+        return $this->environment->project->commandPrefix();
+    }
 }

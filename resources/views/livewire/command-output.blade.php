@@ -1,5 +1,5 @@
 <div wire:poll>
-    <x-subtitle>Command: <code>php artisan {{ $command->command }}</code></x-subtitle>
+    <x-subtitle>Command: <code>{{ $command->prefix() }} {{ $command->command }}</code></x-subtitle>
     <div class="flex justify-between items-center mb-2">
         <div class="text-sm">
             <x-status :status="$command->status" />
