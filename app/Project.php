@@ -84,4 +84,23 @@ class Project extends Model
     {
         return static::TYPES[$this->type];
     }
+
+    /**
+     * Get the prefix for running Commands for a given project type.
+     *
+     * @return string
+     */
+    public function commandPrefix(): string
+    {
+        if ($this->type == 'laravel') {
+            return 'php artisan';
+        }
+
+        return '';
+    }
+
+    public function usesCommands(): bool
+    {
+        return $this->type == 'laravel';
+    }
 }

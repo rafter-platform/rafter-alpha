@@ -15,6 +15,10 @@ class Environment extends Model
         'production',
     ];
 
+    protected $hidden = [
+        'environmental_variables',
+    ];
+
     protected $fillable = [
         'name',
         'url',
@@ -34,6 +38,11 @@ class Environment extends Model
     public function database()
     {
         return $this->belongsTo('App\Database');
+    }
+
+    public function commands()
+    {
+        return $this->hasMany('App\Command')->latest();
     }
 
     public function sourceProvider()

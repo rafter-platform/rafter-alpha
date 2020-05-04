@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Project::class, function (Faker $faker) {
     return [
-        'name' => $faker->name(),
+        'name' => $faker->text(20),
         'type' => $faker->randomElement(array_keys(Project::TYPES)),
         'team_id' => factory('App\Team'),
         'google_project_id' => factory('App\GoogleProject'),
