@@ -2,11 +2,10 @@
 
 namespace App;
 
-use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class DeploymentStep extends Model
+class TrackedJob extends Model
 {
     const STATUS_STARTED = 'started';
     const STATUS_FINISHED = 'finished';
@@ -24,9 +23,9 @@ class DeploymentStep extends Model
         'finished_at' => 'datetime',
     ];
 
-    public function deployment()
+    public function trackable()
     {
-        return $this->belongsTo('App\DeploymentStep');
+        return $this->morphTo('trackable');
     }
 
     /**
@@ -36,7 +35,7 @@ class DeploymentStep extends Model
      */
     public function markAsStarted()
     {
-        if (! $this->hasStarted()) {
+        if (!$this->hasStarted()) {
             $this->update([
                 'status' => static::STATUS_STARTED,
                 'started_at' => Carbon::now(),
@@ -51,7 +50,7 @@ class DeploymentStep extends Model
      */
     public function hasStarted()
     {
-        return ! empty($this->started_at);
+        return !empty($this->started_at);
     }
 
     /**
@@ -74,7 +73,7 @@ class DeploymentStep extends Model
      */
     public function hasFinished()
     {
-        return ! empty($this->finished_at);
+        return !empty($this->finished_at);
     }
 
     /**
@@ -97,7 +96,7 @@ class DeploymentStep extends Model
      */
     public function duration()
     {
-        if (! $this->hasStarted()) return '';
+        if (!$this->hasStarted()) return '';
 
         return ($this->finished_at ?? Carbon::now())
             ->diffAsCarbonInterval($this->started_at)

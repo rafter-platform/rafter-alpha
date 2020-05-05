@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDeploymentStepsTable extends Migration
+class CreateTrackedJobsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,15 @@ class CreateDeploymentStepsTable extends Migration
      */
     public function up()
     {
-        Schema::create('deployment_steps', function (Blueprint $table) {
+        Schema::create('tracked_jobs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('deployment_id')->index();
+            $table->unsignedBigInteger('trackable_id')->index();
+            $table->string('trackable_type')->index();
             $table->string('name');
             $table->string('status')->default('queued');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->timestamps();
-
-            $table->foreign('deployment_id')
-                ->references('id')->on('deployments')
-                ->onDelete('cascade');
         });
     }
 
@@ -35,6 +32,6 @@ class CreateDeploymentStepsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('deployment_steps');
+        Schema::dropIfExists('tracked_jobs');
     }
 }
