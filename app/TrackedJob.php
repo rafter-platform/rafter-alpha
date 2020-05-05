@@ -95,6 +95,16 @@ class TrackedJob extends Model
     }
 
     /**
+     * Whether the job has failed.
+     *
+     * @return boolean
+     */
+    public function hasFailed()
+    {
+        return $this->status == static::STATUS_FAILED;
+    }
+
+    /**
      * Set the output of the tracked job.
      *
      * If the output is just `true`, we just blank out the log.

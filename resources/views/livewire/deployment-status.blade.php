@@ -10,7 +10,7 @@
             </p>
         </div>
         @foreach ($deployment->steps as $step)
-            <div class="border-b" x-data="{ showLogs: false }">
+            <div class="border-b" @if ($step->hasFailed()) x-data="{ showLogs: true }" @else x-data="{ showLogs: false }" @endif>
                 <div class="flex justify-between items-center p-2 px-4">
                     <div class="flex items-center">
                         <span class="text-gray-700 text-sm">{{ $step->label() }}</span>
