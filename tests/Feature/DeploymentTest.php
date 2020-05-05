@@ -149,7 +149,7 @@ class DeploymentTest extends TestCase
 
         $environment = factory('App\Environment')->state('laravel')->create();
 
-        $deployment = $environment->deploy('abc123', 'commit message', null);
+        $deployment = $environment->deployHash('abc123', 'commit message', null);
 
         $environment->refresh();
         $deployment->refresh();
@@ -214,7 +214,7 @@ class DeploymentTest extends TestCase
 
         $environment = factory('App\Environment')->state('laravel')->create();
 
-        $deployment = $environment->deploy('abc123', 'commit message', null);
+        $deployment = $environment->deployHash('abc123', 'commit message', null);
 
         $environment->refresh();
         $deployment->refresh();

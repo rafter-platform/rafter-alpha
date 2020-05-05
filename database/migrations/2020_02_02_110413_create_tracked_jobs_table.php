@@ -19,6 +19,7 @@ class CreateTrackedJobsTable extends Migration
             $table->string('trackable_type')->index();
             $table->string('name');
             $table->string('status')->default('queued');
+            $table->longText('output')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->timestamps();

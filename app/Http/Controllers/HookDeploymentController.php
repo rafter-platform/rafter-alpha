@@ -16,7 +16,7 @@ class HookDeploymentController extends Controller
             return response('', 200);
         }
 
-        if (! GitHubApp::verifyWebhookPayload($request)) {
+        if (!GitHubApp::verifyWebhookPayload($request)) {
             return response('', 403);
         }
 
@@ -50,7 +50,7 @@ class HookDeploymentController extends Controller
                 $initiatorId = $user->id;
             }
 
-            $environment->deploy($hash, $message, $initiatorId);
+            $environment->deployHash($hash, $message, $initiatorId);
         });
 
         return response('', 200);

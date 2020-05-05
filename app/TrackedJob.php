@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class TrackedJob extends Model
 {
@@ -51,14 +52,17 @@ class TrackedJob extends Model
     /**
      * Mark the step as finished
      *
+     * @param string $output
      * @return void
      */
-    public function markAsFinished()
+    public function markAsFinished($output = '')
     {
         $this->update([
             'status' => static::STATUS_FINISHED,
             'finished_at' => Carbon::now(),
         ]);
+
+        $this->setOutput($output);
     }
 
     /**
@@ -76,16 +80,35 @@ class TrackedJob extends Model
      *
      * @return void
      */
-    public function markAsFailed()
+    public function markAsFailed($exception)
     {
         $this->update([
             'status' => static::STATUS_FAILED,
             'finished_at' => Carbon::now(),
         ]);
 
+        $this->setOutput($exception);
+
         if (method_exists($this->trackable, 'markAsFailed')) {
             $this->trackable->markAsFailed();
         }
+    }
+
+    /**
+     * Set the output of the tracked job.
+     *
+     * If the output is just `true`, we just blank out the log.
+     *
+     * @param string $output
+     * @return void
+     */
+    public function setOutput($output)
+    {
+        if ($output === true) {
+            $output = '';
+        }
+
+        $this->update(['output' => $output]);
     }
 
     /**
@@ -100,5 +123,15 @@ class TrackedJob extends Model
         return ($this->finished_at ?? Carbon::now())
             ->diffAsCarbonInterval($this->started_at)
             ->forHumans(['short' => true]);
+    }
+
+    /**
+     * Get a pretty formatted label based on the name of the job.
+     *
+     * @return string
+     */
+    public function label(): string
+    {
+        return str_replace('-', ' ', Str::title(Str::kebab($this->name)));
     }
 }
