@@ -72,6 +72,8 @@ class DatabaseSeeder extends Seeder
                 'worker_service_name' => 'laravel-example-production-worker',
             ]);
 
+            $environment->setInitialEnvironmentVariables();
+
             $environment->deployments()->create([
                 'initiator_id' => $user->id,
                 'commit_message' => 'Initial (seeded) deploy.',
