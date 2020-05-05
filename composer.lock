@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e79571ff08f3f8a633f2aaff88deadc7",
+    "content-hash": "37f257c8e6bb2e9cda008152a94da150",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -224,16 +224,16 @@
         },
         {
             "name": "driesvints/blade-icons",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/driesvints/blade-icons.git",
-                "reference": "4ba589df707c57556bb71225d67dd15f14be1d12"
+                "reference": "63c7fd652fd571b21f93b02bff1c5b0d9199ab16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/4ba589df707c57556bb71225d67dd15f14be1d12",
-                "reference": "4ba589df707c57556bb71225d67dd15f14be1d12",
+                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/63c7fd652fd571b21f93b02bff1c5b0d9199ab16",
+                "reference": "63c7fd652fd571b21f93b02bff1c5b0d9199ab16",
                 "shasum": ""
             },
             "require": {
@@ -277,7 +277,7 @@
                 "blade",
                 "laravel"
             ],
-            "time": "2020-04-01T15:19:41+00:00"
+            "time": "2020-04-24T14:43:20+00:00"
         },
         {
             "name": "egulias/email-validator",

@@ -16,7 +16,8 @@
                         <span class="text-gray-700 text-sm">{{ $step->label() }}</span>
                         @if ($step->output)
                             <button @click="showLogs = !showLogs" class="ml-2 text-gray-600" title="Inspect output">
-                                <x-heroicon-s-eye class="fill-current w-4 h-4" />
+                                <span x-show="!showLogs"><x-heroicon-s-eye class="fill-current w-4 h-4" /></span>
+                                <span x-show="showLogs"><x-heroicon-s-eye-off class="fill-current w-4 h-4" /></span>
                             </button>
                         @endif
                     </div>
