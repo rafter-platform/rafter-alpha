@@ -13,7 +13,7 @@ class ConfigureQueues implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-    public function execute()
+    public function handle()
     {
         $queueConfig = new QueueConfig($this->model->environment);
 

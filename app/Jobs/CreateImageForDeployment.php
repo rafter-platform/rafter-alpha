@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\GoogleCloud\CloudBuildConfig;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,12 +14,7 @@ class CreateImageForDeployment implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function execute()
+    public function handle()
     {
         $build = new CloudBuildConfig($this->model);
 

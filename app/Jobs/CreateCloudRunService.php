@@ -12,12 +12,7 @@ class CreateCloudRunService implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function execute()
+    public function handle()
     {
         $this->model->createCloudRunService();
         $this->model->createCloudRunWorkerService();

@@ -12,12 +12,7 @@ class EnsureAppIsPublic implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function execute()
+    public function handle()
     {
         $environment = $this->model->environment;
 

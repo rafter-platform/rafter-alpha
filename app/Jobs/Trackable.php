@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Middleware\Tracked;
 use App\TrackedJob;
 use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Support\Facades\Log;
@@ -32,35 +33,10 @@ trait Trackable
         ]);
     }
 
-    /**
-     * Execute the job. This is a wrapper around the #execute method,
-     * which the subclass must implement.
-     *
-     * @return void
-     */
-    public function handle()
+    public function middleware()
     {
-        $this->trackedJob->markAsStarted();
-
-        try {
-            $response = $this->execute();
-
-            // If the response is truthy, then we can assume
-            // the trackedJob has been completed.
-            if ($response) {
-                $this->trackedJob->markAsFinished($response);
-            }
-        } catch (Throwable $e) {
-            $this->fail($e);
-        }
+        return [new Tracked];
     }
-
-    /**
-     * Method that a class must implement.
-     *
-     * @return boolean|null
-     */
-    abstract function execute();
 
     /**
      * Handle the job failing by marking the deployment as failed.

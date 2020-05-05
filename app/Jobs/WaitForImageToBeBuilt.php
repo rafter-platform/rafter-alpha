@@ -16,12 +16,7 @@ class WaitForImageToBeBuilt implements ShouldQueue
     // 20 minutes
     public $tries = 80;
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function execute()
+    public function handle()
     {
         $operation = $this->model->getBuildOperation();
 
@@ -30,7 +25,6 @@ class WaitForImageToBeBuilt implements ShouldQueue
             return;
         }
 
-        // If it's working, check again in 15 seconds
         if (!$operation->isDone()) {
             $message = sprintf(
                 'Image is being built. <a href="%s" target="_blank">View the output in Cloud Build</a>.',
@@ -47,6 +41,6 @@ class WaitForImageToBeBuilt implements ShouldQueue
         return sprintf(
             'Image built successfully! <a href="%s" target="_blank">View the output in Cloud Build</a>.',
             $operation->getUrl()
-        );;
+        );
     }
 }

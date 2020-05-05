@@ -16,12 +16,7 @@ class WaitForCloudRunServiceToDeploy implements ShouldQueue
     // 1 minute
     public $tries = 6;
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function execute()
+    public function handle()
     {
         $webService = $this->model->getCloudRunWebService();
         $workerService = $this->model->getCloudRunWorkerService();

@@ -12,12 +12,7 @@ class UpdateCloudRunService implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function execute()
+    public function handle()
     {
         $this->model->updateCloudRunService();
         $this->model->updateCloudRunWorkerService();

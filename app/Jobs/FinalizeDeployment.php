@@ -12,7 +12,7 @@ class FinalizeDeployment implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-    public function execute()
+    public function handle()
     {
         $this->model->markAsSuccessful();
 
