@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\TrackedJob;
+use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -44,10 +45,10 @@ trait Trackable
         try {
             $response = $this->execute();
 
-            // If the response is true, then we can assume
+            // If the response is truthy, then we can assume
             // the trackedJob has been completed.
             if ($response) {
-                $this->trackedJob->markAsFinished();
+                $this->trackedJob->markAsFinished($response);
             }
         } catch (Throwable $e) {
             $this->fail($e);
@@ -70,6 +71,13 @@ trait Trackable
     public function failed(Throwable $exception)
     {
         Log::error($exception->getMessage());
-        $this->trackedJob->markAsFailed();
+
+        $message = $exception->getMessage();
+
+        if ($exception instanceof MaxAttemptsExceededException) {
+            $message = 'This operation took too long.';
+        }
+
+        $this->trackedJob->markAsFailed($message);
     }
 }

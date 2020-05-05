@@ -23,4 +23,11 @@ class DeploymentsList extends Component
             'deployments' => $this->environment->deployments()->paginate(10),
         ]);
     }
+
+    public function deployNow()
+    {
+        $deployment = $this->environment->deploy(request()->user()->id);
+
+        return redirect()->to($deployment->getRoute());
+    }
 }

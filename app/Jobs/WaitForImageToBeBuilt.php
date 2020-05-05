@@ -32,12 +32,21 @@ class WaitForImageToBeBuilt implements ShouldQueue
 
         // If it's working, check again in 15 seconds
         if (!$operation->isDone()) {
+            $message = sprintf(
+                'Image is being built. <a href="%s" target="_blank">View the output in Cloud Build</a>.',
+                $operation->getUrl()
+            );
+
+            $this->trackedJob->setOutput($message);
             $this->release(15);
             return;
         }
 
         $this->model->recordBuiltImage($operation->builtImage());
 
-        return true;
+        return sprintf(
+            'Image built successfully! <a href="%s" target="_blank">View the output in Cloud Build</a>.',
+            $operation->getUrl()
+        );;
     }
 }

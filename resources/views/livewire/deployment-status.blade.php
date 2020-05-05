@@ -10,14 +10,25 @@
             </p>
         </div>
         @foreach ($deployment->steps as $step)
-            <div class="flex justify-between items-center p-2 px-4 border-b">
-                {{-- LOL, how is this not easier? --}}
-                <span class="text-gray-700 text-sm">{{ str_replace('-', ' ', Str::title(Str::kebab($step->name))) }}</span>
+            <div class="border-b" x-data="{ showLogs: false }">
+                <div class="flex justify-between items-center p-2 px-4">
+                    <div class="flex items-center">
+                        <span class="text-gray-700 text-sm">{{ $step->label() }}</span>
+                        @if ($step->output)
+                            <button @click="showLogs = !showLogs" class="ml-2 text-gray-600" title="Inspect output">
+                                <x-heroicon-s-eye class="fill-current w-4 h-4" />
+                            </button>
+                        @endif
+                    </div>
 
-                <div class="flex items-center">
-                    <span class="text-sm mr-2 text-gray-600">{{ $step->duration() }}</span>
-                    <x-status :status="$step->status" />
+                    <div class="flex items-center">
+                        <span class="text-sm mr-2 text-gray-600">{{ $step->duration() }}</span>
+                        <x-status :status="$step->status" />
+                    </div>
                 </div>
+                @if ($step->output)
+                    <pre x-show="showLogs" class="bg-gray-100 text-xs text-gray-600 p-2 px-4 max-h-80 overflow-auto build-logs">{!! $step->output !!}</pre>
+                @endif
             </div>
         @endforeach
     </div>
