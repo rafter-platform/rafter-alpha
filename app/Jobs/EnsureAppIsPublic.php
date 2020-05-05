@@ -2,8 +2,16 @@
 
 namespace App\Jobs;
 
-class EnsureAppIsPublic extends DeploymentStepJob
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class EnsureAppIsPublic implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
+
     /**
      * Execute the job.
      *
@@ -11,12 +19,12 @@ class EnsureAppIsPublic extends DeploymentStepJob
      */
     public function execute()
     {
-        $environment = $this->deployment->environment;
+        $environment = $this->model->environment;
 
         // Get the existing policies
         $policy = $environment->client()->getIamPolicyForCloudRunService($environment);
 
-        if (! $policy->isPublic()) {
+        if (!$policy->isPublic()) {
             $policy->setPublic();
         }
 

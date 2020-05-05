@@ -2,8 +2,16 @@
 
 namespace App\Jobs;
 
-class CreateCloudRunService extends DeploymentStepJob
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class CreateCloudRunService implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
+
     /**
      * Execute the job.
      *
@@ -11,8 +19,8 @@ class CreateCloudRunService extends DeploymentStepJob
      */
     public function execute()
     {
-        $this->deployment->createCloudRunService();
-        $this->deployment->createCloudRunWorkerService();
+        $this->model->createCloudRunService();
+        $this->model->createCloudRunWorkerService();
 
         return true;
     }

@@ -3,9 +3,16 @@
 namespace App\Jobs;
 
 use App\GoogleCloud\CloudBuildConfig;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class CreateImageForDeployment extends DeploymentStepJob
+class CreateImageForDeployment implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
+
     /**
      * Execute the job.
      *
@@ -13,11 +20,11 @@ class CreateImageForDeployment extends DeploymentStepJob
      */
     public function execute()
     {
-        $build = new CloudBuildConfig($this->deployment);
+        $build = new CloudBuildConfig($this->model);
 
-        $operation = $this->deployment->submitBuild($build);
+        $operation = $this->model->submitBuild($build);
 
-        $this->deployment->update(['operation_name' => $operation['name']]);
+        $this->model->update(['operation_name' => $operation['name']]);
 
         return true;
     }

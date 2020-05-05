@@ -3,9 +3,16 @@
 namespace App\Jobs;
 
 use Exception;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class WaitForImageToBeBuilt extends DeploymentStepJob
+class WaitForImageToBeBuilt implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
+
     // 20 minutes
     public $tries = 80;
 
@@ -16,7 +23,7 @@ class WaitForImageToBeBuilt extends DeploymentStepJob
      */
     public function execute()
     {
-        $operation = $this->deployment->getBuildOperation();
+        $operation = $this->model->getBuildOperation();
 
         if ($operation->isDone() && $operation->hasError()) {
             $this->fail(new Exception($operation->errorMessage()));
@@ -24,12 +31,12 @@ class WaitForImageToBeBuilt extends DeploymentStepJob
         }
 
         // If it's working, check again in 15 seconds
-        if (! $operation->isDone()) {
+        if (!$operation->isDone()) {
             $this->release(15);
             return;
         }
 
-        $this->deployment->recordBuiltImage($operation->builtImage());
+        $this->model->recordBuiltImage($operation->builtImage());
 
         return true;
     }

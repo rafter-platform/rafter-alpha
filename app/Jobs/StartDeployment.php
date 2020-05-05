@@ -2,11 +2,19 @@
 
 namespace App\Jobs;
 
-class StartDeployment extends DeploymentStepJob
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class StartDeployment implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
+
     public function execute()
     {
-        $this->deployment->markAsInProgress();
+        $this->model->markAsInProgress();
 
         return true;
     }

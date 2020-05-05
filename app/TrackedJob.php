@@ -11,12 +11,7 @@ class TrackedJob extends Model
     const STATUS_FINISHED = 'finished';
     const STATUS_FAILED = 'failed';
 
-    protected $fillable = [
-        'name',
-        'started_at',
-        'finished_at',
-        'status',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'started_at' => 'datetime',
@@ -87,6 +82,10 @@ class TrackedJob extends Model
             'status' => static::STATUS_FAILED,
             'finished_at' => Carbon::now(),
         ]);
+
+        if (method_exists($this->trackable, 'markAsFailed')) {
+            $this->trackable->markAsFailed();
+        }
     }
 
     /**
