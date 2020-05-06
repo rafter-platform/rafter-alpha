@@ -16,6 +16,8 @@ class GoogleProject extends Model
         // To enable APIs
         'servicemanagement.googleapis.com',
         'cloudresourcemanager.googleapis.com',
+        // IAM
+        'iam.googleapis.com',
         // Cloud Run
         'run.googleapis.com',
         // Cloud Build
