@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class TrackedJob extends Model
@@ -34,7 +33,7 @@ class TrackedJob extends Model
         if (!$this->hasStarted()) {
             $this->update([
                 'status' => static::STATUS_STARTED,
-                'started_at' => Carbon::now(),
+                'started_at' => now(),
             ]);
         }
     }
@@ -59,7 +58,7 @@ class TrackedJob extends Model
     {
         $this->update([
             'status' => static::STATUS_FINISHED,
-            'finished_at' => Carbon::now(),
+            'finished_at' => now(),
         ]);
 
         $this->setOutput($output);
@@ -84,7 +83,7 @@ class TrackedJob extends Model
     {
         $this->update([
             'status' => static::STATUS_FAILED,
-            'finished_at' => Carbon::now(),
+            'finished_at' => now(),
         ]);
 
         $this->setOutput($exception);
@@ -130,7 +129,7 @@ class TrackedJob extends Model
     {
         if (!$this->hasStarted()) return '';
 
-        return ($this->finished_at ?? Carbon::now())
+        return ($this->finished_at ?? now())
             ->diffAsCarbonInterval($this->started_at)
             ->forHumans(['short' => true]);
     }
