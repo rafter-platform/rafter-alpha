@@ -7,15 +7,6 @@ use Tests\TestCase;
 
 class ProjectIamPolicyTest extends TestCase
 {
-    protected $policy;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->policy = $this->loadStub('project-iam-policies');
-    }
-
     public function test_it_adds_a_new_member_to_a_new_role()
     {
         $payload = [
