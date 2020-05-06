@@ -2,14 +2,24 @@
 
 namespace App\Jobs;
 
-class FinalizeDeployment extends DeploymentStepJob
-{
-    public function execute()
-    {
-        $this->deployment->markAsSuccessful();
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-        $this->environment->activeDeployment()->associate($this->deployment);
-        $this->environment->save();
+class FinalizeDeployment implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
+
+    public function handle()
+    {
+        $this->model->markAsSuccessful();
+
+        $environment = $this->model->environment;
+
+        $environment->activeDeployment()->associate($this->model);
+        $environment->save();
 
         return true;
     }

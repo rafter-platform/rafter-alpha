@@ -11,10 +11,9 @@
  */
 @tailwind base;
 
-/* html { font-family: 'Inter', sans-serif; }
-@supports (font-variation-settings: normal) {
-  html { font-family: 'Inter var', sans-serif; }
-} */
+.build-logs a {
+    @apply underline text-blue-600;
+}
 
 /**
  * This injects any component classes registered by plugins.

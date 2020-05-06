@@ -60,6 +60,11 @@ class Environment extends Model
         return $this->belongsTo('App\Deployment', 'active_deployment_id');
     }
 
+    public function repository(): ?string
+    {
+        return $this->project->repository;
+    }
+
     /**
      * Whether the environment is using a database.
      */
@@ -218,9 +223,30 @@ class Environment extends Model
     }
 
     /**
-     * Create a new deployment on Cloud Run.
+     * Deploy the HEAD of the current branch.
+     *
+     * @param int|null $initiatorId
+     * @return Deployment
      */
-    public function deploy($commitHash, $commitMessage, $initiatorId)
+    public function deploy($initiatorId): Deployment
+    {
+        $hash = $this->sourceProvider()->client()->latestHashFor($this->repository(), $this->branch);
+
+        $deployment = $this->deployments()->create([
+            'commit_hash' => $hash,
+            'commit_message' => 'Manual deploy',
+            'initiator_id' => $initiatorId,
+        ]);
+
+        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
+
+        return $deployment;
+    }
+
+    /**
+     * Create a new deployment on Cloud Run for a specific hash.
+     */
+    public function deployHash($commitHash, $commitMessage, $initiatorId): Deployment
     {
         $deployment = $this->deployments()->create([
             'commit_hash' => $commitHash,
@@ -240,7 +266,7 @@ class Environment extends Model
      * @param int|null $initiatorId
      * @return Deployment
      */
-    public function redeploy(Deployment $deployment, $initiatorId)
+    public function redeploy(Deployment $deployment, $initiatorId): Deployment
     {
         $newDeployment = $this->deployments()->create([
             'commit_hash' => $deployment->commit_hash,

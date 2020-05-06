@@ -6,7 +6,8 @@ class CloudBuildOperation
 {
     protected $operation;
 
-    public function __construct($operation) {
+    public function __construct($operation)
+    {
         $this->operation = $operation;
     }
 
@@ -37,7 +38,7 @@ class CloudBuildOperation
      */
     public function hasError()
     {
-        return ! empty($this->errorMessage());
+        return !empty($this->errorMessage());
     }
 
     /**
@@ -48,5 +49,28 @@ class CloudBuildOperation
     public function builtImage()
     {
         return $this->operation['metadata']['build']['id'] ?? null;
+    }
+
+    /**
+     * Gets the operation ID.
+     *
+     * @return array
+     */
+    public function getId()
+    {
+        return $this->operation['metadata']['build']['id'] ?? '';
+    }
+
+    /**
+     * Get the URL to the Cloud Build console for this operation.
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return sprintf(
+            'https://console.cloud.google.com/cloud-build/builds/%s',
+            $this->getId()
+        );
     }
 }

@@ -16,7 +16,7 @@
                     </x-slot>
                     <p>{{ \App\Project::TYPES[$project->type] }} / {{ $project->region }} / {{ $project->googleProject->name }}</p>
                     @if ($project->production()->activeDeployment()->exists())
-                        <p>Last deployed {{ $project->environments()->first()->activeDeployment()->created_at->diffForHumans() }}</p>
+                        <p>Last deployed {{ $project->environments()->first()->activeDeployment->created_at->diffForHumans() }}</p>
                     @endif
                 </x-card>
             @endforeach

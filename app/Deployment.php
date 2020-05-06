@@ -29,7 +29,7 @@ class Deployment extends Model
 
     public function steps()
     {
-        return $this->hasMany('App\DeploymentStep');
+        return $this->morphMany('App\TrackedJob', 'trackable');
     }
 
     public function project()
