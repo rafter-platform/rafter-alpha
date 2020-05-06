@@ -20,13 +20,15 @@ class GoogleProject extends Model
         'run.googleapis.com',
         // Cloud Build
         'cloudbuild.googleapis.com',
-        // for DB support
+        // MySQL DB
         'sqladmin.googleapis.com',
-        // for Postgres DB support
+        // Postgres DB
         'compute.googleapis.com',
-        // for queue support
+        // Cloud Tasks
         'cloudtasks.googleapis.com',
         'appengine.googleapis.com',
+        // Secret Manager
+        'secretmanager.googleapis.com',
     ];
 
     const REGIONS = [

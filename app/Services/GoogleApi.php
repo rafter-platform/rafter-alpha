@@ -16,7 +16,14 @@ use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\QueueConfig;
 use App\GoogleCloud\SchedulerJobConfig;
 use App\GoogleProject;
+use Google\ApiCore\ApiException;
 use Google\Cloud\Logging\LoggingClient;
+use Google\Cloud\SecretManager\V1\Replication;
+use Google\Cloud\SecretManager\V1\Replication\Automatic;
+use Google\Cloud\SecretManager\V1\Secret;
+use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
+use Google\Cloud\SecretManager\V1\SecretPayload;
+use Google\Protobuf\FieldMask;
 use Google_Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\RequestException;
@@ -29,7 +36,8 @@ class GoogleApi
     protected $googleProject;
     protected $googleClient;
 
-    public function __construct(GoogleProject $googleProject) {
+    public function __construct(GoogleProject $googleProject)
+    {
         $this->googleProject = $googleProject;
         $this->googleClient = app(Google_Client::class);
         $this->googleClient->setAuthConfig($googleProject->service_account_json);
@@ -357,6 +365,52 @@ class GoogleApi
         }
 
         return $logs;
+    }
+
+    /**
+     * Set or create a secret in Secret Manager API
+     *
+     * @param string $key
+     * @param string $value
+     * @return \Google\Cloud\SecretManager\V1\SecretVersion;
+     */
+    public function setSecret(string $key, string $value)
+    {
+        $client = new SecretManagerServiceClient([
+            'keyFile' => $this->googleProject->service_account_json,
+        ]);
+
+        // Build the parent name from the project.
+        $parent = $client->projectName($this->googleProject->project_id);
+
+        // Try fetching the secret first, and update it.
+        try {
+            $name = $client->secretName($this->googleProject->project_id, $key);
+            $secret = $client->getSecret($name);
+
+            $secret->setLabels([
+                'data' => $value,
+            ]);
+
+            $updateMask = (new FieldMask())->setPaths(['labels']);
+
+            return $client->updateSecret($secret, $updateMask);
+        } catch (ApiException $e) {
+            // Otherwise, it needs to be created
+            $secret = $client->createSecret(
+                $parent,
+                $key,
+                new Secret([
+                    'replication' => new Replication([
+                        'automatic' => new Automatic(),
+                    ]),
+                ])
+            );
+
+            return $client->addSecretVersion($secret->getName(), new SecretPayload([
+                'data' => $value,
+            ]));
+        }
     }
 
     /**

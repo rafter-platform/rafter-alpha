@@ -12,7 +12,8 @@ class CloudBuildConfig
     protected $deployment;
     protected $environment;
 
-    public function __construct(Deployment $deployment) {
+    public function __construct(Deployment $deployment)
+    {
         $this->deployment = $deployment;
         $this->environment = $deployment->environment;
     }
@@ -50,7 +51,7 @@ class CloudBuildConfig
      */
     public function isGitBased()
     {
-        return ! $this->isManual();
+        return !$this->isManual();
     }
 
     /**
@@ -140,6 +141,19 @@ class CloudBuildConfig
                 'name' => 'gcr.io/cloud-builders/docker',
                 'entrypoint' => 'bash',
                 'args' => ['-c', "docker pull {$this->imageLocation()}:latest || exit 0"],
+            ],
+
+            // Pull down git token secret data
+            [
+                'name' => 'gcr.io/cloud-builders/gcloud',
+                'entrypoint' => 'bash',
+                'args' => ['-c', 'gcloud secrets versions access latest --secret=' . $this->deployment->environment->gitTokenSecretName() . ' > git-token.txt'],
+            ],
+
+            // DEBUG: echo out the secret
+            [
+                'name' => 'ubuntu',
+                'args' => ['cat', 'git-token.txt'],
             ],
 
             $this->isGitBased() ? $this->downloadGitRepoStep() : [],

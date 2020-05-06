@@ -4,6 +4,7 @@ namespace App;
 
 use App\GoogleCloud\SchedulerJobConfig;
 use App\Services\GoogleApi;
+use Google\Cloud\SecretManager\V1\SecretVersion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Bus;
@@ -347,6 +348,32 @@ class Environment extends Model
     public function startScheduler()
     {
         return $this->client()->createSchedulerJob(new SchedulerJobConfig($this));
+    }
+
+    /**
+     * Set a secret using Google Secret Manager for this environment.
+     *
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+    public function setSecret(string $key, string $value): SecretVersion
+    {
+        return $this->client()->setSecret($key, $value);
+    }
+
+    /**
+     * The git token secret name to be used during Cloud Build.
+     *
+     * @return string
+     */
+    public function gitTokenSecretName(): string
+    {
+        return sprintf(
+            '%s-%s',
+            'rafter-git-token',
+            $this->slug()
+        );
     }
 
     /**
