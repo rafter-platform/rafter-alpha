@@ -2,14 +2,8 @@
 
 namespace App\GoogleCloud;
 
-class CloudRunIamPolicy
+class CloudRunIamPolicy extends IamPolicy
 {
-    protected $policy;
-
-    public function __construct($policy) {
-        $this->policy = $policy;
-    }
-
     /**
      * Whether the Cloud Run policy is public.
      *
@@ -19,33 +13,11 @@ class CloudRunIamPolicy
     {
         $binding = $this->getBinding('roles/run.invoker');
 
-        if (! $binding) {
+        if (!$binding) {
             return false;
         }
 
         return collect($binding['members'])->contains('allUsers');
-    }
-
-    /**
-     * Get all bindings from the plicy.
-     *
-     * @return array
-     */
-    protected function getBindings()
-    {
-        return $this->policy['bindings'] ?? [];
-    }
-
-    /**
-     * Get a specific binding
-     *
-     * @param string $role
-     * @return array|null
-     */
-    protected function getBinding($role)
-    {
-        return collect($this->getBindings())
-            ->firstWhere('role', $role);
     }
 
     /**
@@ -55,27 +27,6 @@ class CloudRunIamPolicy
      */
     public function setPublic()
     {
-        $bindings = $this->getBindings();
-
-        $bindings[] = [
-            'role' => 'roles/run.invoker',
-            'members' => [
-                'allUsers',
-            ],
-        ];
-
-        $this->policy['bindings'] = $bindings;
-
-        return $this;
-    }
-
-    /**
-     * Get the policy
-     *
-     * @return array
-     */
-    public function getPolicy()
-    {
-        return $this->policy;
+        return $this->addMemberToRole('allUsers', 'roles/run.invoker');
     }
 }

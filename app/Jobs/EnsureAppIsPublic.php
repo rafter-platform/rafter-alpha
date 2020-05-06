@@ -18,10 +18,7 @@ class EnsureAppIsPublic implements ShouldQueue
 
         // Get the existing policies
         $policy = $environment->client()->getIamPolicyForCloudRunService($environment);
-
-        if (!$policy->isPublic()) {
-            $policy->setPublic();
-        }
+        $policy->setPublic();
 
         // Update the policy
         $environment->client()->setIamPolicyForCloudRunService($environment, $policy->getPolicy());

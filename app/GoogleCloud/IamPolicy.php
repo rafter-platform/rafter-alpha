@@ -2,10 +2,9 @@
 
 namespace App\GoogleCloud;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-class ProjectIamPolicy
+class IamPolicy
 {
     protected $policy;
 
@@ -37,7 +36,7 @@ class ProjectIamPolicy
     }
 
     /**
-     * Add a member to a given role.
+     * Add a member to a given role. Ensures no duplicate members are added.
      *
      * @param string $member The member, e.g. service account email.
      * @param string $role The role, starting with `roles/`
@@ -76,7 +75,7 @@ class ProjectIamPolicy
      *
      * @return array
      */
-    public function getPolicy()
+    public function getPolicy(): array
     {
         return $this->policy;
     }

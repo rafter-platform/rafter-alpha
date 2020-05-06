@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\GoogleCloud\ProjectIamPolicy;
+use App\GoogleCloud\IamPolicy;
 use Tests\TestCase;
 
-class ProjectIamPolicyTest extends TestCase
+class IamPolicyTest extends TestCase
 {
     public function test_it_adds_a_new_member_to_a_new_role()
     {
@@ -15,7 +15,7 @@ class ProjectIamPolicyTest extends TestCase
             'bindings' => []
         ];
 
-        $policy = new ProjectIamPolicy($payload);
+        $policy = new IamPolicy($payload);
 
         $policy->addMemberToRole('new-service@account.com', 'roles/someNewRole');
 
@@ -46,7 +46,7 @@ class ProjectIamPolicyTest extends TestCase
             ]
         ];
 
-        $policy = new ProjectIamPolicy($payload);
+        $policy = new IamPolicy($payload);
 
         $policy->addMemberToRole('new-service@account.com', 'roles/existingRole');
 
@@ -79,7 +79,7 @@ class ProjectIamPolicyTest extends TestCase
             ]
         ];
 
-        $policy = new ProjectIamPolicy($payload);
+        $policy = new IamPolicy($payload);
 
         $policy->addMemberToRole('old-service@account.com', 'roles/existingRole');
 
