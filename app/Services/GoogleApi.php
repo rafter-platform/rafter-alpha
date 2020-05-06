@@ -372,7 +372,6 @@ class GoogleApi
      *
      * @param string $key
      * @param string $value
-     * @return \Google\Cloud\SecretManager\V1\SecretVersion;
      */
     public function setSecret(string $key, string $value)
     {
@@ -413,6 +412,17 @@ class GoogleApi
         }
     }
 
+    public function getProjectIamPolicys($email)
+    {
+        $account = urlencode($email);
+        return $this->request(
+            // "https://iam.googleapis.com/v1/projects/{$this->googleProject->project_id}/serviceAccounts/{$account}:getIamPolicy",
+            "https://cloudresourcemanager.googleapis.com/v1/projects/{$this->googleProject->project_id}/serviceAccounts/{$email}:getIamPolicy",
+            'POST',
+            false
+        );
+    }
+
     /**
      * Request data from the Google Cloud API.
      *
@@ -424,10 +434,17 @@ class GoogleApi
     protected function request($endpoint, $method = 'GET', $data = [])
     {
         try {
-            return Http::withToken($this->token())
-                ->{$method}($endpoint, $data)
-                ->throw()
-                ->json();
+            if ($data === false) {
+                return Http::withToken($this->token())
+                    ->send($method, $endpoint)
+                    ->throw()
+                    ->json();
+            } else {
+                return Http::withToken($this->token())
+                    ->$method($endpoint, $data)
+                    ->throw()
+                    ->json();
+            }
         } catch (RequestException $exception) {
             Log::error($exception->response->body());
 

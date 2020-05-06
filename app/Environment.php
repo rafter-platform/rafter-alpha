@@ -4,7 +4,6 @@ namespace App;
 
 use App\GoogleCloud\SchedulerJobConfig;
 use App\Services\GoogleApi;
-use Google\Cloud\SecretManager\V1\SecretVersion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Bus;
@@ -357,7 +356,7 @@ class Environment extends Model
      * @param string $value
      * @return void
      */
-    public function setSecret(string $key, string $value): SecretVersion
+    public function setSecret(string $key, string $value)
     {
         return $this->client()->setSecret($key, $value);
     }
