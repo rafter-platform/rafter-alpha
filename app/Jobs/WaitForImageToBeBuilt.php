@@ -43,4 +43,14 @@ class WaitForImageToBeBuilt implements ShouldQueue
             $operation->getUrl()
         );
     }
+
+    public function appendToFailureOutput()
+    {
+        $operation = $this->model->getBuildOperation();
+
+        return sprintf(
+            '<a href="%s" target="_blank">View the output in Cloud Build</a>.',
+            $operation->getUrl()
+        );
+    }
 }

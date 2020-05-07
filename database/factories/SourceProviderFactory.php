@@ -12,6 +12,6 @@ $factory->define(SourceProvider::class, function (Faker $faker) {
         'name' => 'GitHub ' . $faker->text(10),
         'type' => 'GitHub',
         'installation_id' => $faker->randomNumber(),
-        'meta' => ['some' => 'stuff'],
+        'meta' => ['token' => 'notatoken'],
     ];
 });

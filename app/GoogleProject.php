@@ -5,6 +5,7 @@ namespace App;
 use App\Jobs\CreateAppEngineShellApp;
 use App\Jobs\DetermineProjectNumber;
 use App\Jobs\EnableProjectApis;
+use App\Jobs\GrantCloudBuildAccessToSecrets;
 use App\Jobs\SyncDatabaseInstances;
 use App\Jobs\WaitForProjectApisToBeEnabled;
 use App\Services\GoogleApi;
@@ -16,17 +17,21 @@ class GoogleProject extends Model
         // To enable APIs
         'servicemanagement.googleapis.com',
         'cloudresourcemanager.googleapis.com',
+        // IAM
+        'iam.googleapis.com',
         // Cloud Run
         'run.googleapis.com',
         // Cloud Build
         'cloudbuild.googleapis.com',
-        // for DB support
+        // MySQL DB
         'sqladmin.googleapis.com',
-        // for Postgres DB support
+        // Postgres DB
         'compute.googleapis.com',
-        // for queue support
+        // Cloud Tasks
         'cloudtasks.googleapis.com',
         'appengine.googleapis.com',
+        // Secret Manager
+        'secretmanager.googleapis.com',
     ];
 
     const REGIONS = [
@@ -76,7 +81,9 @@ class GoogleProject extends Model
     {
         EnableProjectApis::withChain([
             new WaitForProjectApisToBeEnabled($this),
+            new DetermineProjectNumber($this),
             new CreateAppEngineShellApp($this),
+            new GrantCloudBuildAccessToSecrets($this),
             new SyncDatabaseInstances($this),
         ])->dispatch($this);
     }

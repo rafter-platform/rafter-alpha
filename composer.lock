@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37f257c8e6bb2e9cda008152a94da150",
+    "content-hash": "ebd6ea6ef299cc2dabdd58ca65a89c08",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -439,16 +439,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "cd3c37998020d91ae4eafca4f26a92da4dabba83"
+                "reference": "1fdfe942f9aaf3064e621834a5e3047fccb3a6da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/cd3c37998020d91ae4eafca4f26a92da4dabba83",
-                "reference": "cd3c37998020d91ae4eafca4f26a92da4dabba83",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/1fdfe942f9aaf3064e621834a5e3047fccb3a6da",
+                "reference": "1fdfe942f9aaf3064e621834a5e3047fccb3a6da",
                 "shasum": ""
             },
             "require": {
@@ -465,7 +465,7 @@
                 "cache/filesystem-adapter": "^0.3.2",
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
                 "phpcompatibility/php-compatibility": "^9.2",
-                "phpunit/phpunit": "~4.8.36",
+                "phpunit/phpunit": "^4.8|^5.0",
                 "squizlabs/php_codesniffer": "~2.3",
                 "symfony/css-selector": "~2.1",
                 "symfony/dom-crawler": "~2.1"
@@ -496,7 +496,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-09-11T17:38:10+00:00"
+            "time": "2020-03-26T15:30:32+00:00"
         },
         {
             "name": "google/apiclient-services",
@@ -700,6 +700,55 @@
                 "Apache-2.0"
             ],
             "description": "Stackdriver Logging Client for PHP",
+            "time": "2020-04-07T20:58:05+00:00"
+        },
+        {
+            "name": "google/cloud-secret-manager",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/google-cloud-php-secret-manager.git",
+                "reference": "24615f1a0c8e22bc7532e203ab11d4e3456a9838"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-secret-manager/zipball/24615f1a0c8e22bc7532e203ab11d4e3456a9838",
+                "reference": "24615f1a0c8e22bc7532e203ab11d4e3456a9838",
+                "shasum": ""
+            },
+            "require": {
+                "google/gax": "^1.2.0"
+            },
+            "require-dev": {
+                "google/cloud-core": "^1.35",
+                "phpdocumentor/reflection": "^3.0",
+                "phpunit/phpunit": "^4.8|^5.0"
+            },
+            "suggest": {
+                "ext-grpc": "Enables use of gRPC, a universal high-performance RPC framework created by Google.",
+                "ext-protobuf": "Provides a significant increase in throughput over the pure PHP protobuf implementation. See https://cloud.google.com/php/grpc for installation instructions."
+            },
+            "type": "library",
+            "extra": {
+                "component": {
+                    "id": "cloud-secret-manager",
+                    "path": "SecretManager",
+                    "entry": null,
+                    "target": "googleapis/google-cloud-php-secret-manager.git"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Google\\Cloud\\SecretManager\\": "src",
+                    "GPBMetadata\\Google\\Cloud\\Secrets\\": "metadata",
+                    "GPBMetadata\\Google\\Cloud\\Secretmanager\\": "metadata"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Secret Manager Client for PHP",
             "time": "2020-04-07T20:58:05+00:00"
         },
         {

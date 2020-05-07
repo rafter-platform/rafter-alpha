@@ -350,6 +350,32 @@ class Environment extends Model
     }
 
     /**
+     * Set a secret using Google Secret Manager for this environment.
+     *
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+    public function setSecret(string $key, string $value)
+    {
+        return $this->client()->setSecret($key, $value);
+    }
+
+    /**
+     * The git token secret name to be used during Cloud Build.
+     *
+     * @return string
+     */
+    public function gitTokenSecretName(): string
+    {
+        return sprintf(
+            '%s-%s',
+            'rafter-git-token',
+            $this->slug()
+        );
+    }
+
+    /**
      * Get logs for the service.
      *
      * @return array

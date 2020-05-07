@@ -23,6 +23,16 @@ class SourceProvider extends Model
     }
 
     /**
+     * Get the token for this source provider.
+     *
+     * @return string
+     */
+    public function token(): string
+    {
+        return $this->meta['token'];
+    }
+
+    /**
      * Get a source control provider client for the provider.
      *
      * @return \App\Contracts\SourceProviderClient

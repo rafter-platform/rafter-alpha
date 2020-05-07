@@ -7,6 +7,7 @@ use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
+use App\Jobs\SetBuildSecrets;
 use App\Jobs\StartDeployment;
 use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunService;
@@ -79,6 +80,7 @@ class DeploymentSteps
         $this->addStep(StartDeployment::class);
 
         if (!$this->isRedeploy) {
+            $this->addStep(SetBuildSecrets::class);
             $this->addStep(CreateImageForDeployment::class);
         }
 

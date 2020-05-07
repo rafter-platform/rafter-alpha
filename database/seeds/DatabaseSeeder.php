@@ -39,11 +39,13 @@ class DatabaseSeeder extends Seeder
          */
         $googleProjectName = env('SEED_GOOGLE_PROJECT_NAME');
         $googleProjectId = env('SEED_GOOGLE_PROJECT_ID');
+        $googleProjectNumber = env('SEED_GOOGLE_PROJECT_NUMBER');
 
-        if ($googleProjectName && $googleProjectId && File::exists(__DIR__ . '/../../service-account.json')) {
+        if ($googleProjectName && $googleProjectId && $googleProjectNumber && File::exists(__DIR__ . '/../../service-account.json')) {
             $googleProject = $team->googleProjects()->create([
                 'name' => $googleProjectName,
                 'project_id' => $googleProjectId,
+                'project_number' => $googleProjectNumber,
                 'service_account_json' => json_decode(File::get(__DIR__ . '/../../service-account.json')),
             ]);
 

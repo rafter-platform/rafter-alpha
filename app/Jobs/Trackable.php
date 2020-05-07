@@ -38,6 +38,11 @@ trait Trackable
         return [new Tracked];
     }
 
+    public function appendToFailureOutput(): string
+    {
+        return '';
+    }
+
     /**
      * Handle the job failing by marking the deployment as failed.
      *
@@ -54,6 +59,6 @@ trait Trackable
             $message = 'This operation took too long.';
         }
 
-        $this->trackedJob->markAsFailed($message);
+        $this->trackedJob->markAsFailed($message . PHP_EOL . $this->appendToFailureOutput());
     }
 }

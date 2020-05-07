@@ -14,7 +14,8 @@ class GitHub implements SourceProviderClient
 {
     protected $source;
 
-    public function __construct(SourceProvider $source) {
+    public function __construct(SourceProvider $source)
+    {
         $this->source = $source;
     }
 
@@ -108,7 +109,7 @@ class GitHub implements SourceProviderClient
             'https://api.github.com/repos/%s/tarball/%s?access_token=%s',
             $deployment->repository(),
             $deployment->commit_hash,
-            $this->token()
+            '$$TOKEN'
         );
     }
 
@@ -161,7 +162,8 @@ class GitHub implements SourceProviderClient
     /**
      * Get the access token for the given SourceProvider.
      */
-    protected function token() {
-        return $this->source->meta['token'];
+    protected function token()
+    {
+        return $this->source->token();
     }
 }
