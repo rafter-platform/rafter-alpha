@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deployment extends Model
 {
+    const STATUS_QUEUED = 'queued';
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_SUCCESSFUL = 'successful';
     const STATUS_FAILED = 'failed';
@@ -85,6 +86,16 @@ class Deployment extends Model
     public function markAsInProgress()
     {
         $this->update(['status' => static::STATUS_IN_PROGRESS]);
+    }
+
+    /**
+     * Whether the deployment is in progress.
+     *
+     * @return boolean
+     */
+    public function isInProgress(): bool
+    {
+        return $this->status == static::STATUS_IN_PROGRESS || $this->status == static::STATUS_QUEUED;
     }
 
     /**
@@ -260,6 +271,20 @@ class Deployment extends Model
     public function getRoute(): string
     {
         return route('projects.environments.deployments.show', [$this->project(), $this->environment, $this]);
+    }
+
+    /**
+     * Get the duration of the deployment
+     *
+     * @return string
+     */
+    public function duration(): string
+    {
+        return $this->updated_at
+            ->shortAbsoluteDiffForHumans($this->created_at, [
+                'short' => true,
+                'absolute' => true,
+            ]);
     }
 
     public function client(): GoogleApi

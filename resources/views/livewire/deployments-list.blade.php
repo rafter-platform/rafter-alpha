@@ -1,4 +1,4 @@
-<div>
+<div wire:poll>
     <div class="flex justify-between items-center">
         <x-subtitle>Recent Deployments</x-subtitle>
         <x-white-button wire:click="deployNow">Deploy Now</x-white-button>
@@ -16,7 +16,10 @@
                                 Status
                             </th>
                             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Date
+                                When
+                            </th>
+                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Duration
                             </th>
                             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                 Initiated By
@@ -35,6 +38,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
                                     {{ $deployment->created_at->diffForHumans() }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                                    {{ $deployment->isInProgress() ? '-' : $deployment->duration() }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
                                     {{ $deployment->initiator->name }}

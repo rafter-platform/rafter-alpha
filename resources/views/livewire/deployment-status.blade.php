@@ -1,9 +1,17 @@
 <div wire:poll>
     <div class="bg-white">
         <div class="p-4 border-b">
-            <div class="flex items-center mb-1">
-                <h1 class="text-xl mr-4">{{ $deployment->commit_message }}</h1>
-                <x-status :status="$deployment->status" />
+            <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center">
+                    <h1 class="text-xl mr-4">{{ $deployment->commit_message }}</h1>
+                    <x-status :status="$deployment->status" />
+                </div>
+                <div class="text-sm text-gray-500">
+                    Deployed {{ $deployment->created_at->diffForHumans() }}
+                    @unless($deployment->isInProgress())
+                    ({{ $deployment->duration() }})
+                    @endunless
+                </div>
             </div>
             <p class="text-sm text-gray-600">
                 Deployed to <b>{{ $deployment->environment->name }}</b> by <b>{{ $deployment->initiator->name }}</b>
