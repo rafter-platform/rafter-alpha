@@ -5,6 +5,7 @@ namespace App;
 use App\Jobs\CreateAppEngineShellApp;
 use App\Jobs\DetermineProjectNumber;
 use App\Jobs\EnableProjectApis;
+use App\Jobs\GrantCloudBuildAccessToSecrets;
 use App\Jobs\SyncDatabaseInstances;
 use App\Jobs\WaitForProjectApisToBeEnabled;
 use App\Services\GoogleApi;
@@ -80,7 +81,9 @@ class GoogleProject extends Model
     {
         EnableProjectApis::withChain([
             new WaitForProjectApisToBeEnabled($this),
+            new DetermineProjectNumber($this),
             new CreateAppEngineShellApp($this),
+            new GrantCloudBuildAccessToSecrets($this),
             new SyncDatabaseInstances($this),
         ])->dispatch($this);
     }

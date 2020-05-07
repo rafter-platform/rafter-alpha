@@ -13,6 +13,7 @@ use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\EnableApisOperation;
+use App\GoogleCloud\IamPolicy;
 use App\GoogleCloud\QueueConfig;
 use App\GoogleCloud\SchedulerJobConfig;
 use App\GoogleProject;
@@ -410,14 +411,35 @@ class GoogleApi
         }
     }
 
-    public function getProjectIamPolicys($email)
+    /**
+     * Get the IAM Policy for a Google Project.
+     *
+     * @return IamPolicy
+     */
+    public function getProjectIamPolicy(): IamPolicy
     {
-        $account = urlencode($email);
+        return new IamPolicy(
+            $this->request(
+                "https://cloudresourcemanager.googleapis.com/v1/projects/{$this->googleProject->project_id}:getIamPolicy",
+                'POST',
+                false
+            )
+        );
+    }
+
+    /**
+     * Set the IAM Policy for a Google Project.
+     *
+     * @return IamPolicy
+     */
+    public function setProjectIamPolicy(IamPolicy $policy)
+    {
         return $this->request(
-            // "https://iam.googleapis.com/v1/projects/{$this->googleProject->project_id}/serviceAccounts/{$account}:getIamPolicy",
-            "https://cloudresourcemanager.googleapis.com/v1/projects/{$this->googleProject->project_id}/serviceAccounts/{$email}:getIamPolicy",
+            "https://cloudresourcemanager.googleapis.com/v1/projects/{$this->googleProject->project_id}:setIamPolicy",
             'POST',
-            false
+            [
+                'policy' => $policy->getPolicy(),
+            ]
         );
     }
 

@@ -18,6 +18,7 @@ class CreateGoogleProjectsTable extends Migration
             $table->unsignedBigInteger('team_id');
             $table->string('name');
             $table->string('project_id');
+            $table->string('project_number')->nullable();
             $table->string('status')->default('pending');
             $table->string('operation_name')->nullable();
             $table->json('service_account_json');
