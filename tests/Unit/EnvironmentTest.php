@@ -7,6 +7,7 @@ use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
+use App\Jobs\SetBuildSecrets;
 use App\Jobs\StartDeployment;
 use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
@@ -32,6 +33,7 @@ class EnvironmentTest extends TestCase
         $environment->createInitialDeployment();
 
         Queue::assertPushedWithChain(StartDeployment::class, [
+            SetBuildSecrets::class,
             CreateImageForDeployment::class,
             ConfigureQueues::class,
             WaitForImageToBeBuilt::class,
@@ -54,6 +56,7 @@ class EnvironmentTest extends TestCase
         $environment->createInitialDeployment();
 
         Queue::assertPushedWithChain(StartDeployment::class, [
+            SetBuildSecrets::class,
             CreateImageForDeployment::class,
             ConfigureQueues::class,
             WaitForImageToBeBuilt::class,

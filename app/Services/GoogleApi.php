@@ -23,7 +23,6 @@ use Google\Cloud\SecretManager\V1\Replication\Automatic;
 use Google\Cloud\SecretManager\V1\Secret;
 use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
 use Google\Cloud\SecretManager\V1\SecretPayload;
-use Google\Protobuf\FieldMask;
 use Google_Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\RequestException;
@@ -375,8 +374,11 @@ class GoogleApi
      */
     public function setSecret(string $key, string $value)
     {
-        $client = new SecretManagerServiceClient([
-            'keyFile' => $this->googleProject->service_account_json,
+        /** @var \Google\Cloud\SecretManager\V1\SecretManagerServiceClient */
+        $client = app(SecretManagerServiceClient::class, [
+            'options' => [
+                'credentials' => $this->googleProject->service_account_json,
+            ],
         ]);
 
         // Build the parent name from the project.
@@ -385,15 +387,11 @@ class GoogleApi
         // Try fetching the secret first, and update it.
         try {
             $name = $client->secretName($this->googleProject->project_id, $key);
-            $secret = $client->getSecret($name);
+            $client->getSecret($name);
 
-            $secret->setLabels([
+            return $client->addSecretVersion($name, new SecretPayload([
                 'data' => $value,
-            ]);
-
-            $updateMask = (new FieldMask())->setPaths(['labels']);
-
-            return $client->updateSecret($secret, $updateMask);
+            ]));
         } catch (ApiException $e) {
             // Otherwise, it needs to be created
             $secret = $client->createSecret(
