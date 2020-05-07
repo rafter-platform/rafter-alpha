@@ -81,25 +81,28 @@ class CloudBuildConfig
     protected function downloadGitRepoStep()
     {
         return [
-            'name' => 'gcr.io/cloud-builders/git',
-            'args' => ['clone', '--depth=1', $this->deployment->cloneUrl()],
+            'name' => 'gcr.io/cloud-builders/curl',
+            'entrypoint' => 'bash',
+            'args' => ['-c', 'curl -L --output repo.tar.gz ' . $this->deployment->tarballUrl()],
         ];
-
-        // TODO: Get tarball working, as it will be much smaller
-        // return [
-        //     'name' => 'gcr.io/cloud-builders/curl',
-        //     'args' => [$this->deployment->tarballUrl(), '-L', '--output', 'repo.tar.gz'],
-        // ];
     }
 
     /**
-     * Get the name of the repo's project
+     * Get the name of the repo, formatted as the extracted tarball folder:
+     * user-repo-shorthash
      *
      * @return string
      */
     protected function repoName()
     {
-        return explode('/', $this->deployment->repository())[1];
+        $repo = str_replace('/', '-', $this->deployment->repository());
+        $shortHash = substr($this->deployment->commit_hash, 0, 7);
+
+        return sprintf(
+            "%s-%s",
+            $repo,
+            $shortHash
+        );
     }
 
     /**
@@ -150,13 +153,27 @@ class CloudBuildConfig
                 'args' => ['-c', 'gcloud secrets versions access latest --secret=' . $this->deployment->environment->gitTokenSecretName() . ' > git-token.txt'],
             ],
 
-            // DEBUG: echo out the secret
+            // Store the token in a variable
             [
                 'name' => 'ubuntu',
-                'args' => ['cat', 'git-token.txt'],
+                'entrypoint' => 'bash',
+                'args' => ['-c', 'TOKEN=$(cat git-token.txt)'],
             ],
 
             $this->isGitBased() ? $this->downloadGitRepoStep() : [],
+
+            // DEBUG
+            [
+                'name' => 'ubuntu',
+                'args' => ['ls', '-la', './'],
+            ],
+
+            // Extract the tarball
+            $this->isGitBased() ? [
+                'name' => 'ubuntu',
+                'entrypoint' => 'bash',
+                'args' => ['-c', 'tar xzvf repo.tar.gz'],
+            ] : [],
 
             // Copy the Dockerfile we need
             [
@@ -172,7 +189,7 @@ class CloudBuildConfig
                 'dir' => $this->isGitBased() ? $this->repoName() : '',
             ],
 
-            // TEST: Show the dir
+            // DEBUG
             [
                 'name' => 'ubuntu',
                 'args' => ['ls', '-la', './'],

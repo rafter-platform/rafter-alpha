@@ -109,7 +109,7 @@ class GitHub implements SourceProviderClient
             'https://api.github.com/repos/%s/tarball/%s?access_token=%s',
             $deployment->repository(),
             $deployment->commit_hash,
-            $this->token()
+            '$$TOKEN'
         );
     }
 
