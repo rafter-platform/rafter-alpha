@@ -7,6 +7,7 @@ use App\Jobs\CreateCloudRunService;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
+use App\Jobs\SetBuildSecrets;
 use App\Jobs\StartDeployment;
 use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
@@ -32,6 +33,7 @@ class EnvironmentTest extends TestCase
         $environment->createInitialDeployment();
 
         Queue::assertPushedWithChain(StartDeployment::class, [
+            SetBuildSecrets::class,
             CreateImageForDeployment::class,
             ConfigureQueues::class,
             WaitForImageToBeBuilt::class,
@@ -54,6 +56,7 @@ class EnvironmentTest extends TestCase
         $environment->createInitialDeployment();
 
         Queue::assertPushedWithChain(StartDeployment::class, [
+            SetBuildSecrets::class,
             CreateImageForDeployment::class,
             ConfigureQueues::class,
             WaitForImageToBeBuilt::class,
@@ -80,12 +83,12 @@ class EnvironmentTest extends TestCase
 
         Http::assertSent(function ($request) use ($environment) {
             return $request->method() === 'POST'
-            && $request->url() == "https://cloudscheduler.googleapis.com/v1/projects/{$environment->projectId()}/locations/{$environment->region()}/jobs"
-            && $request['name'] == "projects/{$environment->projectId()}/locations/{$environment->region()}/jobs/{$environment->slug()}-run-schedule"
-            && $request['schedule'] == '* * * * *'
-            && $request['httpTarget']['uri'] == $environment->worker_url . '/_rafter/schedule/run'
-            && $request['httpTarget']['httpMethod'] == 'POST'
-            && $request['httpTarget']['oidcToken']['serviceAccountEmail'] == 'rafter@rafter.service.account.com';
+                && $request->url() == "https://cloudscheduler.googleapis.com/v1/projects/{$environment->projectId()}/locations/{$environment->region()}/jobs"
+                && $request['name'] == "projects/{$environment->projectId()}/locations/{$environment->region()}/jobs/{$environment->slug()}-run-schedule"
+                && $request['schedule'] == '* * * * *'
+                && $request['httpTarget']['uri'] == $environment->worker_url . '/_rafter/schedule/run'
+                && $request['httpTarget']['httpMethod'] == 'POST'
+                && $request['httpTarget']['oidcToken']['serviceAccountEmail'] == 'rafter@rafter.service.account.com';
         });
     }
 }

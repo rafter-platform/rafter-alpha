@@ -1,0 +1,69 @@
+{
+    "version": 1,
+    "etag": "BwWk/fff4lc=",
+    "bindings": [
+        {
+            "role": "roles/cloudbuild.builds.builder",
+            "members": [
+                "serviceAccount:123456789@cloudbuild.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/cloudbuild.serviceAgent",
+            "members": [
+                "serviceAccount:service-123456789@gcp-sa-cloudbuild.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/cloudscheduler.serviceAgent",
+            "members": [
+                "serviceAccount:service-123456789@gcp-sa-cloudscheduler.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/cloudtasks.serviceAgent",
+            "members": [
+                "serviceAccount:service-123456789@gcp-sa-cloudtasks.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/compute.serviceAgent",
+            "members": [
+                "serviceAccount:service-123456789@compute-system.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/editor",
+            "members": [
+                "serviceAccount:123456789-compute@developer.gserviceaccount.com",
+                "serviceAccount:123456789@cloudservices.gserviceaccount.com",
+                "serviceAccount:rafter-demo-project@appspot.gserviceaccount.com",
+                "serviceAccount:service-123456789@containerregistry.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/firebaserules.system",
+            "members": [
+                "serviceAccount:service-123456789@firebase-rules.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/owner",
+            "members": [
+                "serviceAccount:rafter@rafter-demo-project.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/run.serviceAgent",
+            "members": [
+                "serviceAccount:service-123456789@serverless-robot-prod.iam.gserviceaccount.com"
+            ]
+        },
+        {
+            "role": "roles/secretmanager.secretAccessor",
+            "members": [
+                "serviceAccount:123456789@cloudbuild.gserviceaccount.com"
+            ]
+        }
+    ]
+}

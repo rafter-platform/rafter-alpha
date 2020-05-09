@@ -14,10 +14,17 @@ use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\DomainMappingConfig;
 use App\GoogleCloud\EnableApisOperation;
+use App\GoogleCloud\IamPolicy;
 use App\GoogleCloud\QueueConfig;
 use App\GoogleCloud\SchedulerJobConfig;
 use App\GoogleProject;
+use Google\ApiCore\ApiException;
 use Google\Cloud\Logging\LoggingClient;
+use Google\Cloud\SecretManager\V1\Replication;
+use Google\Cloud\SecretManager\V1\Replication\Automatic;
+use Google\Cloud\SecretManager\V1\Secret;
+use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
+use Google\Cloud\SecretManager\V1\SecretPayload;
 use Google_Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\RequestException;
@@ -30,7 +37,8 @@ class GoogleApi
     protected $googleProject;
     protected $googleClient;
 
-    public function __construct(GoogleProject $googleProject) {
+    public function __construct(GoogleProject $googleProject)
+    {
         $this->googleProject = $googleProject;
         $this->googleClient = app(Google_Client::class);
         $this->googleClient->setAuthConfig($googleProject->service_account_json);
@@ -398,6 +406,82 @@ class GoogleApi
     }
 
     /**
+     * Set or create a secret in Secret Manager API
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public function setSecret(string $key, string $value)
+    {
+        /** @var \Google\Cloud\SecretManager\V1\SecretManagerServiceClient */
+        $client = app(SecretManagerServiceClient::class, [
+            'options' => [
+                'credentials' => $this->googleProject->service_account_json,
+            ],
+        ]);
+
+        // Build the parent name from the project.
+        $parent = $client->projectName($this->googleProject->project_id);
+
+        // Try fetching the secret first, and update it.
+        try {
+            $name = $client->secretName($this->googleProject->project_id, $key);
+            $client->getSecret($name);
+
+            return $client->addSecretVersion($name, new SecretPayload([
+                'data' => $value,
+            ]));
+        } catch (ApiException $e) {
+            // Otherwise, it needs to be created
+            $secret = $client->createSecret(
+                $parent,
+                $key,
+                new Secret([
+                    'replication' => new Replication([
+                        'automatic' => new Automatic(),
+                    ]),
+                ])
+            );
+
+            return $client->addSecretVersion($secret->getName(), new SecretPayload([
+                'data' => $value,
+            ]));
+        }
+    }
+
+    /**
+     * Get the IAM Policy for a Google Project.
+     *
+     * @return IamPolicy
+     */
+    public function getProjectIamPolicy(): IamPolicy
+    {
+        return new IamPolicy(
+            $this->request(
+                "https://cloudresourcemanager.googleapis.com/v1/projects/{$this->googleProject->project_id}:getIamPolicy",
+                'POST',
+                false
+            )
+        );
+    }
+
+    /**
+     * Set the IAM Policy for a Google Project.
+     *
+     * @return IamPolicy
+     */
+    public function setProjectIamPolicy(IamPolicy $policy)
+    {
+        return $this->request(
+            "https://cloudresourcemanager.googleapis.com/v1/projects/{$this->googleProject->project_id}:setIamPolicy",
+            'POST',
+            [
+                'policy' => $policy->getPolicy(),
+            ]
+        );
+    }
+
+    /**
      * Request data from the Google Cloud API.
      *
      * @param string $endpoint
@@ -408,10 +492,17 @@ class GoogleApi
     protected function request($endpoint, $method = 'GET', $data = [])
     {
         try {
-            return Http::withToken($this->token())
-                ->{$method}($endpoint, $data)
-                ->throw()
-                ->json();
+            if ($data === false) {
+                return Http::withToken($this->token())
+                    ->send($method, $endpoint)
+                    ->throw()
+                    ->json();
+            } else {
+                return Http::withToken($this->token())
+                    ->$method($endpoint, $data)
+                    ->throw()
+                    ->json();
+            }
         } catch (RequestException $exception) {
             Log::error($exception->response->body());
 

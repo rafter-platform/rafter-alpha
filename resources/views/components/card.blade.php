@@ -1,11 +1,21 @@
-<div {{ $attributes->merge(['class' => "card break-words bg-white border border-2 rounded shadow mb-4 p-4"]) }}">
-    @unless (empty($title))
-    <div class="text-xl mb-4">
-        {{ $title }}
+<div {{ $attributes->merge(['class' => "bg-white overflow-hidden shadow rounded-lg" ]) }}>
+    @if ($title ?? false)
+    <div class="border-b border-gray-200 px-4 py-5 sm:px-6">
+        <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap">
+            <div class="ml-4 mt-2">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    {{ $title }}
+                </h3>
+            </div>
+            @if ($action ?? false)
+                <div class="ml-4 mt-2 flex-shrink-0">
+                    {{ $action }}
+                </div>
+            @endif
+        </div>
     </div>
-    @endunless
-
-    <div class="text-gray-700 font-normal">
+    @endif
+    <div class="px-4 py-5 sm:p-6">
         {{ $slot }}
     </div>
 </div>

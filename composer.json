@@ -9,9 +9,11 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "driesvints/blade-icons": "^2.2",
         "fideloper/proxy": "^4.0",
         "google/apiclient": "^2.0",
         "google/cloud-logging": "^1.20",
+        "google/cloud-secret-manager": "^1.0",
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "^7.0",
         "laravel/telescope": "^3.2",

@@ -58,7 +58,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Deployments
     Route::resource('projects.environments.deployments', 'DeploymentController');
-    Route::post('projects/{project}/environments/{environment}/deployments/{deployment}/redeploy', 'DeploymentController@redeploy')
+    Route::post('projects/{project}/environments/{environment}/deployments/{deployment}/redeploy', 'RedeployDeploymentController')
         ->name('projects.environments.deployments.redeploy');
 
     // Logs
@@ -68,6 +68,12 @@ Route::group(['middleware' => ['auth']], function () {
     // Domains
     Route::get('projects/{project}/environments/{environment}/domains', 'EnvironmentDomainsController')
         ->name('projects.environments.domains');
+
+    // Commands
+    Route::get('projects/{project}/environments/{environment}/commands', 'CommandController@index')
+        ->name('projects.environments.commands.index');
+    Route::get('projects/{project}/environments/{environment}/commands/{command}', 'CommandController@show')
+        ->name('projects.environments.commands.show');
 
     // Database Instances
     Route::resource('database-instances', 'DatabaseInstanceController');

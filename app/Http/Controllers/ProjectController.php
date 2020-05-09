@@ -13,7 +13,8 @@ use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->authorizeResource('App\Project');
     }
 
@@ -74,7 +75,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return view('projects.show', ['project' => $project->loadMissing('environments.deployments')]);
+        return redirect()->route('projects.environments.show', [$project, $project->production()]);
     }
 
     /**

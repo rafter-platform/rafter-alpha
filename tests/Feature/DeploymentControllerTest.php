@@ -51,10 +51,10 @@ class DeploymentControllerTest extends TestCase
             ->assertSuccessful();
 
         $this->get(route('projects.environments.deployments.show', [
-                $this->other->environment->project,
-                $this->other->environment,
-                $this->other
-            ]))
+            $this->other->environment->project,
+            $this->other->environment,
+            $this->other
+        ]))
             ->assertForbidden();
     }
 }

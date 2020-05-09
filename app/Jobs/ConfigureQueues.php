@@ -3,14 +3,21 @@
 namespace App\Jobs;
 
 use App\GoogleCloud\QueueConfig;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class ConfigureQueues extends DeploymentStepJob
+class ConfigureQueues implements ShouldQueue
 {
-    public function execute()
-    {
-        $queueConfig = new QueueConfig($this->deployment->environment);
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
-        $this->deployment->environment->client()->createOrUpdateQueue($queueConfig);
+    public function handle()
+    {
+        $queueConfig = new QueueConfig($this->model->environment);
+
+        $this->model->environment->client()->createOrUpdateQueue($queueConfig);
 
         return true;
     }

@@ -38,13 +38,5 @@ class ProjectControllerTest extends TestCase
         });
 
         $response->assertDontSee($this->otherProject->name);
-
-        $response = $this->actingAs($this->user)
-            ->get('/projects/' . $projects->first()->id)
-            ->assertSuccessful();
-
-        $response = $this->actingAs($this->user)
-            ->get('/projects/'.$this->otherProject->id)
-            ->assertForbidden();
     }
 }

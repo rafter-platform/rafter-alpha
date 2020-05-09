@@ -3,17 +3,6 @@
 namespace App;
 
 use App\GoogleCloud\SchedulerJobConfig;
-use App\Jobs\ConfigureQueues;
-use App\Jobs\CreateCloudRunService;
-use App\Jobs\CreateImageForDeployment;
-use App\Jobs\EnsureAppIsPublic;
-use App\Jobs\FinalizeDeployment;
-use App\Jobs\StartDeployment;
-use App\Jobs\StartScheduler;
-use App\Jobs\UpdateCloudRunService;
-use App\Jobs\UpdateCloudRunServiceWithUrls;
-use App\Jobs\WaitForCloudRunServiceToDeploy;
-use App\Jobs\WaitForImageToBeBuilt;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
@@ -24,6 +13,10 @@ class Environment extends Model
 {
     const INITIAL_ENVIRONMENTS = [
         'production',
+    ];
+
+    protected $hidden = [
+        'environmental_variables',
     ];
 
     protected $fillable = [
@@ -47,6 +40,11 @@ class Environment extends Model
         return $this->belongsTo('App\Database');
     }
 
+    public function commands()
+    {
+        return $this->hasMany('App\Command')->latest();
+    }
+
     public function sourceProvider()
     {
         return $this->project->sourceProvider;
@@ -64,8 +62,12 @@ class Environment extends Model
      */
     public function activeDeployment()
     {
-        // TODO: Update logic to actually set an active_deployment_id when a deployment is active
-        return $this->deployments()->first();
+        return $this->belongsTo('App\Deployment', 'active_deployment_id');
+    }
+
+    public function repository(): ?string
+    {
+        return $this->project->repository;
     }
 
     /**
@@ -140,6 +142,16 @@ class Environment extends Model
     }
 
     /**
+     * Whether this environment has been successfully deployed at least once.
+     *
+     * @return boolean
+     */
+    public function hasBeenDeployedSuccessfully()
+    {
+        return $this->activeDeployment()->exists();
+    }
+
+    /**
      * Provision an environment for the first time.
      *
      * @return void
@@ -206,32 +218,40 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
-        // TODO: Make this a responsibility of... something else?
-        // especially the per-project-type stuff
-        $jobs = [
-            new StartDeployment($deployment),
-            new CreateImageForDeployment($deployment),
-            new ConfigureQueues($deployment),
-            new WaitForImageToBeBuilt($deployment),
-            new CreateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            // // Deploy the service another time, since we now have URL env vars set
-            new UpdateCloudRunServiceWithUrls($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            $this->project->isLaravel() ? new StartScheduler($deployment) : false,
-            new FinalizeDeployment($deployment),
-        ];
+        $jobs = DeploymentSteps::for($deployment)
+            ->initialDeployment()
+            ->get();
 
-        Bus::dispatchChain(array_filter($jobs));
+        Bus::dispatchChain($jobs);
 
         return $deployment;
     }
 
     /**
-     * Create a new deployment on Cloud Run.
+     * Deploy the HEAD of the current branch.
+     *
+     * @param int|null $initiatorId
+     * @return Deployment
      */
-    public function deploy($commitHash, $commitMessage, $initiatorId)
+    public function deploy($initiatorId): Deployment
+    {
+        $hash = $this->sourceProvider()->client()->latestHashFor($this->repository(), $this->branch);
+
+        $deployment = $this->deployments()->create([
+            'commit_hash' => $hash,
+            'commit_message' => 'Manual deploy',
+            'initiator_id' => $initiatorId,
+        ]);
+
+        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
+
+        return $deployment;
+    }
+
+    /**
+     * Create a new deployment on Cloud Run for a specific hash.
+     */
+    public function deployHash($commitHash, $commitMessage, $initiatorId): Deployment
     {
         $deployment = $this->deployments()->create([
             'commit_hash' => $commitHash,
@@ -239,15 +259,7 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
-            new CreateImageForDeployment($deployment),
-            new ConfigureQueues($deployment),
-            new WaitForImageToBeBuilt($deployment),
-            new UpdateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            new FinalizeDeployment($deployment),
-        ])->dispatch();
+        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
 
         return $deployment;
     }
@@ -259,24 +271,26 @@ class Environment extends Model
      * @param int|null $initiatorId
      * @return Deployment
      */
-    public function redeploy(Deployment $deployment, $initiatorId)
+    public function redeploy(Deployment $deployment, $initiatorId): Deployment
     {
-        $deployment = $this->deployments()->create([
+        $newDeployment = $this->deployments()->create([
             'commit_hash' => $deployment->commit_hash,
             'commit_message' => $deployment->commit_message,
             'image' => $deployment->image,
             'initiator_id' => $initiatorId,
         ]);
 
-        (new StartDeployment($deployment))->withDeploymentChain([
-            new ConfigureQueues($deployment),
-            new UpdateCloudRunService($deployment),
-            new WaitForCloudRunServiceToDeploy($deployment),
-            new EnsureAppIsPublic($deployment),
-            new FinalizeDeployment($deployment),
-        ])->dispatch();
+        $steps = DeploymentSteps::for($newDeployment);
 
-        return $deployment;
+        if ($this->hasBeenDeployedSuccessfully()) {
+            $steps->redeploy();
+        } else {
+            $steps->initialDeployment();
+        }
+
+        Bus::dispatchChain($steps->get());
+
+        return $newDeployment;
     }
 
     /**
@@ -284,7 +298,7 @@ class Environment extends Model
      */
     public function setUrl($url)
     {
-        if (! empty($this->url)) return;
+        if (!empty($this->url)) return;
 
         $this->url = $url;
         $this->save();
@@ -300,7 +314,7 @@ class Environment extends Model
      */
     public function setWorkerUrl($url)
     {
-        if (! empty($this->worker_url)) return;
+        if (!empty($this->worker_url)) return;
 
         $this->worker_url = $url;
         $this->save();
@@ -338,6 +352,32 @@ class Environment extends Model
     public function startScheduler()
     {
         return $this->client()->createSchedulerJob(new SchedulerJobConfig($this));
+    }
+
+    /**
+     * Set a secret using Google Secret Manager for this environment.
+     *
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+    public function setSecret(string $key, string $value)
+    {
+        return $this->client()->setSecret($key, $value);
+    }
+
+    /**
+     * The git token secret name to be used during Cloud Build.
+     *
+     * @return string
+     */
+    public function gitTokenSecretName(): string
+    {
+        return sprintf(
+            '%s-%s',
+            'rafter-git-token',
+            $this->slug()
+        );
     }
 
     /**

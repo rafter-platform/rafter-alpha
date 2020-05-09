@@ -86,5 +86,7 @@ class LogViewer extends Component
                 $log['httpRequest']['requestUrl']
             );
         }
+
+        return '';
     }
 }

@@ -1,4 +1,4 @@
-<div class="flex flex-wrap mb-6">
+<div class="flex flex-wrap mb-6" {{ $attributes->only('x-show') }}>
     <label for="{{ $name }}" class="block text-gray-700 text-sm font-bold mb-2">
         {{ $label }}:
     </label>
@@ -7,7 +7,7 @@
         id="{{ $name }}"
         class="form-select w-full @error($name) border-red-500 @enderror"
         value="{{ old($name) }}"
-        {{ $attributes->except('options') }}>
+        {{ $attributes->except('options', 'x-show') }}>
         @foreach ($options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach
