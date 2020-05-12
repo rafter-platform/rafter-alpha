@@ -34,6 +34,7 @@ class DomainMappingTest extends TestCase
         $mapping->checkStatus();
 
         $this->assertEquals(DomainMapping::STATUS_UNVERIFIED, $mapping->status);
+        $this->assertRegExp('/verified owner/i', $mapping->message);
     }
 
     public function test_it_marks_status_if_pending_dns_records()
@@ -47,6 +48,9 @@ class DomainMappingTest extends TestCase
         $mapping->checkStatus();
 
         $this->assertEquals(DomainMapping::STATUS_PENDING_DNS, $mapping->status);
+        $this->assertRegExp('/CNAME/i', $mapping->message);
+        $this->assertRegExp('/www/i', $mapping->message);
+        $this->assertRegExp('/ghs.googlehosted.com./i', $mapping->message);
     }
 
     public function test_it_marks_status_if_pending_certificate()
@@ -60,6 +64,8 @@ class DomainMappingTest extends TestCase
         $mapping->checkStatus();
 
         $this->assertEquals(DomainMapping::STATUS_PENDING_CERTIFICATE, $mapping->status);
+        $this->assertRegExp('/certificate/i', $mapping->message);
+        $this->assertRegExp('/issued/i', $mapping->message);
     }
 
     public function test_it_marks_status_if_ready()
@@ -73,6 +79,7 @@ class DomainMappingTest extends TestCase
         $mapping->checkStatus();
 
         $this->assertEquals(DomainMapping::STATUS_ACTIVE, $mapping->status);
+        $this->assertEquals('', $mapping->message);
     }
 
     public function test_it_stays_inactive_if_status_empty()

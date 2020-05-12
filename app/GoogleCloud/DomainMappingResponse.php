@@ -67,4 +67,9 @@ class DomainMappingResponse
     {
         return $this->response;
     }
+
+    public function dnsRecords(): array
+    {
+        return $this->response['status']['resourceRecords'] ?? [];
+    }
 }
