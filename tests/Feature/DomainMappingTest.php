@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\DomainMapping;
+use App\Jobs\CheckDomainMappingStatus;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Tests\Support\FakeGoogleApiClient;
 use Tests\TestCase;
 
@@ -21,6 +23,8 @@ class DomainMappingTest extends TestCase
         parent::setUp();
 
         $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
+
+        Queue::fake();
     }
 
     public function test_it_marks_status_if_unverified()
@@ -35,6 +39,8 @@ class DomainMappingTest extends TestCase
 
         $this->assertEquals(DomainMapping::STATUS_UNVERIFIED, $mapping->status);
         $this->assertRegExp('/verified owner/i', $mapping->message);
+
+        Queue::assertNothingPushed();
     }
 
     public function test_it_marks_status_if_pending_dns_records()
@@ -51,6 +57,8 @@ class DomainMappingTest extends TestCase
         $this->assertRegExp('/CNAME/i', $mapping->message);
         $this->assertRegExp('/www/i', $mapping->message);
         $this->assertRegExp('/ghs.googlehosted.com./i', $mapping->message);
+
+        Queue::assertPushed(CheckDomainMappingStatus::class);
     }
 
     public function test_it_marks_status_if_pending_certificate()
@@ -66,6 +74,8 @@ class DomainMappingTest extends TestCase
         $this->assertEquals(DomainMapping::STATUS_PENDING_CERTIFICATE, $mapping->status);
         $this->assertRegExp('/certificate/i', $mapping->message);
         $this->assertRegExp('/issued/i', $mapping->message);
+
+        Queue::assertPushed(CheckDomainMappingStatus::class);
     }
 
     public function test_it_marks_status_if_ready()
@@ -80,6 +90,8 @@ class DomainMappingTest extends TestCase
 
         $this->assertEquals(DomainMapping::STATUS_ACTIVE, $mapping->status);
         $this->assertEquals('', $mapping->message);
+
+        Queue::assertNothingPushed();
     }
 
     public function test_it_stays_inactive_if_status_empty()
@@ -93,6 +105,8 @@ class DomainMappingTest extends TestCase
         $mapping->checkStatus();
 
         $this->assertEquals(DomainMapping::STATUS_INACTIVE, $mapping->status);
+
+        Queue::assertPushed(CheckDomainMappingStatus::class);
     }
 
     protected function createMapping(): DomainMapping
