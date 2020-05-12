@@ -119,7 +119,11 @@ class DomainMapping extends Model
         $message = $error->getMessage();
 
         if ($error instanceof RequestException) {
-            $message = "Your domain did not meet Cloud Run's guidelines. Please delete and try a different domain.";
+            if ($error->getCode() == 404) {
+                $message = "Your domain was deleted from Cloud Run's dashboard. Please delete it locally.";
+            } else {
+                $message = "Your domain did not meet Cloud Run's guidelines. Please delete and try a different domain.";
+            }
         }
 
         $this->update([
