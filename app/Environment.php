@@ -52,7 +52,7 @@ class Environment extends Model
 
     public function domainMappings()
     {
-        return $this->hasMany('App\DomainMapping');
+        return $this->hasMany('App\DomainMapping')->latest();
     }
 
     /**
@@ -407,10 +407,15 @@ class Environment extends Model
      */
     public function addDomainMapping($data): DomainMapping
     {
-        return tap($this->domainMappings()->create($data), function ($mapping) {
+        $mapping = $this->domainMappings()->create($data);
+
+        $this->refresh();
+
+        dispatch(function () use ($mapping) {
             $mapping->provision();
-            $this->refresh();
         });
+
+        return $mapping;
     }
 
     public function client(): GoogleApi
