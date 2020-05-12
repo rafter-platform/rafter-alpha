@@ -33,7 +33,9 @@
 
             @foreach ($mappings as $idx => $mapping)
                 <x-tr :idx="$idx">
-                    <x-td class="font-medium">{{ $mapping->domain }}</x-td>
+                    <x-td class="font-medium">
+                        <a href="https://{{ $mapping->domain }}" target="_blank">{{ $mapping->domain }}</a>
+                    </x-td>
                     <x-td><x-status :status="$mapping->status" /></x-td>
                     <x-td>
                         <div class="text-xs whitespace-normal">
