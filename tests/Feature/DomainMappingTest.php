@@ -4,13 +4,14 @@ namespace Tests\Feature;
 
 use App\DomainMapping;
 use App\Jobs\CheckDomainMappingStatus;
+use Exception;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Tests\Support\FakeGoogleApiClient;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 
 class DomainMappingTest extends TestCase
 {
@@ -107,6 +108,35 @@ class DomainMappingTest extends TestCase
         $this->assertEquals(DomainMapping::STATUS_INACTIVE, $mapping->status);
 
         Queue::assertPushed(CheckDomainMappingStatus::class);
+    }
+
+    public function test_a_mapping_can_be_deleted()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        $mapping = $this->createMapping();
+
+        $mapping->markActive();
+
+        $mapping->delete();
+
+        Http::assertSent(function ($request) {
+            return Str::of($request->url())->contains('domainmappings/www.rafter.app')
+                && $request->method() == 'DELETE';
+        });
+    }
+
+    public function test_an_errored_mapping_is_not_deleted_remotely()
+    {
+        $mapping = $this->createMapping();
+
+        $mapping->markError(new Exception('Some Error'));
+
+        $mapping->delete();
+
+        Http::assertNothingSent();
     }
 
     protected function createMapping(): DomainMapping

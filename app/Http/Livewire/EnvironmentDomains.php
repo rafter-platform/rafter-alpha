@@ -2,10 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\DomainMapping;
 use App\Environment;
 use App\Rules\ValidDomain;
 use Livewire\Component;
-use Illuminate\Support\Str;
 
 class EnvironmentDomains extends Component
 {
@@ -41,6 +41,12 @@ class EnvironmentDomains extends Component
 
         $this->environment->addDomainMapping($data);
         $this->domain = '';
+    }
+
+    public function deleteDomain($id)
+    {
+        $mapping = DomainMapping::find($id);
+        $mapping->delete();
     }
 
     public function render()

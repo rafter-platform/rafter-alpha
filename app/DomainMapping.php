@@ -48,6 +48,15 @@ class DomainMapping extends Model
 
     protected $guarded = [];
 
+    protected static function booted()
+    {
+        static::deleting(function ($mapping) {
+            if ($mapping->isErrored()) return;
+
+            $mapping->client()->deleteCloudRunDomainMapping($mapping);
+        });
+    }
+
     public function environment()
     {
         return $this->belongsTo('App\Environment');
@@ -130,6 +139,11 @@ class DomainMapping extends Model
             'status' => static::STATUS_ERROR,
             'message' => $message,
         ]);
+    }
+
+    public function isErrored()
+    {
+        return $this->status == static::STATUS_ERROR;
     }
 
     /**

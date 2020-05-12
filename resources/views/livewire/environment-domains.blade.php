@@ -42,7 +42,11 @@
                             {!! $mapping->message !!}
                         </div>
                     </x-td>
-                    <x-td last />
+                    <x-td last>
+                        <x-dropdown-menu>
+                            <x-dropdown-menu-item wire:click="deleteDomain({{ $mapping->id }})">Delete</x-dropdown-menu-item>
+                        </x-dropdown-menu>
+                    </x-td>
                 </x-tr>
             @endforeach
         </x-table>

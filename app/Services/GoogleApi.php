@@ -263,6 +263,27 @@ class GoogleApi
     }
 
     /**
+     * Delete a Cloud Run domain mapping
+     *
+     * @param DomainMapping $mapping
+     * @return array
+     */
+    public function deleteCloudRunDomainMapping(DomainMapping $mapping): array
+    {
+        $region = $mapping->environment->region();
+
+        return $this->request(
+            sprintf(
+                'https://%s-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/%s/domainmappings/%s',
+                $region,
+                $this->googleProject->project_id,
+                $mapping->domain
+            ),
+            'DELETE'
+        );
+    }
+
+    /**
      * Create a Database Instance on Google Cloud.
      */
     public function createDatabaseInstance(DatabaseInstanceConfig $databaseInstanceConfig)
