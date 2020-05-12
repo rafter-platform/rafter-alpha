@@ -33,10 +33,6 @@ class CheckDomainMappingStatus implements ShouldQueue
      */
     public function handle()
     {
-        try {
-            $this->domainMapping->checkStatus();
-        } catch (Throwable $e) {
-            $this->fail($e);
-        }
+        $this->domainMapping->checkStatus();
     }
 }

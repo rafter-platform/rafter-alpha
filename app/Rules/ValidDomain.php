@@ -17,7 +17,11 @@ class ValidDomain implements Rule
     public function passes($attribute, $value)
     {
         return Str::of($value)->contains('.')
-            && !Str::of($value)->contains('/');
+            && !Str::of($value)->contains('/')
+            && !Str::of($value)->contains(':')
+            && !Str::of($value)->startsWith(['.', '-'])
+            && !Str::of($value)->endsWith(['.', '-'])
+            && strtolower($value) == $value;
     }
 
     /**
@@ -27,6 +31,7 @@ class ValidDomain implements Rule
      */
     public function message()
     {
-        return 'Provide a standard domain or subdomain. Services can not be mapped to paths and should not contain any trailing slashes.';
+        return "Provide a standard domain or subdomain. Services can not be mapped to paths and should not contain any trailing slashes. "
+            . "Only lowercase alphanumeric characters, in addition to '.' and '-', are allowed.";
     }
 }

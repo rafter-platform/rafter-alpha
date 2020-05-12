@@ -40,6 +40,7 @@ class Status extends Component
             case 'in_progress':
             case 'creating':
             case 'started':
+            case 'unverified':
                 $color = 'yellow';
                 break;
 
@@ -52,6 +53,7 @@ class Status extends Component
                 break;
 
             case 'failed':
+            case 'error':
                 $color = 'red';
                 break;
 

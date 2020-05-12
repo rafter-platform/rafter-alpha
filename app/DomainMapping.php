@@ -8,7 +8,7 @@ use App\Jobs\CheckDomainMappingStatus;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class DomainMapping extends Model
 {
@@ -114,6 +114,20 @@ class DomainMapping extends Model
         ]);
     }
 
+    public function markError(Throwable $error)
+    {
+        $message = $error->getMessage();
+
+        if ($error instanceof RequestException) {
+            $message = "Your domain did not meet Cloud Run's guidelines. Please delete and try a different domain.";
+        }
+
+        $this->update([
+            'status' => static::STATUS_ERROR,
+            'message' => $message,
+        ]);
+    }
+
     /**
      * Provision a domain mapping to Google Cloud.
      *
@@ -126,7 +140,7 @@ class DomainMapping extends Model
 
             CheckDomainMappingStatus::dispatch($this)->delay(3);
         } catch (RequestException $e) {
-            $this->update(['message' => $e->getMessage()]);
+            $this->markError($e);
         }
     }
 
@@ -138,7 +152,12 @@ class DomainMapping extends Model
      */
     public function checkStatus()
     {
-        $mapping = $this->getMapping();
+        try {
+            $mapping = $this->getMapping();
+        } catch (Throwable $e) {
+            $this->markError($e);
+            return;
+        }
 
         if ($mapping->isActive()) {
             $this->markActive();
