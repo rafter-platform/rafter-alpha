@@ -17,6 +17,7 @@ class CreateDomainMappingsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('domain');
+            $table->longText('message')->nullable();
             $table->string('status')->default('inactive');
             $table->unsignedBigInteger('environment_id');
 

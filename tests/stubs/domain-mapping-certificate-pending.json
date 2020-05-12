@@ -1,0 +1,62 @@
+{
+    "apiVersion": "domains.cloudrun.com/v1",
+    "kind": "DomainMapping",
+    "metadata": {
+        "name": "laravel-demo-3.rafter.app",
+        "namespace": "1018375464568",
+        "selfLink": "/apis/domains.cloudrun.com/v1/namespaces/1018375464568/domainmappings/laravel-demo-3.rafter.app",
+        "uid": "38d2d4cc-0aaa-4200-bd64-00ec9eafaa75",
+        "resourceVersion": "AAWlY70uIsA",
+        "generation": 1,
+        "creationTimestamp": "2020-05-11T18:43:02.236631Z",
+        "labels": {
+            "run.googleapis.com/overrideAt": "2020-05-11T18:43:03.702Z",
+            "cloud.googleapis.com/location": "us-central1"
+        },
+        "annotations": {
+            "serving.knative.dev/creator": "rafter@rafter-demo-project.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier": "rafter@rafter-demo-project.iam.gserviceaccount.com"
+        }
+    },
+    "spec": { "routeName": "laravel-example-production" },
+    "status": {
+        "conditions": [
+            {
+                "type": "Ready",
+                "status": "Unknown",
+                "reason": "CertificatePending",
+                "message": "Waiting for certificate provisioning. You must configure your DNS records for certificate issuance to begin.",
+                "lastTransitionTime": "2020-05-11T18:43:05.262Z"
+            },
+            {
+                "type": "CertificateProvisioned",
+                "status": "Unknown",
+                "reason": "CertificatePending",
+                "message": "Certificate issuance pending.",
+                "lastTransitionTime": "2020-05-11T18:44:05.420Z"
+            },
+            {
+                "type": "DomainRoutable",
+                "status": "True",
+                "lastTransitionTime": "2020-05-11T18:43:04.959Z"
+            },
+            {
+                "type": "Retry",
+                "status": "True",
+                "reason": "WaitingForOperation",
+                "message": "System will retry after 0:00:01 from lastTransitionTime for attempt 30.",
+                "lastTransitionTime": "2020-05-11T18:44:37.815Z",
+                "severity": "Info"
+            }
+        ],
+        "observedGeneration": 1,
+        "resourceRecords": [
+            {
+                "name": "laravel-demo-3",
+                "rrdata": "ghs.googlehosted.com.",
+                "type": "CNAME"
+            }
+        ],
+        "mappedRouteName": "laravel-example-production"
+    }
+}

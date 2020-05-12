@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DatabaseInstance;
+use App\DomainMapping;
 use App\Environment;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudBuildOperation;
@@ -13,6 +14,7 @@ use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
 use App\GoogleCloud\DomainMappingConfig;
+use App\GoogleCloud\DomainMappingResponse;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\IamPolicy;
 use App\GoogleCloud\QueueConfig;
@@ -224,25 +226,25 @@ class GoogleApi
     }
 
     /**
-     * Get the authorized domains for a project
+     * Get a domain mapping
      *
-     * @param string $region
+     * @param DomainMapping $mapping
      * @return array
      */
-    public function getCloudRunAuthorizedDomains($region)
+    public function getCloudRunDomainMapping(DomainMapping $mapping): DomainMappingResponse
     {
-        return $this->request("https://{$region}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/authorizeddomains");
-    }
+        $region = $mapping->environment->region();
 
-    /**
-     * Get the authorized domains for a project
-     *
-     * @param string $region
-     * @return array
-     */
-    public function getCloudRunDomainMappings($region)
-    {
-        return $this->request("https://{$region}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/domainmappings");
+        $response = $this->request(
+            sprintf(
+                'https://%s-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/%s/domainmappings/%s',
+                $region,
+                $this->googleProject->project_id,
+                $mapping->domain
+            )
+        );
+
+        return new DomainMappingResponse($response);
     }
 
     /**
