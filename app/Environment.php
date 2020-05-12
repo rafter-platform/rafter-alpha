@@ -409,6 +409,7 @@ class Environment extends Model
     {
         return tap($this->domainMappings()->create($data), function ($mapping) {
             $mapping->provision();
+            $this->refresh();
         });
     }
 

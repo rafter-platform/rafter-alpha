@@ -4,9 +4,11 @@ namespace App;
 
 use App\GoogleCloud\DomainMappingConfig;
 use App\GoogleCloud\DomainMappingResponse;
+use App\Jobs\CheckDomainMappingStatus;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Log;
 
 class DomainMapping extends Model
 {
@@ -120,18 +122,28 @@ class DomainMapping extends Model
     public function provision()
     {
         try {
-            $response = $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
+            $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
 
-            // TODO: Set status and message based on response.
-            dump($response);
+            CheckDomainMappingStatus::dispatch($this)->delay(3);
         } catch (RequestException $e) {
             $this->update(['message' => $e->getMessage()]);
         }
     }
 
+    /**
+     * Checks the status of the domain mapping on Cloud Run, and updates the local status accordingly.
+     * Additionally, if the domain is pending DNS or Certificate updates, it will re-check after a given time period.
+     *
+     * @return void
+     */
     public function checkStatus()
     {
         $mapping = $this->getMapping();
+
+        if ($mapping->isActive()) {
+            $this->markActive();
+            return;
+        }
 
         if ($mapping->isUnverified()) {
             $this->markUnverified();
@@ -140,18 +152,15 @@ class DomainMapping extends Model
 
         if ($mapping->isPendingDns()) {
             $this->markPendingDns($mapping->dnsRecords());
-            return;
         }
 
         if ($mapping->isPendingCertificate()) {
             $this->markPendingCertificate();
-            return;
         }
 
-        if ($mapping->isActive()) {
-            $this->markActive();
-            return;
-        }
+        CheckDomainMappingStatus::dispatch($this)->delay(15);
+
+        return;
     }
 
     public function client(): GoogleApi

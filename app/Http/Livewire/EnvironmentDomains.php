@@ -53,11 +53,14 @@ class EnvironmentDomains extends Component
             'domain' => 'required|min:6',
         ]);
 
-        $domainMapping = $this->environment->addDomainMapping($data);
+        $this->environment->addDomainMapping($data);
+        $this->domain = '';
     }
 
     public function render()
     {
-        return view('livewire.environment-domains');
+        return view('livewire.environment-domains', [
+            'mappings' => $this->environment->domainMappings,
+        ]);
     }
 }

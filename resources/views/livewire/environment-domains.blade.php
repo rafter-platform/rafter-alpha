@@ -1,8 +1,8 @@
-<div>
-    @if ($environment->domainMappings()->count() > 0)
+<div wire:poll>
+    @if (count($mappings) > 0)
         <ul class="mb-4">
-            @foreach ($environment->domainMappings as $mapping)
-                <li>{{ $mapping->domain }} - <x-status :status="$mapping->status" /></li>
+            @foreach ($mappings as $mapping)
+                <li>{{ $mapping->domain }} - <x-status :status="$mapping->status" /><br>{!! $mapping->message !!}</li>
             @endforeach
         </ul>
     @endif
