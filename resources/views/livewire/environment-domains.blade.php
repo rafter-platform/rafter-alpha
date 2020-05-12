@@ -1,4 +1,27 @@
 <div wire:poll>
+    <form class="mb-4" wire:submit.prevent="addDomain">
+        <div class="flex mt-1">
+            <div class="relative rounded-l-md shadow-sm flex-1">
+                <label for="domain" class="sr-only">Add a domain</label>
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="text-gray-500">
+                        https://
+                    </span>
+                </div>
+                <input name="domain" label="Domain Name" wire:model="domain" class="form-input rounded-r-none block w-full pl-20" placeholder="www.example.com" />
+            </div>
+            <span class="inline-flex rounded-r-md shadow-sm">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent leading-5 font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
+                    Add Domain
+                </button>
+            </span>
+        </div>
+        @error('domain')
+            <p class="text-red-500 text-xs italic mt-4">
+                {{ $message }}
+            </p>
+        @enderror
+    </form>
     @if (count($mappings) > 0)
         <x-table>
             <x-slot name="thead">
@@ -22,14 +45,4 @@
             @endforeach
         </x-table>
     @endif
-
-    <h3 class="text-lg mb-2">Assign a Custom Domain</h3>
-
-    <form wire:submit.prevent="addDomain">
-        <x-input name="domain" label="Domain Name" wire:model="domain" />
-
-        <div class="text-right">
-            <x-button>Add Domain</x-button>
-        </div>
-    </form>
 </div>
