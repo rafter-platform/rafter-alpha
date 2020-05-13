@@ -144,6 +144,8 @@ class DomainMapping extends Model
         try {
             $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
 
+            $this->markInactive('Rafter is adding your domain to Cloud Run...');
+
             CheckDomainMappingStatus::dispatch($this->id)->delay(3);
         } catch (RequestException $e) {
             $this->markError($e);
