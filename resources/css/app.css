@@ -11,8 +11,13 @@
  */
 @tailwind base;
 
-.build-logs a {
+.build-logs a,
+.prose a {
     @apply underline text-blue-600;
+}
+
+.prose code {
+    @apply bg-gray-100 text-red-600 px-1;
 }
 
 /**

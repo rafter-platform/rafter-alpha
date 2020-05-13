@@ -58,23 +58,8 @@ class DomainMappingTest extends TestCase
         $this->assertRegExp('/CNAME/i', $mapping->message);
         $this->assertRegExp('/www/i', $mapping->message);
         $this->assertRegExp('/ghs.googlehosted.com./i', $mapping->message);
-
-        Queue::assertPushed(CheckDomainMappingStatus::class);
-    }
-
-    public function test_it_marks_status_if_pending_certificate()
-    {
-        $mapping = $this->createMapping();
-
-        Http::fake([
-            static::API_MASK => $this->loadStub('domain-mapping-certificate-pending'),
-        ]);
-
-        $mapping->checkStatus();
-
-        $this->assertEquals(DomainMapping::STATUS_PENDING_CERTIFICATE, $mapping->status);
         $this->assertRegExp('/certificate/i', $mapping->message);
-        $this->assertRegExp('/issued/i', $mapping->message);
+        $this->assertRegExp('/issue/i', $mapping->message);
 
         Queue::assertPushed(CheckDomainMappingStatus::class);
     }

@@ -38,7 +38,7 @@
                     </x-td>
                     <x-td><x-status :status="$mapping->status" /></x-td>
                     <x-td>
-                        <div class="text-xs whitespace-normal">
+                        <div class="text-xs whitespace-normal prose">
                             {!! $mapping->message !!}
                         </div>
                     </x-td>

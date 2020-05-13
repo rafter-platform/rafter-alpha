@@ -45,15 +45,7 @@ class DomainMappingResponse
     public function isPendingDns(): bool
     {
         return $this->getConditionStatus('DomainRoutable') == 'True'
-            && $this->getConditionStatus('CertificateProvisioned') == 'Unknown'
-            && Str::of($this->getConditionMessage('CertificateProvisioned'))->contains(static::DNS_MESSAGE_INDICATOR);
-    }
-
-    public function isPendingCertificate(): bool
-    {
-        return $this->getConditionStatus('DomainRoutable') == 'True'
-            && $this->getConditionStatus('CertificateProvisioned') == 'Unknown'
-            && !Str::of($this->getConditionMessage('CertificateProvisioned'))->contains(static::DNS_MESSAGE_INDICATOR);
+            && $this->getConditionStatus('CertificateProvisioned') == 'Unknown';
     }
 
     public function isActive(): bool

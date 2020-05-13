@@ -41,6 +41,7 @@ class Status extends Component
             case 'creating':
             case 'started':
             case 'unverified':
+            case 'pending_dns':
                 $color = 'yellow';
                 break;
 

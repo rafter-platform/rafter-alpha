@@ -36,12 +36,6 @@ class DomainMapping extends Model
     const STATUS_PENDING_DNS = 'pending_dns';
 
     /**
-     * Cloud Run recognizes that the records have been added, and it is attempting to
-     * provision the TLS certificate for the domain.
-     */
-    const STATUS_PENDING_CERTIFICATE = 'pending_certificate';
-
-    /**
      * Everything checks out and is ready to go.
      */
     const STATUS_ACTIVE = 'active';
@@ -85,33 +79,13 @@ class DomainMapping extends Model
 
     public function markPendingDns(array $records)
     {
-        $message = 'Add the following DNS records to your registrar to point the domain to Cloud Run:<br />';
-
-        // TODO: Extract this into a view partial
-        $message .= '<table><thead><tr><th>Type</th><th>Name</th><th>Content</th></tr></thead><tbody>';
-
-        foreach ($records as $record) {
-            $message .= sprintf(
-                '<tr><td>%s</td><td>%s</td><td>%s</td></tr>',
-                $record['type'],
-                $record['name'],
-                $record['rrdata'],
-            );
-        }
-
-        $message .= '</tbody></table>';
+        $message = view('environments._domain-mapping-dns-records-pending', [
+            'records' => $records,
+        ]);
 
         $this->update([
             'status' => static::STATUS_PENDING_DNS,
             'message' => $message,
-        ]);
-    }
-
-    public function markPendingCertificate()
-    {
-        $this->update([
-            'status' => static::STATUS_PENDING_CERTIFICATE,
-            'message' => "A certificate is being issued for this domain. This may take up to 15 minutes."
         ]);
     }
 
@@ -189,10 +163,6 @@ class DomainMapping extends Model
 
         if ($mapping->isPendingDns()) {
             $this->markPendingDns($mapping->dnsRecords());
-        }
-
-        if ($mapping->isPendingCertificate()) {
-            $this->markPendingCertificate();
         }
 
         CheckDomainMappingStatus::dispatch($this)->delay(15);
