@@ -7,17 +7,17 @@ use Illuminate\View\Component;
 class DropdownMenuItem extends Component
 {
     public $href;
-    public $icon;
+    public $hasIcon;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($href = '', $icon = '')
+    public function __construct($href = '', $hasIcon = false)
     {
         $this->href = $href;
-        $this->icon = $icon;
+        $this->hasIcon = $hasIcon;
     }
 
     /**
@@ -32,9 +32,9 @@ class DropdownMenuItem extends Component
 
     public function classList()
     {
-        $classes = 'px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900';
+        $classes = 'px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900 ';
 
-        $classes .= !empty($this->icon) ? 'group flex items-center' : 'block w-full text-left';
+        $classes .= $this->hasIcon ? 'group flex items-center' : 'block w-full text-left';
 
         return $classes;
     }

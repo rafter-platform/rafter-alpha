@@ -43,9 +43,14 @@
                         </div>
                     </x-td>
                     <x-td last>
-                        <x-dropdown-menu>
-                            <x-dropdown-menu-item wire:click="deleteDomain({{ $mapping->id }})">Delete</x-dropdown-menu-item>
-                        </x-dropdown-menu>
+                        <div class="lg:hidden text-xs">
+                            <button wire:click="deleteDomain({{ $mapping->id }})">Delete</button>
+                        </div>
+                        <div class="hidden lg:block">
+                            <x-dropdown-menu>
+                                <x-dropdown-menu-item wire:click="deleteDomain({{ $mapping->id }})">Delete</x-dropdown-menu-item>
+                            </x-dropdown-menu>
+                        </div>
                     </x-td>
                 </x-tr>
             @endforeach
