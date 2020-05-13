@@ -14,16 +14,16 @@ class CheckDomainMappingStatus implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $domainMapping;
+    protected $domainMappingId;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(DomainMapping $domainMapping)
+    public function __construct($domainMappingId)
     {
-        $this->domainMapping = $domainMapping;
+        $this->domainMappingId = $domainMappingId;
     }
 
     /**
@@ -33,6 +33,10 @@ class CheckDomainMappingStatus implements ShouldQueue
      */
     public function handle()
     {
-        $this->domainMapping->checkStatus();
+        $mapping = DomainMapping::find($this->domainMappingId);
+
+        if (is_null($mapping)) return;
+
+        $mapping->checkStatus();
     }
 }

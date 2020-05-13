@@ -144,7 +144,7 @@ class DomainMapping extends Model
         try {
             $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
 
-            CheckDomainMappingStatus::dispatch($this)->delay(3);
+            CheckDomainMappingStatus::dispatch($this->id)->delay(3);
         } catch (RequestException $e) {
             $this->markError($e);
         }
@@ -168,7 +168,7 @@ class DomainMapping extends Model
 
             $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
 
-            CheckDomainMappingStatus::dispatch($this)->delay(1);
+            CheckDomainMappingStatus::dispatch($this->id)->delay(1);
         } catch (RequestException $e) {
             $this->markError($e);
         }
@@ -203,7 +203,7 @@ class DomainMapping extends Model
             $this->markPendingDns($mapping->dnsRecords());
         }
 
-        CheckDomainMappingStatus::dispatch($this)->delay(15);
+        CheckDomainMappingStatus::dispatch($this->id)->delay(15);
 
         return;
     }
