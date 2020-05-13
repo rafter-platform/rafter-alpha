@@ -26,7 +26,10 @@
         <h2 class="text-lg font-bold mb-2 md:mb-0 mr-4">{{ ucfirst($environment->name) }}</h2>
         <div class="text-xs mr-4 mb-1 md:mb-0">
             <x:heroicon-o-globe class="mr-1.5 h-4 w-4 inline align-middle" />
-            <a href="{{ $environment->url }}">{{ str_replace('https://', '', $environment->url) }}</a>
+            <a href="https://{{ $environment->primaryDomain() }}">{{ $environment->primaryDomain() }}</a>
+            @if ($environment->additionalDomainsCount() > 0)
+                <a title="{{ $environment->additionalDomainsCount() }} other domain(s)" href="{{ route('projects.environments.domains', [$project, $environment]) }}">(+{{ $environment->additionalDomainsCount() }})</a>
+            @endif
         </div>
         <div class="text-xs mr-4">
             <x-github-icon class="mr-1.5 h-4 w-4 inline align-middle" />

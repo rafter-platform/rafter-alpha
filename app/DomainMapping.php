@@ -6,6 +6,7 @@ use App\GoogleCloud\DomainMappingConfig;
 use App\GoogleCloud\DomainMappingResponse;
 use App\Jobs\CheckDomainMappingStatus;
 use App\Services\GoogleApi;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\RequestException;
 use Throwable;
@@ -223,5 +224,10 @@ class DomainMapping extends Model
     protected function webmasterCentralUrl(): string
     {
         return 'https://www.google.com/webmasters/verification/verification?domain=' . $this->domain;
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        $query->where('status', '=', static::STATUS_ACTIVE);
     }
 }

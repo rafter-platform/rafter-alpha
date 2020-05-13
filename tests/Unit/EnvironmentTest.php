@@ -91,4 +91,47 @@ class EnvironmentTest extends TestCase
                 && $request['httpTarget']['oidcToken']['serviceAccountEmail'] == 'rafter@rafter.service.account.com';
         });
     }
+
+    public function test_primary_domain_is_known()
+    {
+        $environment = factory('App\Environment')->state('laravel')->create([
+            'url' => 'https://some.a.run.app',
+        ]);
+
+        $this->assertEquals('some.a.run.app', $environment->primaryDomain());
+
+        // Throw in an inactive mapping to ensure it doesn't count as a primary domain
+        $environment->domainMappings()->create(factory('App\DomainMapping')->raw([
+            'status' => 'inactive',
+        ]));
+
+        $environment->refresh();
+
+        $this->assertEquals('some.a.run.app', $environment->primaryDomain());
+
+        $mapping = $environment->domainMappings()->create(factory('App\DomainMapping')->raw([
+            'status' => 'active',
+        ]));
+
+        $environment->refresh();
+
+        $this->assertEquals($mapping->domain, $environment->primaryDomain());
+    }
+
+    public function test_knows_additional_domains()
+    {
+        $environment = factory('App\Environment')->state('laravel')->create([
+            'url' => 'https://some.a.run.app',
+        ]);
+
+        $this->assertEquals(0, $environment->additionalDomainsCount());
+
+        $environment->domainMappings()->createMany(factory('App\DomainMapping', 5)->raw([
+            'status' => 'active',
+        ]));
+
+        $environment->refresh();
+
+        $this->assertEquals(5, $environment->additionalDomainsCount());
+    }
 }

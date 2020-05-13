@@ -65,6 +65,18 @@ class Environment extends Model
         return $this->belongsTo('App\Deployment', 'active_deployment_id');
     }
 
+    public function primaryDomain(): string
+    {
+        $domain = $this->domainMappings()->active()->first()->domain ?? $this->url;
+
+        return str_replace('https://', '', $domain);
+    }
+
+    public function additionalDomainsCount(): int
+    {
+        return $this->domainMappings()->active()->count();
+    }
+
     public function repository(): ?string
     {
         return $this->project->repository;
