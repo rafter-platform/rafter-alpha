@@ -49,6 +49,15 @@ class EnvironmentDomains extends Component
         $mapping->delete();
     }
 
+    public function verifyDomain($id)
+    {
+        $mapping = DomainMapping::find($id);
+
+        dispatch(function () use ($mapping) {
+            $mapping->resubmitAfterVerification();
+        });
+    }
+
     public function render()
     {
         return view('livewire.environment-domains', [

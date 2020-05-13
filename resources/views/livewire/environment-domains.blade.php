@@ -41,6 +41,14 @@
                         <div class="text-xs whitespace-normal prose">
                             {!! $mapping->message !!}
                         </div>
+                        @if ($mapping->isUnverified())
+                            <div class="mt-4">
+                                <x-white-button wire:click="verifyDomain({{ $mapping->id }})">
+                                    <x-heroicon-o-check-circle class="w-5 h-5 mr-1 text-green-600" />
+                                    I have added the service account
+                                </x-white-button>
+                            </div>
+                        @endif
                     </x-td>
                     <x-td last>
                         <div class="lg:hidden text-xs">

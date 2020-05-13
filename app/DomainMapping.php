@@ -65,7 +65,8 @@ class DomainMapping extends Model
     {
         $message = sprintf(
             "In order to add this domain, Cloud Run needs to verify that this service account is a verified owner of %s. "
-                . " To proceed, please add <code>%s</code> as a <a href=\"%s\" target=\"_blank\">verified owner on Webmaster Central</a>.",
+                . " To proceed, please add <code>%s</code> as a <a href=\"%s\" target=\"_blank\">verified owner on Webmaster Central</a>."
+                . " When you've added the service account, click the button below.",
             $this->domain,
             $this->serviceAccountEmail(),
             $this->webmasterCentralUrl()
@@ -97,6 +98,14 @@ class DomainMapping extends Model
         ]);
     }
 
+    public function markInactive($message = '')
+    {
+        $this->update([
+            'status' => static::STATUS_INACTIVE,
+            'message' => $message,
+        ]);
+    }
+
     public function markError(Throwable $error)
     {
         $message = $error->getMessage();
@@ -120,6 +129,11 @@ class DomainMapping extends Model
         return $this->status == static::STATUS_ERROR;
     }
 
+    public function isUnverified()
+    {
+        return $this->status == static::STATUS_UNVERIFIED;
+    }
+
     /**
      * Provision a domain mapping to Google Cloud.
      *
@@ -131,6 +145,30 @@ class DomainMapping extends Model
             $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
 
             CheckDomainMappingStatus::dispatch($this)->delay(3);
+        } catch (RequestException $e) {
+            $this->markError($e);
+        }
+    }
+
+    /**
+     * Resubmit a domain mapping to Cloud Run after the user has indicated that they have verified the domain.
+     * The only way to do this is to delete and re-add the domain mapping via the API.
+     *
+     * @return void
+     */
+    public function resubmitAfterVerification()
+    {
+        try {
+            // Set the status to inactive to show immediate feedback to the user
+            $this->markInactive('Rafter is resubmitting your domain to Cloud Run after verification.');
+
+            $this->environment->client()->deleteCloudRunDomainMapping($this);
+
+            sleep(1);
+
+            $this->environment->client()->addCloudRunDomainMapping(new DomainMappingConfig($this));
+
+            CheckDomainMappingStatus::dispatch($this)->delay(1);
         } catch (RequestException $e) {
             $this->markError($e);
         }
