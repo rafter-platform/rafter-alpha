@@ -1,0 +1,20 @@
+{
+    "apiVersion": "domains.cloudrun.com/v1",
+    "kind": "DomainMapping",
+    "metadata": {
+        "name": "laravel-demo-2.rafter.app",
+        "namespace": "1018375464568",
+        "selfLink": "/apis/domains.cloudrun.com/v1/namespaces/1018375464568/domainmappings/laravel-demo-2.rafter.app",
+        "uid": "5d94d394-5d96-4b78-8e7f-547066a628e7",
+        "resourceVersion": "AAWlY6XTGVY",
+        "generation": 1,
+        "creationTimestamp": "2020-05-11T18:38:05.973846Z",
+        "labels": { "cloud.googleapis.com/location": "us-central1" },
+        "annotations": {
+            "serving.knative.dev/creator": "rafter@rafter-demo-project.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier": "rafter@rafter-demo-project.iam.gserviceaccount.com"
+        }
+    },
+    "spec": { "routeName": "laravel-example-production" },
+    "status": []
+}

@@ -3,57 +3,51 @@
         <x-subtitle>Recent Deployments</x-subtitle>
         <x-white-button wire:click="deployNow">Deploy Now</x-white-button>
     </div>
-    <div class="flex flex-col">
-        <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-                <table class="min-w-full">
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Commit
-                            </th>
-                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                When
-                            </th>
-                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Duration
-                            </th>
-                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Initiated By
-                            </th>
-                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($deployments as $idx => $deployment)
-                            <tr class="{{ $idx % 2 == 0 ? 'bg-white' : 'bg-gray-50' }}">
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
-                                    <a href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                    <x-status :status="$deployment->status" />
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                    {{ $deployment->created_at->diffForHumans() }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                    {{ $deployment->isInProgress() ? '-' : $deployment->duration() }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                    {{ $deployment->initiator->name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                    <a href="{{ $deployment->getRoute() }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                {{ $deployments->links('pagination') }}
-            </div>
-        </div>
-    </div>
+    <x-table>
+        <x-slot name="thead">
+            <x-th>
+                Commit
+            </x-th>
+            <x-th>
+                Status
+            </x-th>
+            <x-th>
+                When
+            </x-th>
+            <x-th>
+                Duration
+            </x-th>
+            <x-th>
+                Initiated By
+            </x-th>
+            <x-th last />
+        </x-slot>
+
+        @foreach ($deployments as $idx => $deployment)
+            <x-tr :idx="$idx">
+                <x-td>
+                    <a href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
+                </x-td>
+                <x-td>
+                    <x-status :status="$deployment->status" />
+                </x-td>
+                <x-td>
+                    {{ $deployment->created_at->diffForHumans() }}
+                </x-td>
+                <x-td>
+                    {{ $deployment->isInProgress() ? '-' : $deployment->duration() }}
+                </x-td>
+                <x-td>
+                    {{ $deployment->initiator->name }}
+                </x-td>
+                <x-td last>
+                    <a href="{{ $deployment->getRoute() }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                </x-td>
+            </x-tr>
+        @endforeach
+
+        <x-slot name="pagination">
+            {{ $deployments->links('pagination') }}
+        </x-slot>
+    </x-table>
 </div>

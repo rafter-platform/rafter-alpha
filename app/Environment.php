@@ -50,6 +50,11 @@ class Environment extends Model
         return $this->project->sourceProvider;
     }
 
+    public function domainMappings()
+    {
+        return $this->hasMany('App\DomainMapping')->latest();
+    }
+
     /**
      * Get the active deployment
      *
@@ -58,6 +63,18 @@ class Environment extends Model
     public function activeDeployment()
     {
         return $this->belongsTo('App\Deployment', 'active_deployment_id');
+    }
+
+    public function primaryDomain(): string
+    {
+        $domain = $this->domainMappings()->active()->first()->domain ?? $this->url;
+
+        return str_replace('https://', '', $domain);
+    }
+
+    public function additionalDomainsCount(): int
+    {
+        return $this->domainMappings()->active()->count();
     }
 
     public function repository(): ?string
@@ -392,6 +409,25 @@ class Environment extends Model
         ];
 
         return $this->client()->getLogsForService($config);
+    }
+
+    /**
+     * Add a domain mapping.
+     *
+     * @param array $data Input data
+     * @return
+     */
+    public function addDomainMapping($data): DomainMapping
+    {
+        $mapping = $this->domainMappings()->create($data);
+
+        $this->refresh();
+
+        dispatch(function () use ($mapping) {
+            $mapping->provision();
+        });
+
+        return $mapping;
     }
 
     public function client(): GoogleApi

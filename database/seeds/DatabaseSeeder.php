@@ -81,6 +81,11 @@ class DatabaseSeeder extends Seeder
                 'commit_message' => 'Initial (seeded) deploy.',
                 'status' => 'successful',
             ]);
+
+            $environment->domainMappings()->create([
+                'domain' => 'laravel-demo.rafter.app',
+                'status' => 'active',
+            ]);
         }
     }
 }

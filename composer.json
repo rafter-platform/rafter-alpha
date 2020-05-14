@@ -16,6 +16,7 @@
         "google/cloud-secret-manager": "^1.0",
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "^7.0",
+        "laravel/telescope": "^3.2",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "livewire/livewire": "^1.0",

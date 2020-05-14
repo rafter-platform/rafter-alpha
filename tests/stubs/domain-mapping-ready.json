@@ -1,0 +1,50 @@
+{
+    "apiVersion": "domains.cloudrun.com/v1",
+    "kind": "DomainMapping",
+    "metadata": {
+        "name": "laravel-demo.rafter.app",
+        "namespace": "1018375464568",
+        "selfLink": "/apis/domains.cloudrun.com/v1/namespaces/1018375464568/domainmappings/laravel-demo.rafter.app",
+        "uid": "9c5c1356-9d0d-4080-aa74-6d567c509e67",
+        "resourceVersion": "AAWjgFK17Mg",
+        "generation": 1,
+        "creationTimestamp": "2020-04-17T17:34:04.303843Z",
+        "labels": {
+            "run.googleapis.com/overrideAt": "2020-04-17T17:34:06.368Z",
+            "cloud.googleapis.com/location": "us-central1"
+        },
+        "annotations": {
+            "serving.knative.dev/creator": "rafter@service.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier": "rafter@service.iam.gserviceaccount.com"
+        }
+    },
+    "spec": { "routeName": "laravel-example-production" },
+    "status": {
+        "conditions": [
+            {
+                "type": "Ready",
+                "status": "True",
+                "lastTransitionTime": "2020-04-17T18:00:22.349Z"
+            },
+            {
+                "type": "CertificateProvisioned",
+                "status": "True",
+                "lastTransitionTime": "2020-04-17T18:00:22.349Z"
+            },
+            {
+                "type": "DomainRoutable",
+                "status": "True",
+                "lastTransitionTime": "2020-04-17T17:34:07.171Z"
+            }
+        ],
+        "observedGeneration": 1,
+        "resourceRecords": [
+            {
+                "name": "laravel-demo",
+                "rrdata": "ghs.googlehosted.com.",
+                "type": "CNAME"
+            }
+        ],
+        "mappedRouteName": "laravel-example-production"
+    }
+}

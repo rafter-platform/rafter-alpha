@@ -1,0 +1,62 @@
+{
+    "apiVersion": "domains.cloudrun.com/v1",
+    "kind": "DomainMapping",
+    "metadata": {
+        "name": "www.rafter.app",
+        "namespace": "1018375464568",
+        "selfLink": "/apis/domains.cloudrun.com/v1/namespaces/1018375464568/domainmappings/www.rafter.app",
+        "uid": "d70f0336-919f-4099-bc84-8547dcaedd15",
+        "resourceVersion": "AAWlX52Y40A",
+        "generation": 1,
+        "creationTimestamp": "2020-05-10T18:23:04.999936Z",
+        "labels": {
+            "run.googleapis.com/overrideAt": "2020-05-10T18:23:06.571Z",
+            "cloud.googleapis.com/location": "us-central1"
+        },
+        "annotations": {
+            "serving.knative.dev/creator": "rafter@service.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier": "rafter@service.iam.gserviceaccount.com"
+        }
+    },
+    "spec": { "routeName": "rafter-production" },
+    "status": {
+        "conditions": [
+            {
+                "type": "Ready",
+                "status": "Unknown",
+                "reason": "CertificatePending",
+                "message": "Waiting for certificate provisioning. You must configure your DNS records for certificate issuance to begin.",
+                "lastTransitionTime": "2020-05-10T18:23:07.363Z"
+            },
+            {
+                "type": "CertificateProvisioned",
+                "status": "Unknown",
+                "reason": "CertificatePending",
+                "message": "Certificate issuance pending. The challenege data was not visible through the public internet. This may indicate that DNS is not properly configured or has not fully propagated. The system will retry.",
+                "lastTransitionTime": "2020-05-10T18:59:20.906Z"
+            },
+            {
+                "type": "DomainRoutable",
+                "status": "True",
+                "lastTransitionTime": "2020-05-10T18:23:07.027Z"
+            },
+            {
+                "type": "Retry",
+                "status": "True",
+                "reason": "WaitingForOperation",
+                "message": "System will retry after 24:00:00 from lastTransitionTime for attempt 163.",
+                "lastTransitionTime": "2020-05-11T13:49:28.072Z",
+                "severity": "Info"
+            }
+        ],
+        "observedGeneration": 1,
+        "resourceRecords": [
+            {
+                "name": "www",
+                "rrdata": "ghs.googlehosted.com.",
+                "type": "CNAME"
+            }
+        ],
+        "mappedRouteName": "rafter-production"
+    }
+}

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DatabaseInstance;
+use App\DomainMapping;
 use App\Environment;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudBuildOperation;
@@ -12,6 +13,8 @@ use App\GoogleCloud\CloudRunService;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
+use App\GoogleCloud\DomainMappingConfig;
+use App\GoogleCloud\DomainMappingResponse;
 use App\GoogleCloud\EnableApisOperation;
 use App\GoogleCloud\IamPolicy;
 use App\GoogleCloud\QueueConfig;
@@ -219,6 +222,64 @@ class GoogleApi
             $environment->project->googleProject->project_id,
             $environment->project->region,
             $environment->web_service_name
+        );
+    }
+
+    /**
+     * Get a domain mapping
+     *
+     * @param DomainMapping $mapping
+     * @return array
+     */
+    public function getCloudRunDomainMapping(DomainMapping $mapping): DomainMappingResponse
+    {
+        $region = $mapping->environment->region();
+
+        $response = $this->request(
+            sprintf(
+                'https://%s-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/%s/domainmappings/%s',
+                $region,
+                $this->googleProject->project_id,
+                $mapping->domain
+            )
+        );
+
+        return new DomainMappingResponse($response);
+    }
+
+    /**
+     * Add a domain mapping to the given Cloud Run service.
+     *
+     * @param DomainMappingConfig $mappingConfig
+     * @return array
+     */
+    public function addCloudRunDomainMapping(DomainMappingConfig $mappingConfig)
+    {
+        return $this->request(
+            "https://{$mappingConfig->region()}-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/{$this->googleProject->project_id}/domainmappings",
+            "POST",
+            $mappingConfig->config()
+        );
+    }
+
+    /**
+     * Delete a Cloud Run domain mapping
+     *
+     * @param DomainMapping $mapping
+     * @return array
+     */
+    public function deleteCloudRunDomainMapping(DomainMapping $mapping): array
+    {
+        $region = $mapping->environment->region();
+
+        return $this->request(
+            sprintf(
+                'https://%s-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/%s/domainmappings/%s',
+                $region,
+                $this->googleProject->project_id,
+                $mapping->domain
+            ),
+            'DELETE'
         );
     }
 

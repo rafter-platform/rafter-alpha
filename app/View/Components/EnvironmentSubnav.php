@@ -44,6 +44,7 @@ class EnvironmentSubnav extends Component
             'Logs' => route('projects.environments.logs', [$this->project, $this->environment]),
             'Databases' => route('projects.environments.database.index', [$this->project, $this->environment]),
             'Settings' => route('projects.environments.settings.index', [$this->project, $this->environment]),
+            'Domains' => route('projects.environments.domains', [$this->project, $this->environment]),
         ];
 
         if ($this->project->usesCommands()) {

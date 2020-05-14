@@ -1,0 +1,45 @@
+{
+    "apiVersion": "domains.cloudrun.com/v1",
+    "kind": "DomainMapping",
+    "metadata": {
+        "name": "www.rafter.app",
+        "namespace": "1018375464568",
+        "selfLink": "/apis/domains.cloudrun.com/v1/namespaces/1018375464568/domainmappings/www.rafter.app",
+        "uid": "a33fd5e7-ee06-4e65-a60f-f6ee4f8a9e49",
+        "resourceVersion": "AAWlY0qGFcA",
+        "generation": 1,
+        "creationTimestamp": "2020-05-11T18:12:33.484532Z",
+        "labels": { "cloud.googleapis.com/location": "us-central1" },
+        "annotations": {
+            "serving.knative.dev/creator": "rafter@service.iam.gserviceaccount.com",
+            "serving.knative.dev/lastModifier": "rafter@service.iam.gserviceaccount.com"
+        }
+    },
+    "spec": { "routeName": "rafter-production" },
+    "status": {
+        "conditions": [
+            {
+                "type": "Ready",
+                "status": "False",
+                "reason": "PermissionDenied",
+                "message": "Caller is not authorized to administer the domain 'www.rafter.app'. If you own 'www.rafter.app', you can obtain authorization by verifying ownership of the domain, or any of its parent domains, via the Webmaster Central portal: https://www.google.com/webmasters/verification/verification?domain=www.rafter.app. We recommend verifying ownership of the largest scope you wish to use with subdomains (eg. verify 'example.com' if you wish to map 'subdomain.example.com').",
+                "lastTransitionTime": "2020-05-11T18:12:34.200Z"
+            },
+            {
+                "type": "CertificateProvisioned",
+                "status": "False",
+                "reason": "PermissionDenied",
+                "message": "Certificate will not be provisioned unless the domain is made routable.",
+                "lastTransitionTime": "2020-05-11T18:12:34.200Z"
+            },
+            {
+                "type": "DomainRoutable",
+                "status": "False",
+                "reason": "PermissionDenied",
+                "message": "Caller is not authorized to administer the domain 'www.rafter.app'. If you own 'www.rafter.app', you can obtain authorization by verifying ownership of the domain, or any of its parent domains, via the Webmaster Central portal: https://www.google.com/webmasters/verification/verification?domain=www.rafter.app. We recommend verifying ownership of the largest scope you wish to use with subdomains (eg. verify 'example.com' if you wish to map 'subdomain.example.com').",
+                "lastTransitionTime": "2020-05-11T18:12:34.200Z"
+            }
+        ],
+        "observedGeneration": 1
+    }
+}
