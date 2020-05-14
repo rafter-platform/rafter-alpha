@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\DomainMapping;
 use App\Environment;
 use App\Rules\ValidDomain;
+use Laravel\Socialite\Facades\Socialite;
 use Livewire\Component;
 
 class EnvironmentDomains extends Component
@@ -63,6 +64,11 @@ class EnvironmentDomains extends Component
         $mapping = DomainMapping::find($id);
 
         $mapping->checkStatus(true);
+    }
+
+    public function getGoogleOauthUrlProperty()
+    {
+        return Socialite::driver('google')->redirect()->getTargetUrl();
     }
 
     public function render()

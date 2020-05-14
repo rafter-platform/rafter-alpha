@@ -38,4 +38,10 @@ return [
         'webhook_secret' => env('GITHUB_WEBHOOK_SECRET'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => 'https://rafter.ngrok.io/auth/google',
+    ],
+
 ];

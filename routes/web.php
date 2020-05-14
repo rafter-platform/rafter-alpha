@@ -83,4 +83,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Inbound Source Provider Authorizations
     Route::get('auth/github', 'SourceProviderController@store');
+
+    // Google OAuth flow
+    Route::get('auth/google', function () {
+        return view('google-auth-redirect');
+    });
 });

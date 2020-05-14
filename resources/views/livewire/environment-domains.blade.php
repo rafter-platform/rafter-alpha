@@ -43,9 +43,13 @@
                         </div>
                         @if ($mapping->isUnverified())
                             <div class="mt-4">
+                                <x-white-button wire:click="$emit('automaticallyVerifyDomain', '{{ $mapping->id }}', '{{ $this->googleOauthUrl }}')">
+                                    <x-heroicon-o-external-link class="w-5 h-5 mr-1 text-green-600" />
+                                    Do this for me...
+                                </x-white-button>
                                 <x-white-button wire:click="verifyDomain({{ $mapping->id }})">
                                     <x-heroicon-o-check-circle class="w-5 h-5 mr-1 text-green-600" />
-                                    I have added the service account
+                                    I have added the service account manually
                                 </x-white-button>
                             </div>
                         @endif
@@ -69,5 +73,14 @@
                 </x-tr>
             @endforeach
         </x-table>
+
+        @push('scripts')
+            <script>
+                window.livewire.on('automaticallyVerifyDomain', (mappingId, authUrl) => {
+                    var strWindowFeatures = 'toolbar=no, menubar=no, width=600, height=700, top=100, left=100';
+                    window.open(authUrl, 'google-oauth', strWindowFeatures);
+                });
+            </script>
+        @endpush
     @endif
 </div>
