@@ -58,6 +58,13 @@ class EnvironmentDomains extends Component
         });
     }
 
+    public function checkDomainStatus($id)
+    {
+        $mapping = DomainMapping::find($id);
+
+        $mapping->checkStatus(true);
+    }
+
     public function render()
     {
         return view('livewire.environment-domains', [

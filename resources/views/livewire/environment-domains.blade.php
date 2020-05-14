@@ -52,10 +52,16 @@
                     </x-td>
                     <x-td last>
                         <div class="lg:hidden text-xs">
-                            <button wire:click="deleteDomain({{ $mapping->id }})">Delete</button>
+                            @if ($mapping->canManuallyCheckStatus())
+                                <button wire:click="checkDomainStatus({{ $mapping->id }})">Check Status</button>
+                            @endif
+                            <button class="mr-2" wire:click="deleteDomain({{ $mapping->id }})">Delete</button>
                         </div>
                         <div class="hidden lg:block">
                             <x-dropdown-menu>
+                                @if ($mapping->canManuallyCheckStatus())
+                                    <x-dropdown-menu-item wire:click="checkDomainStatus({{ $mapping->id }})">Check Status</x-dropdown-menu-item>
+                                @endif
                                 <x-dropdown-menu-item wire:click="deleteDomain({{ $mapping->id }})">Delete</x-dropdown-menu-item>
                             </x-dropdown-menu>
                         </div>

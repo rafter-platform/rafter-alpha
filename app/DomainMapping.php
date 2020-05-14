@@ -135,6 +135,16 @@ class DomainMapping extends Model
         return $this->status == static::STATUS_UNVERIFIED;
     }
 
+    public function isPendingDns()
+    {
+        return $this->status == static::STATUS_PENDING_DNS;
+    }
+
+    public function isInactive()
+    {
+        return $this->status == static::STATUS_INACTIVE;
+    }
+
     /**
      * Provision a domain mapping to Google Cloud.
      *
@@ -183,7 +193,7 @@ class DomainMapping extends Model
      *
      * @return void
      */
-    public function checkStatus()
+    public function checkStatus($manuallyTriggered = false)
     {
         try {
             $mapping = $this->getMapping();
@@ -206,9 +216,20 @@ class DomainMapping extends Model
             $this->markPendingDns($mapping->dnsRecords());
         }
 
-        CheckDomainMappingStatus::dispatch($this->id)->delay(15);
+        if (!$manuallyTriggered) {
+            CheckDomainMappingStatus::dispatch($this->id)->delay(15);
+        }
+    }
 
-        return;
+    /**
+     * Whether the status can be manually checked by the user. Only permitted for pending DNS things,
+     * or if the initial check is... slow.
+     *
+     * @return boolean
+     */
+    public function canManuallyCheckStatus()
+    {
+        return $this->isPendingDns() || $this->isInactive();
     }
 
     public function client(): GoogleApi

@@ -4,7 +4,7 @@
     {{ $slot }}
 </a>
 @else
-<button {{ $attributes->merge([ 'class' => $classList() ])}}>
+<button @click="open = false" {{ $attributes->merge([ 'class' => $classList() ])}}>
     {{ $icon ?? '' }}
     {{ $slot }}
 </button>
