@@ -54,7 +54,7 @@ class DomainMappingPolicy
      */
     public function update(User $user, DomainMapping $domainMapping)
     {
-        //
+        return $user->currentTeam->is($domainMapping->environment->project->team);
     }
 
     /**
@@ -66,7 +66,7 @@ class DomainMappingPolicy
      */
     public function delete(User $user, DomainMapping $domainMapping)
     {
-        //
+        return $user->currentTeam->is($domainMapping->environment->project->team);
     }
 
     /**

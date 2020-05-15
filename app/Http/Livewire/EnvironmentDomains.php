@@ -4,11 +4,15 @@ namespace App\Http\Livewire;
 
 use App\DomainMapping;
 use App\Environment;
+use App\Jobs\ReverifyDomainMapping;
 use App\Rules\ValidDomain;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class EnvironmentDomains extends Component
 {
+    use AuthorizesRequests;
+
     public $environment;
 
     public $domain;
@@ -46,6 +50,9 @@ class EnvironmentDomains extends Component
     public function deleteDomain($id)
     {
         $mapping = DomainMapping::find($id);
+
+        $this->authorize('delete', [$mapping]);
+
         $mapping->delete();
     }
 
@@ -53,14 +60,16 @@ class EnvironmentDomains extends Component
     {
         $mapping = DomainMapping::find($id);
 
-        dispatch(function () use ($mapping) {
-            $mapping->resubmitAfterVerification();
-        });
+        $this->authorize('update', [$mapping]);
+
+        ReverifyDomainMapping::dispatch($mapping->id);
     }
 
     public function checkDomainStatus($id)
     {
         $mapping = DomainMapping::find($id);
+
+        $this->authorize('update', [$mapping]);
 
         $mapping->checkStatus(true);
     }
