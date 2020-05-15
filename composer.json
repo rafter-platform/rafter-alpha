@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "driesvints/blade-icons": "^2.2",
         "fideloper/proxy": "^4.0",
         "google/apiclient": "^2.0",
