@@ -3,7 +3,6 @@
 namespace App\GoogleCloud;
 
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class CloudRunService
 {

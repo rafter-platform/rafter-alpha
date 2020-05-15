@@ -4,7 +4,6 @@ namespace App;
 
 use App\Services\FakeSourceProviderClient;
 use App\Services\GitHub;
-use App\SourceProvider;
 use InvalidArgumentException;
 
 class SourceProviderClientFactory

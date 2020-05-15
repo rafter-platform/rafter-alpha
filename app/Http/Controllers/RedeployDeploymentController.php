@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Deployment;
 use App\Environment;
 use App\Project;
-use Illuminate\Http\Request;
 
 class RedeployDeploymentController extends Controller
 {

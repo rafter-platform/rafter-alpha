@@ -2,8 +2,6 @@
 
 namespace App\GoogleCloud;
 
-use Illuminate\Support\Facades\Log;
-
 class EnableApisOperation
 {
     protected $operation;
