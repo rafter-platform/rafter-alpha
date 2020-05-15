@@ -12,10 +12,8 @@ jobs:
 
     strategy:
       fail-fast: true
-      matrix:
-        php: [7.2, 7.3, 7.4]
 
-    name: PHP ${{ matrix.php }}
+    name: Laravel Tests
 
     steps:
       - uses: actions/checkout@v2
@@ -37,7 +35,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 7.4
           extensions: curl, dom, gd, libxml, mbstring, pcntl, pdo, pdo_sqlite, sqlite, zip
           coverage: none
 
