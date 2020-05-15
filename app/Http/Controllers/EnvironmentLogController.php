@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Environment;
 use App\Project;
-use Illuminate\Http\Request;
 
 class EnvironmentLogController extends Controller
 {

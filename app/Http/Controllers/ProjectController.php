@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use App\GoogleProject;
 use App\Http\Requests\CreateProjectRequest;
 use App\Project;
-use App\Rules\ValidRepository;
-use App\SourceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {

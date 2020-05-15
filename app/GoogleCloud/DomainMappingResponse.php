@@ -2,8 +2,6 @@
 
 namespace App\GoogleCloud;
 
-use Illuminate\Support\Str;
-
 class DomainMappingResponse
 {
     protected $response;

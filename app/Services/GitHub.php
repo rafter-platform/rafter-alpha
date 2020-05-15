@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\SourceProvider;
-use GuzzleHttp\Client;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use Exception;
