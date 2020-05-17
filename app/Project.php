@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Options;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model

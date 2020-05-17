@@ -4,35 +4,36 @@ namespace App;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 use JsonSerializable;
 
 class Options implements ArrayAccess, Arrayable, JsonSerializable
 {
     protected $value;
 
-    public function __construct(array $value)
+    public function __construct(array $value = [])
     {
         $this->value = $value;
     }
 
     public function offsetExists($offset): bool
     {
-        return isset($this->value[$offset]);
+        return Arr::has($this->value, $offset);
     }
 
     public function offsetGet($offset)
     {
-        return $this->value[$offset];
+        return Arr::get($this->value, $offset);
     }
 
     public function offsetSet($offset, $value): void
     {
-        $this->value[$offset] = $value;
+        Arr::set($this->value, $offset, $value);
     }
 
     public function offsetUnset($offset): void
     {
-        unset($this->value[$offset]);
+        Arr::pull($this->value, $offset);
     }
 
     public function toArray(): array
