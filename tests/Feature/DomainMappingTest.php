@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\DomainMapping;
+use App\Http\Livewire\EnvironmentDomains;
 use App\Jobs\CheckDomainMappingStatus;
+use App\Jobs\ReverifyDomainMapping;
 use Exception;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Queue;
 use Tests\Support\FakeGoogleApiClient;
 use Tests\TestCase;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 class DomainMappingTest extends TestCase
 {
@@ -122,6 +125,140 @@ class DomainMappingTest extends TestCase
         $mapping->delete();
 
         Http::assertNothingSent();
+    }
+
+    public function test_user_can_delete_mapping()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        $mapping = $this->createMapping();
+        $mapping->markActive();
+
+        $user = $mapping->environment->project->team->owner;
+        $user->setCurrentTeam($mapping->environment->project->team);
+        $user->refresh();
+
+        $this->actingAs($user);
+
+        Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
+            ->call('deleteDomain', $mapping->id);
+
+        $this->assertFalse($mapping->exists());
+
+        Http::assertSent(function ($request) {
+            return Str::of($request->url())->contains('domainmappings/www.rafter.app')
+                && $request->method() == 'DELETE';
+        });
+    }
+
+    public function test_user_cannot_delete_other_mappings()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        $mapping = $this->createMapping();
+        $mapping->markActive();
+
+        $this->actingAs(factory('App\User')->create());
+
+        Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
+            ->call('deleteDomain', $mapping->id);
+
+        $this->assertTrue($mapping->exists());
+
+        Http::assertNothingSent();
+    }
+
+    public function test_user_can_check_domain_status()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        Http::assertNothingSent();
+
+        $mapping = $this->createMapping();
+        $mapping->markActive();
+
+        $user = $mapping->environment->project->team->owner;
+        $user->setCurrentTeam($mapping->environment->project->team);
+        $user->refresh();
+
+        $this->actingAs($user);
+
+        Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
+            ->call('checkDomainStatus', $mapping->id);
+
+        Http::assertSent(function ($request) {
+            return Str::of($request->url())->contains('domainmappings/www.rafter.app')
+                && $request->method() == 'GET';
+        });
+    }
+
+    public function test_user_cannot_check_status_of_other_mappings()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        Http::assertNothingSent();
+
+        $mapping = $this->createMapping();
+        $mapping->markActive();
+
+        $this->actingAs(factory('App\User')->create());
+
+        Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
+            ->call('checkDomainStatus', $mapping->id);
+
+        Http::assertNothingSent();
+    }
+
+    public function test_user_can_reverify_domain()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        Queue::fake();
+
+        $mapping = $this->createMapping();
+        $mapping->markUnverified();
+
+        $user = $mapping->environment->project->team->owner;
+        $user->setCurrentTeam($mapping->environment->project->team);
+        $user->refresh();
+
+        $this->actingAs($user);
+
+        Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
+            ->call('verifyDomain', $mapping->id);
+
+        Queue::assertPushed(ReverifyDomainMapping::class, function ($job) use ($mapping) {
+            return $job->mappingId === $mapping->id;
+        });
+    }
+
+    public function test_user_cannot_reverify_other_mappings()
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        Queue::fake();
+
+        $mapping = $this->createMapping();
+        $mapping->markUnverified();
+
+        $this->actingAs(factory('App\User')->create());
+
+        Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
+            ->call('verifyDomain', $mapping->id);
+
+        Queue::assertNothingPushed();
     }
 
     protected function createMapping(): DomainMapping
