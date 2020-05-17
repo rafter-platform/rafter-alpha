@@ -14,13 +14,10 @@ class Project extends Model
         'nodejs' => "Node.js",
     ];
 
-    protected $fillable = [
-        'name',
-        'region',
-        'google_project_id',
-        'type',
-        'repository',
-        'source_provider_id',
+    protected $guarded = [];
+
+    protected $casts = [
+        'options' => Options::class,
     ];
 
     public function team()

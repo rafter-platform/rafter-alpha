@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Options;
 use App\GoogleCloud\SchedulerJobConfig;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
@@ -19,10 +20,10 @@ class Environment extends Model
         'environmental_variables',
     ];
 
-    protected $fillable = [
-        'name',
-        'url',
-        'environmental_variables',
+    protected $guarded = [];
+
+    protected $casts = [
+        'options' => Options::class,
     ];
 
     public function project()
