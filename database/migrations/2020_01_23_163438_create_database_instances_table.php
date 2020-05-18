@@ -26,7 +26,7 @@ class CreateDatabaseInstancesTable extends Migration
             $table->string('operation_name')->nullable();
             $table->string('status')->default('pending');
             $table->boolean('synced')->default(false);
-            $table->text('options')->default('{}');
+            $table->text('options')->nullable();
             $table->timestamps();
 
             $table->foreign('google_project_id')

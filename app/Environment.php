@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 
 class Environment extends Model
 {
+    use HasOptions;
+
     const INITIAL_ENVIRONMENTS = [
         'production',
     ];

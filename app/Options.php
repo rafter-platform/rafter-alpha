@@ -11,7 +11,7 @@ class Options implements ArrayAccess, Arrayable, JsonSerializable
 {
     protected $value;
 
-    public function __construct(array $value = [])
+    public function __construct(array $value)
     {
         $this->value = $value;
     }

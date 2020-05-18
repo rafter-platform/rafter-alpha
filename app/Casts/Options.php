@@ -18,7 +18,7 @@ class Options implements CastsAttributes
      */
     public function get($model, $key, $value, $attributes)
     {
-        return new OptionsValueObject(json_decode($value, true));
+        return new OptionsValueObject(json_decode($value ?: '{}', true));
     }
 
     /**

@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 
 class DatabaseInstance extends Model
 {
+    use HasOptions;
+
     const TYPES = [
         'mysql',
         // 'postgres',

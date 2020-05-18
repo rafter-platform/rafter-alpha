@@ -22,7 +22,7 @@ class CreateProjectsTable extends Migration
             $table->unsignedBigInteger('source_provider_id')->index();
             $table->string('region');
             $table->string('repository')->nullable();
-            $table->text('options')->default('{}');
+            $table->text('options')->nullable();
             $table->timestamps();
 
             $table->foreign('team_id')
