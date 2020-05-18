@@ -56,6 +56,16 @@ class HasOptionsTest extends TestCase
                 'location' => 'us-east',
             ],
         ], $model->options->toArray());
+
+        $model->options = [
+            'something' => 'fun',
+        ];
+
+        $this->assertEquals('fun', $model->getOption('something'));
+
+        $this->assertEquals([
+            'something' => 'fun',
+        ], $model->options->toArray());
     }
 
     public function test_options_arrays_are_merged()
