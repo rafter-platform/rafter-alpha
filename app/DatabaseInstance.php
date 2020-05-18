@@ -92,7 +92,7 @@ class DatabaseInstance extends Model
      */
     public function assignRootPassword()
     {
-        $this->update(['root_password' => Str::random()]);
+        $this->setOption('root_password', Str::random());
     }
 
     /**

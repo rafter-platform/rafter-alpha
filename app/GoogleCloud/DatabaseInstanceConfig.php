@@ -8,7 +8,8 @@ class DatabaseInstanceConfig
 {
     public $databaseInstance;
 
-    public function __construct(DatabaseInstance $databaseInstance) {
+    public function __construct(DatabaseInstance $databaseInstance)
+    {
         $this->databaseInstance = $databaseInstance;
     }
 
@@ -22,17 +23,17 @@ class DatabaseInstanceConfig
 
     public function version()
     {
-        return $this->databaseInstance->version;
+        return $this->databaseInstance->getOption('version');
     }
 
     public function tier()
     {
-        return $this->databaseInstance->tier;
+        return $this->databaseInstance->getOption('tier');
     }
 
     public function size()
     {
-        return $this->databaseInstance->size;
+        return $this->databaseInstance->getOption('size');
     }
 
     public function settings()
@@ -47,12 +48,12 @@ class DatabaseInstanceConfig
 
     public function region()
     {
-        return $this->databaseInstance->region;
+        return $this->databaseInstance->getOption('region');
     }
 
     public function rootPassword()
     {
-        return $this->databaseInstance->rootPassword;
+        return $this->databaseInstance->getOption('rootPassword');
     }
 
     public function name()
