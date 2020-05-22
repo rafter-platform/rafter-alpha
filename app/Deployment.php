@@ -14,14 +14,7 @@ class Deployment extends Model
     const STATUS_SUCCESSFUL = 'successful';
     const STATUS_FAILED = 'failed';
 
-    protected $fillable = [
-        'operation_name',
-        'status',
-        'image',
-        'commit_hash',
-        'commit_message',
-        'initiator_id',
-    ];
+    protected $guarded = [];
 
     public function environment()
     {

@@ -10,12 +10,7 @@ class SourceProvider extends Model
         'meta' => 'array',
     ];
 
-    protected $fillable = [
-        'name',
-        'type',
-        'meta',
-        'installation_id',
-    ];
+    protected $guarded = [];
 
     public function user()
     {
