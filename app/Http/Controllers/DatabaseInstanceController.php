@@ -11,7 +11,8 @@ use Illuminate\Validation\Rule;
 
 class DatabaseInstanceController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->authorizeResource('App\DatabaseInstance');
     }
 
@@ -69,10 +70,12 @@ class DatabaseInstanceController extends Controller
             'name' => $request->name,
             'google_project_id' => $request->google_project_id,
             'type' => $request->type,
-            'version' => $request->version,
-            'tier' => $request->tier,
-            'size' => $request->size,
-            'region' => $request->region,
+            'options' => [
+                'version' => $request->version,
+                'tier' => $request->tier,
+                'size' => $request->size,
+                'region' => $request->region,
+            ],
         ]);
 
         try {

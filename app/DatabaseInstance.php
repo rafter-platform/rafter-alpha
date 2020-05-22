@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Options;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\Jobs\MonitorDatabaseInstanceCreation;
 use App\Services\GoogleApi;
@@ -10,6 +11,8 @@ use Illuminate\Support\Str;
 
 class DatabaseInstance extends Model
 {
+    use HasOptions;
+
     const TYPES = [
         'mysql',
         // 'postgres',
@@ -50,22 +53,11 @@ class DatabaseInstance extends Model
     const STATUS_ACTIVE = 'active';
     const STATUS_FAILED = 'failed';
 
-    protected $fillable = [
-        'name',
-        'type',
-        'version',
-        'tier',
-        'size',
-        'status',
-        'region',
-        'root_password',
-        'operation_name',
-        'synced',
-        'google_project_id',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'synced' => 'boolean',
+        'options' => Options::class,
     ];
 
     public function googleProject()
@@ -100,7 +92,7 @@ class DatabaseInstance extends Model
      */
     public function assignRootPassword()
     {
-        $this->update(['root_password' => Str::random()]);
+        $this->setOption('root_password', Str::random());
     }
 
     /**

@@ -13,11 +13,7 @@ class Database extends Model
     const STATUS_ACTIVE = 'active';
     const STATUS_FAILED = 'failed';
 
-    protected $fillable = [
-        'name',
-        'status',
-        'operation_name',
-    ];
+    protected $guarded = [];
 
     public function databaseInstance()
     {

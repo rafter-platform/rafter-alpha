@@ -46,14 +46,7 @@ class GoogleProject extends Model
     const STATUS_READY = 'ready';
     const STATUS_FAILED = 'failed';
 
-    protected $fillable = [
-        'name',
-        'project_id',
-        'project_number',
-        'service_account_json',
-        'status',
-        'operation_name',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'service_account_json' => 'array',

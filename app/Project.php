@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Casts\Options;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use HasOptions;
+
     /**
      * Possible Project types
      */
@@ -14,13 +17,10 @@ class Project extends Model
         'nodejs' => "Node.js",
     ];
 
-    protected $fillable = [
-        'name',
-        'region',
-        'google_project_id',
-        'type',
-        'repository',
-        'source_provider_id',
+    protected $guarded = [];
+
+    protected $casts = [
+        'options' => Options::class,
     ];
 
     public function team()

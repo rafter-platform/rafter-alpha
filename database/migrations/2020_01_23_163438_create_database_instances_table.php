@@ -18,14 +18,10 @@ class CreateDatabaseInstancesTable extends Migration
             $table->unsignedBigInteger('google_project_id');
             $table->string('name');
             $table->string('type');
-            $table->string('version');
-            $table->string('tier');
-            $table->string('size');
-            $table->string('region');
-            $table->string('root_password')->nullable();
             $table->string('operation_name')->nullable();
             $table->string('status')->default('pending');
             $table->boolean('synced')->default(false);
+            $table->text('options')->nullable();
             $table->timestamps();
 
             $table->foreign('google_project_id')
