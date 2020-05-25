@@ -3,6 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\GoogleProject;
+use App\DatabaseInstance;
+use App\Project;
+use App\User;
 
 class Team extends Model
 {
@@ -23,27 +27,27 @@ class Team extends Model
 
     public function owner()
     {
-        return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function users()
     {
-        return $this->belongsToMany('App\User');
+        return $this->belongsToMany(User::class);
     }
 
     public function googleProjects()
     {
-        return $this->hasMany('App\GoogleProject');
+        return $this->hasMany(GoogleProject::class);
     }
 
     public function projects()
     {
-        return $this->hasMany('App\Project');
+        return $this->hasMany(Project::class);
     }
 
     public function databaseInstances()
     {
-        return $this->hasManyThrough('App\DatabaseInstance', 'App\GoogleProject');
+        return $this->hasManyThrough(DatabaseInstance::class, GoogleProject::class);
     }
 
     /**

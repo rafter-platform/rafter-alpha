@@ -10,6 +10,8 @@ use App\Jobs\SyncDatabaseInstances;
 use App\Jobs\WaitForProjectApisToBeEnabled;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
+use App\DatabaseInstance;
+use App\Team;
 
 class GoogleProject extends Model
 {
@@ -58,12 +60,12 @@ class GoogleProject extends Model
 
     public function team()
     {
-        return $this->belongsTo('App\Team');
+        return $this->belongsTo(Team::class);
     }
 
     public function databaseInstances()
     {
-        return $this->hasMany('App\DatabaseInstance');
+        return $this->hasMany(DatabaseInstance::class);
     }
 
     /**

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class GoogleProjectController extends Controller
 {
     public function __construct() {
-        $this->authorizeResource('App\GoogleProject');
+        $this->authorizeResource(GoogleProject::class);
     }
 
     /**

@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Team;
+use App\SourceProvider;
 
 class User extends Authenticatable
 {
@@ -45,22 +47,22 @@ class User extends Authenticatable
 
     public function ownedTeams()
     {
-        return $this->hasMany('App\Team');
+        return $this->hasMany(Team::class);
     }
 
     public function teams()
     {
-        return $this->belongsToMany('App\Team');
+        return $this->belongsToMany(Team::class);
     }
 
     public function sourceProviders()
     {
-        return $this->hasMany('App\SourceProvider');
+        return $this->hasMany(SourceProvider::class);
     }
 
     public function currentTeam()
     {
-        return $this->belongsTo('App\Team', 'current_team_id');
+        return $this->belongsTo(Team::class, 'current_team_id');
     }
 
     public function setCurrentTeam(Team $team)

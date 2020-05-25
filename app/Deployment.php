@@ -6,6 +6,9 @@ use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudRunConfig;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
+use App\User;
+use App\TrackedJob;
+use App\Environment;
 
 class Deployment extends Model
 {
@@ -18,12 +21,12 @@ class Deployment extends Model
 
     public function environment()
     {
-        return $this->belongsTo('App\Environment');
+        return $this->belongsTo(Environment::class);
     }
 
     public function steps()
     {
-        return $this->morphMany('App\TrackedJob', 'trackable');
+        return $this->morphMany(TrackedJob::class, 'trackable');
     }
 
     public function project()
@@ -38,7 +41,7 @@ class Deployment extends Model
 
     public function initiator()
     {
-        return $this->belongsTo('App\User', 'initiator_id')->withDefault([
+        return $this->belongsTo(User::class, 'initiator_id')->withDefault([
             'name' => 'Anonymous User',
         ]);
     }

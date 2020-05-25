@@ -15,6 +15,9 @@ use Tests\Support\FakeGoogleApiClient;
 use Tests\TestCase;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use App\Project;
+use App\Environment;
+use App\User;
 
 class DomainMappingTest extends TestCase
 {
@@ -162,7 +165,7 @@ class DomainMappingTest extends TestCase
         $mapping = $this->createMapping();
         $mapping->markActive();
 
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(factory(User::class)->create());
 
         Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
             ->call('deleteDomain', $mapping->id);
@@ -209,7 +212,7 @@ class DomainMappingTest extends TestCase
         $mapping = $this->createMapping();
         $mapping->markActive();
 
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(factory(User::class)->create());
 
         Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
             ->call('checkDomainStatus', $mapping->id);
@@ -253,7 +256,7 @@ class DomainMappingTest extends TestCase
         $mapping = $this->createMapping();
         $mapping->markUnverified();
 
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(factory(User::class)->create());
 
         Livewire::test(EnvironmentDomains::class, ['environment' => $mapping->environment])
             ->call('verifyDomain', $mapping->id);
@@ -263,11 +266,11 @@ class DomainMappingTest extends TestCase
 
     protected function createMapping(): DomainMapping
     {
-        return factory('App\DomainMapping')->create([
+        return factory(DomainMapping::class)->create([
             'domain' => 'www.rafter.app',
-            'environment_id' => factory('App\Environment')->create([
+            'environment_id' => factory(Environment::class)->create([
                 'name' => 'production',
-                'project_id' => factory('App\Project')->create([
+                'project_id' => factory(Project::class)->create([
                     'name' => 'rafter'
                 ])->id,
             ])->id,

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Http;
 use Tests\Support\FakeGoogleApiClient;
 use Tests\Support\FakeGoogleSecretManagerClient;
 use Tests\TestCase;
+use App\Deployment;
+use App\Environment;
 
 class DeploymentTest extends TestCase
 {
@@ -70,7 +72,7 @@ class DeploymentTest extends TestCase
             '*' => Http::response('Hello World', 200, ['Headers']),
         ]);
 
-        $environment = factory('App\Environment')->state('laravel')->create();
+        $environment = factory(Environment::class)->state('laravel')->create();
 
         $deployment = $environment->createInitialDeployment();
 
@@ -111,7 +113,7 @@ class DeploymentTest extends TestCase
             'cloudbuild.googleapis.com/v1/projects/*/builds' => Http::response(['something' => 'unexpected'], 200),
         ]);
 
-        $environment = factory('App\Environment')->state('laravel')->create();
+        $environment = factory(Environment::class)->state('laravel')->create();
 
         $deployment = $environment->createInitialDeployment();
 
@@ -154,7 +156,7 @@ class DeploymentTest extends TestCase
             '*' => Http::response('Hello World', 200, ['Headers']),
         ]);
 
-        $environment = factory('App\Environment')->state('laravel')->create();
+        $environment = factory(Environment::class)->state('laravel')->create();
 
         $deployment = $environment->deployHash('abc123', 'commit message', null);
 
@@ -218,7 +220,7 @@ class DeploymentTest extends TestCase
             '*' => Http::response('Hello World', 200, ['Headers']),
         ]);
 
-        $environment = factory('App\Environment')->state('laravel')->create();
+        $environment = factory(Environment::class)->state('laravel')->create();
 
         $deployment = $environment->deployHash('abc123', 'commit message', null);
 
@@ -293,9 +295,9 @@ class DeploymentTest extends TestCase
             '*' => Http::response('Hello World', 200, ['Headers']),
         ]);
 
-        $environment = factory('App\Environment')->state('laravel')->create();
+        $environment = factory(Environment::class)->state('laravel')->create();
 
-        $failedDeployment = factory('App\Deployment')->create([
+        $failedDeployment = factory(Deployment::class)->create([
             'environment_id' => $environment->id,
             'status' => 'failed',
         ]);

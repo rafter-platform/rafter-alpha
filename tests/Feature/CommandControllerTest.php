@@ -4,6 +4,10 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Command;
+use App\User;
+use App\Environment;
+use App\Project;
 
 class CommandControllerTest extends TestCase
 {
@@ -16,30 +20,30 @@ class CommandControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->other = factory('App\Command')->create();
+        $this->user = factory(User::class)->create();
+        $this->other = factory(Command::class)->create();
     }
 
     public function test_user_can_view_their_commands()
     {
-        $project = factory('App\Project')->create([
+        $project = factory(Project::class)->create([
             'team_id' => $this->user->currentTeam->id,
         ]);
 
-        $environment = factory('App\Environment')->create([
+        $environment = factory(Environment::class)->create([
             'project_id' => $project->id,
         ]);
 
-        $commands = factory('App\Command', 3)->create([
+        $commands = factory(Command::class, 3)->create([
             'environment_id' => $environment->id,
             'user_id' => $this->user->id,
         ]);
 
         // Also ensure command created by another user on the same team is visible
-        $otherTeamMember = factory('App\User')->create();
+        $otherTeamMember = factory(User::class)->create();
         $this->user->currentTeam->users()->attach($otherTeamMember);
 
-        $otherCommandOnTeam = factory('App\Command')->create([
+        $otherCommandOnTeam = factory(Command::class)->create([
             'environment_id' => $environment->id,
             'user_id' => $otherTeamMember->id,
         ]);

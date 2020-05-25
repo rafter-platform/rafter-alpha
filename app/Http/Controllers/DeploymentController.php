@@ -11,7 +11,7 @@ class DeploymentController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource('App\Deployment');
+        $this->authorizeResource(Deployment::class);
     }
 
     /**

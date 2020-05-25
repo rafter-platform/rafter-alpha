@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\RequestException;
 use Throwable;
+use App\Environment;
 
 class DomainMapping extends Model
 {
@@ -54,7 +55,7 @@ class DomainMapping extends Model
 
     public function environment()
     {
-        return $this->belongsTo('App\Environment');
+        return $this->belongsTo(Environment::class);
     }
 
     public function getMapping(): DomainMappingResponse

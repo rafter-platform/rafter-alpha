@@ -13,7 +13,7 @@ class DatabaseInstanceController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource('App\DatabaseInstance');
+        $this->authorizeResource(DatabaseInstance::class);
     }
 
     /**

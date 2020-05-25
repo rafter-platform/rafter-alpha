@@ -8,6 +8,8 @@ use App\Jobs\MonitorDatabaseInstanceCreation;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Database;
+use App\GoogleProject;
 
 class DatabaseInstance extends Model
 {
@@ -62,12 +64,12 @@ class DatabaseInstance extends Model
 
     public function googleProject()
     {
-        return $this->belongsTo('App\GoogleProject');
+        return $this->belongsTo(GoogleProject::class);
     }
 
     public function databases()
     {
-        return $this->hasMany('App\Database');
+        return $this->hasMany(Database::class);
     }
 
     /**

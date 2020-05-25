@@ -1,5 +1,7 @@
 <?php
 
+use App\Environment;
+
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\DomainMapping;
@@ -9,6 +11,6 @@ $factory->define(DomainMapping::class, function (Faker $faker) {
     return [
         'domain' => $faker->domainName,
         'status' => 'inactive',
-        'environment_id' => factory('App\Environment'),
+        'environment_id' => factory(Environment::class),
     ];
 });

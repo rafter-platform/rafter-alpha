@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\DatabaseInstance;
+use App\GoogleProject;
 
 class DatabaseInstanceTest extends TestCase
 {
@@ -11,8 +13,8 @@ class DatabaseInstanceTest extends TestCase
 
     public function test_connection_string_is_generated()
     {
-        $instance = factory('App\DatabaseInstance')->create([
-            'google_project_id' => factory('App\GoogleProject')->create([
+        $instance = factory(DatabaseInstance::class)->create([
+            'google_project_id' => factory(GoogleProject::class)->create([
                 'project_id' => 'some-project',
             ])->id,
             'name' => 'my-db',
@@ -23,7 +25,7 @@ class DatabaseInstanceTest extends TestCase
 
     public function test_some_options_are_accessible_as_properties()
     {
-        $instance = factory('App\DatabaseInstance')->create();
+        $instance = factory(DatabaseInstance::class)->create();
 
         $this->assertEquals('MYSQL_5_7', $instance->version);
         $this->assertEquals('db-f1-micro', $instance->tier);

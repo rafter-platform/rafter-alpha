@@ -1,5 +1,7 @@
 <?php
 
+use App\Team;
+
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\GoogleProject;
@@ -7,7 +9,7 @@ use Faker\Generator as Faker;
 
 $factory->define(GoogleProject::class, function (Faker $faker) {
     return [
-        'team_id' => factory('App\Team'),
+        'team_id' => factory(Team::class),
         'project_id' => $faker->slug(),
         'name' => $faker->text(20),
         'service_account_json' => [

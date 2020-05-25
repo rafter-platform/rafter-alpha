@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
+use App\Deployment;
+use App\DomainMapping;
+use App\Command;
+use App\Database;
+use App\Project;
 
 class Environment extends Model
 {
@@ -30,22 +35,22 @@ class Environment extends Model
 
     public function project()
     {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo(Project::class);
     }
 
     public function deployments()
     {
-        return $this->hasMany('App\Deployment')->latest('id');
+        return $this->hasMany(Deployment::class)->latest('id');
     }
 
     public function database()
     {
-        return $this->belongsTo('App\Database');
+        return $this->belongsTo(Database::class);
     }
 
     public function commands()
     {
-        return $this->hasMany('App\Command')->latest();
+        return $this->hasMany(Command::class)->latest();
     }
 
     public function sourceProvider()
@@ -55,7 +60,7 @@ class Environment extends Model
 
     public function domainMappings()
     {
-        return $this->hasMany('App\DomainMapping')->latest();
+        return $this->hasMany(DomainMapping::class)->latest();
     }
 
     /**
@@ -65,7 +70,7 @@ class Environment extends Model
      */
     public function activeDeployment()
     {
-        return $this->belongsTo('App\Deployment', 'active_deployment_id');
+        return $this->belongsTo(Deployment::class, 'active_deployment_id');
     }
 
     public function primaryDomain(): string

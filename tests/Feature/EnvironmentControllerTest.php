@@ -4,6 +4,9 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Environment;
+use App\Project;
+use App\User;
 
 class EnvironmentControllerTest extends TestCase
 {
@@ -16,17 +19,17 @@ class EnvironmentControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->other = factory('App\Environment')->create();
+        $this->user = factory(User::class)->create();
+        $this->other = factory(Environment::class)->create();
     }
 
     public function test_user_can_view_their_environments()
     {
-        $project = factory('App\Project')->create([
+        $project = factory(Project::class)->create([
             'team_id' => $this->user->currentTeam->id,
         ]);
 
-        $environment = factory('App\Environment')->create([
+        $environment = factory(Environment::class)->create([
             'project_id' => $project->id,
         ]);
 

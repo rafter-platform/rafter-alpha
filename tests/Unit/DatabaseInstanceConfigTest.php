@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\DatabaseInstance;
 
 class DatabaseInstanceConfigTest extends TestCase
 {
@@ -12,7 +13,7 @@ class DatabaseInstanceConfigTest extends TestCase
 
     public function test_expected_defaults_are_set()
     {
-        $instance = factory('App\DatabaseInstance')->make();
+        $instance = factory(DatabaseInstance::class)->make();
 
         $config = (new DatabaseInstanceConfig($instance))->config();
 

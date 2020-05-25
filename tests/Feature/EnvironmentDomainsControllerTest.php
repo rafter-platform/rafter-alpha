@@ -5,6 +5,10 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\User;
+use App\DomainMapping;
+use App\Environment;
+use App\Project;
 
 class EnvironmentDomainsController extends TestCase
 {
@@ -17,26 +21,26 @@ class EnvironmentDomainsController extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->other = factory('App\User')->create();
+        $this->user = factory(User::class)->create();
+        $this->other = factory(User::class)->create();
     }
 
     public function test_user_can_view_their_domains()
     {
-        $project = factory('App\Project')->create([
+        $project = factory(Project::class)->create([
             'team_id' => $this->user->currentTeam->id,
         ]);
 
-        $environment = factory('App\Environment')->create([
+        $environment = factory(Environment::class)->create([
             'project_id' => $project->id,
         ]);
 
-        $domains = factory('App\DomainMapping', 3)->create([
+        $domains = factory(DomainMapping::class, 3)->create([
             'environment_id' => $environment->id,
         ]);
 
         // Also ensure domain created by another user on the same team is visible
-        $otherTeamMember = factory('App\User')->create();
+        $otherTeamMember = factory(User::class)->create();
         $this->user->currentTeam->users()->attach($otherTeamMember);
         $otherTeamMember->setCurrentTeam($this->user->currentTeam);
         $this->user->currentTeam->refresh();

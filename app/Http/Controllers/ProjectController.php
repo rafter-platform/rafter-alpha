@@ -12,7 +12,7 @@ class ProjectController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource('App\Project');
+        $this->authorizeResource(Project::class);
     }
 
     /**

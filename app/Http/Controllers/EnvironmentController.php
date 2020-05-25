@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class EnvironmentController extends Controller
 {
     public function __construct() {
-        $this->authorizeResource('App\Environment');
+        $this->authorizeResource(Environment::class);
     }
 
     /**

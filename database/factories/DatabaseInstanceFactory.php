@@ -1,5 +1,7 @@
 <?php
 
+use App\GoogleProject;
+
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\DatabaseInstance;
@@ -7,7 +9,7 @@ use Faker\Generator as Faker;
 
 $factory->define(DatabaseInstance::class, function (Faker $faker) {
     return [
-        'google_project_id' => factory('App\GoogleProject'),
+        'google_project_id' => factory(GoogleProject::class),
         'name' => $faker->slug,
         'type' => 'mysql',
         'options' => [

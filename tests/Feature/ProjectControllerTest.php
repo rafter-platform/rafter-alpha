@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Project;
+use App\User;
 
 class ProjectControllerTest extends TestCase
 {
@@ -16,13 +18,13 @@ class ProjectControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->otherProject = factory('App\Project')->create();
+        $this->user = factory(User::class)->create();
+        $this->otherProject = factory(Project::class)->create();
     }
 
     public function test_user_can_view_their_projects()
     {
-        $projects = factory('App\Project', 3)->create([
+        $projects = factory(Project::class, 3)->create([
             'team_id' => $this->user->currentTeam->id,
         ]);
 

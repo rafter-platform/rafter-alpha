@@ -10,7 +10,7 @@ class CommandController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource('App\Command');
+        $this->authorizeResource(Command::class);
     }
 
     /**

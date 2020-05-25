@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Tests\Support\FakeGoogleApiClient;
 use Tests\TestCase;
+use App\DomainMapping;
+use App\Environment;
 
 class EnvironmentTest extends TestCase
 {
@@ -28,7 +30,7 @@ class EnvironmentTest extends TestCase
     {
         Queue::fake();
 
-        $environment = factory('App\Environment')->state('laravel')->create();
+        $environment = factory(Environment::class)->state('laravel')->create();
 
         $environment->createInitialDeployment();
 
@@ -49,7 +51,7 @@ class EnvironmentTest extends TestCase
 
     public function test_create_initial_deployment_enqueues_expected_jobs_for_nodejs()
     {
-        $environment = factory('App\Environment')->state('nodejs')->create();
+        $environment = factory(Environment::class)->state('nodejs')->create();
 
         Queue::fake();
 
@@ -75,7 +77,7 @@ class EnvironmentTest extends TestCase
 
         $this->app->instance(Google_Client::class, new FakeGoogleApiClient);
 
-        $environment = factory('App\Environment')->state('laravel')->create([
+        $environment = factory(Environment::class)->state('laravel')->create([
             'worker_url' => 'https://some.a.run.app',
         ]);
 
@@ -94,14 +96,14 @@ class EnvironmentTest extends TestCase
 
     public function test_primary_domain_is_known()
     {
-        $environment = factory('App\Environment')->state('laravel')->create([
+        $environment = factory(Environment::class)->state('laravel')->create([
             'url' => 'https://some.a.run.app',
         ]);
 
         $this->assertEquals('some.a.run.app', $environment->primaryDomain());
 
         // Throw in an inactive mapping to ensure it doesn't count as a primary domain
-        $environment->domainMappings()->create(factory('App\DomainMapping')->raw([
+        $environment->domainMappings()->create(factory(DomainMapping::class)->raw([
             'status' => 'inactive',
         ]));
 
@@ -109,7 +111,7 @@ class EnvironmentTest extends TestCase
 
         $this->assertEquals('some.a.run.app', $environment->primaryDomain());
 
-        $mapping = $environment->domainMappings()->create(factory('App\DomainMapping')->raw([
+        $mapping = $environment->domainMappings()->create(factory(DomainMapping::class)->raw([
             'status' => 'active',
         ]));
 
@@ -120,13 +122,13 @@ class EnvironmentTest extends TestCase
 
     public function test_knows_additional_domains()
     {
-        $environment = factory('App\Environment')->state('laravel')->create([
+        $environment = factory(Environment::class)->state('laravel')->create([
             'url' => 'https://some.a.run.app',
         ]);
 
         $this->assertEquals(0, $environment->additionalDomainsCount());
 
-        $environment->domainMappings()->createMany(factory('App\DomainMapping', 5)->raw([
+        $environment->domainMappings()->createMany(factory(DomainMapping::class, 5)->raw([
             'status' => 'active',
         ]));
 

@@ -4,6 +4,10 @@ namespace App;
 
 use App\Casts\Options;
 use Illuminate\Database\Eloquent\Model;
+use App\SourceProvider;
+use App\Environment;
+use App\GoogleProject;
+use App\Team;
 
 class Project extends Model
 {
@@ -25,22 +29,22 @@ class Project extends Model
 
     public function team()
     {
-        return $this->belongsTo('App\Team');
+        return $this->belongsTo(Team::class);
     }
 
     public function googleProject()
     {
-        return $this->belongsTo('App\GoogleProject');
+        return $this->belongsTo(GoogleProject::class);
     }
 
     public function environments()
     {
-        return $this->hasMany('App\Environment');
+        return $this->hasMany(Environment::class);
     }
 
     public function sourceProvider()
     {
-        return $this->belongsTo('App\SourceProvider');
+        return $this->belongsTo(SourceProvider::class);
     }
 
     /**

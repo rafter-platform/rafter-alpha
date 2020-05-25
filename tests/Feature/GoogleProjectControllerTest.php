@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\GoogleProject;
+use App\User;
 
 class GoogleProjectControllerTest extends TestCase
 {
@@ -16,13 +18,13 @@ class GoogleProjectControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->otherProject = factory('App\GoogleProject')->create();
+        $this->user = factory(User::class)->create();
+        $this->otherProject = factory(GoogleProject::class)->create();
     }
 
     public function test_user_can_view_their_projects()
     {
-        $projects = factory('App\GoogleProject', 3)->create([
+        $projects = factory(GoogleProject::class, 3)->create([
             'team_id' => $this->user->currentTeam->id,
         ]);
 

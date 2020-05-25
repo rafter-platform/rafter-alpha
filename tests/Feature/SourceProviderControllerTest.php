@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\SourceProvider;
+use App\User;
 
 class SourceProviderControllerTest extends TestCase
 {
@@ -16,13 +18,13 @@ class SourceProviderControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->other = factory('App\SourceProvider')->create();
+        $this->user = factory(User::class)->create();
+        $this->other = factory(SourceProvider::class)->create();
     }
 
     public function test_user_can_view_their_source_providers()
     {
-        $sources = factory('App\SourceProvider', 3)->create([
+        $sources = factory(SourceProvider::class, 3)->create([
             'user_id' => $this->user->id,
         ]);
 

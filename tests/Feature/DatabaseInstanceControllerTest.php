@@ -4,6 +4,9 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\GoogleProject;
+use App\DatabaseInstance;
+use App\User;
 
 class DatabaseInstanceControllerTest extends TestCase
 {
@@ -16,14 +19,14 @@ class DatabaseInstanceControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->other = factory('App\DatabaseInstance')->create();
+        $this->user = factory(User::class)->create();
+        $this->other = factory(DatabaseInstance::class)->create();
     }
 
     public function test_user_can_view_their_database_instances()
     {
-        $dbs = factory('App\DatabaseInstance', 3)->create([
-            'google_project_id' => factory('App\GoogleProject')->create([
+        $dbs = factory(DatabaseInstance::class, 3)->create([
+            'google_project_id' => factory(GoogleProject::class)->create([
                 'team_id' => $this->user->currentTeam->id,
             ]),
         ]);

@@ -6,6 +6,7 @@ use App\GoogleCloud\DatabaseConfig;
 use App\Jobs\MonitorDatabaseCreation;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
+use App\DatabaseInstance;
 
 class Database extends Model
 {
@@ -17,7 +18,7 @@ class Database extends Model
 
     public function databaseInstance()
     {
-        return $this->belongsTo('App\DatabaseInstance');
+        return $this->belongsTo(DatabaseInstance::class);
     }
 
     /**

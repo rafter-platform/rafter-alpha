@@ -4,6 +4,10 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Deployment;
+use App\Environment;
+use App\Project;
+use App\User;
 
 class DeploymentControllerTest extends TestCase
 {
@@ -16,21 +20,21 @@ class DeploymentControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory('App\User')->create();
-        $this->other = factory('App\Deployment')->create();
+        $this->user = factory(User::class)->create();
+        $this->other = factory(Deployment::class)->create();
     }
 
     public function test_user_can_view_their_deployments()
     {
-        $project = factory('App\Project')->create([
+        $project = factory(Project::class)->create([
             'team_id' => $this->user->currentTeam->id,
         ]);
 
-        $environment = factory('App\Environment')->create([
+        $environment = factory(Environment::class)->create([
             'project_id' => $project->id,
         ]);
 
-        $deployments = factory('App\Deployment', 3)->create([
+        $deployments = factory(Deployment::class, 3)->create([
             'environment_id' => $environment->id,
         ]);
 

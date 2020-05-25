@@ -9,6 +9,8 @@ use Google\Auth\Middleware\AuthTokenMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Illuminate\Database\Eloquent\Model;
+use App\User;
+use App\Environment;
 
 class Command extends Model
 {
@@ -21,12 +23,12 @@ class Command extends Model
 
     public function environment()
     {
-        return $this->belongsTo('App\Environment');
+        return $this->belongsTo(Environment::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     /**
