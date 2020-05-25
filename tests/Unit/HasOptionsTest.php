@@ -16,7 +16,7 @@ class HasOptionsTest extends TestCase
         ]);
 
         $this->assertSame('100GB', $model->getOption('size'));
-        $this->assertSame(true, $model->getOption('backups.enabled'));
+        $this->assertTrue($model->getOption('backups.enabled'));
     }
 
     public function test_options_are_merged()
@@ -31,7 +31,7 @@ class HasOptionsTest extends TestCase
         ]);
 
         $this->assertSame('200GB', $model->getOption('size'));
-        $this->assertSame(true, $model->getOption('backups.enabled'));
+        $this->assertTrue($model->getOption('backups.enabled'));
         $this->assertSame('us-central1', $model->getOption('backups.location'));
     }
 
@@ -47,7 +47,7 @@ class HasOptionsTest extends TestCase
         $model->options['backups.location'] = 'us-east';
 
         $this->assertSame('150GB', $model->getOption('size'));
-        $this->assertSame(true, $model->getOption('backups.enabled'));
+        $this->assertTrue($model->getOption('backups.enabled'));
         $this->assertSame('us-east', $model->getOption('backups.location'));
 
         $this->assertSame([
@@ -78,7 +78,7 @@ class HasOptionsTest extends TestCase
         $model->options['size'] = '150GB';
         $model->options['backups.location'] = 'us-east';
 
-        $this->assertSame(true, $model->getOption('access.public'));
+        $this->assertTrue($model->getOption('access.public'));
 
         $this->assertEquals([
             'location' => 'us-east',
