@@ -28,7 +28,7 @@ class IamPolicyTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $policy->getPolicy()['bindings']);
+        $this->assertSame($expected, $policy->getPolicy()['bindings']);
     }
 
     public function test_it_adds_a_new_member_to_an_existing_role()
@@ -60,7 +60,7 @@ class IamPolicyTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $policy->getPolicy()['bindings']);
+        $this->assertSame($expected, $policy->getPolicy()['bindings']);
     }
 
 
@@ -92,6 +92,6 @@ class IamPolicyTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $policy->getPolicy()['bindings']);
+        $this->assertSame($expected, $policy->getPolicy()['bindings']);
     }
 }

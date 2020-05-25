@@ -18,7 +18,7 @@ EOD;
 
         $vars = EnvVars::fromString($string);
 
-        $this->assertEquals([
+        $this->assertSame([
             [
                 'name' => 'FOO',
                 'value' => 'bar',
@@ -36,7 +36,7 @@ EOD;
 
         $vars->set('HELLO', 'world');
 
-        $this->assertEquals('world', $vars->get('HELLO'));
+        $this->assertSame('world', $vars->get('HELLO'));
     }
 
     public function test_it_populates_vars_with_constructor()
@@ -45,7 +45,7 @@ EOD;
             'HI' => 'there',
         ]);
 
-        $this->assertEquals('there', $vars->get('HI'));
+        $this->assertSame('there', $vars->get('HI'));
     }
 
     public function test_it_gets_internal_object_with_get_no_key()
@@ -54,7 +54,7 @@ EOD;
             'HI' => 'gang',
         ]);
 
-        $this->assertEquals([
+        $this->assertSame([
             'HI' => 'gang'
         ], $vars->get());
     }
@@ -70,8 +70,8 @@ EOD;
 HELLO='world'
 IT='me'
 EOD;
-        $this->assertEquals($string, $vars->toString());
-        $this->assertEquals($string, (string) $vars);
+        $this->assertSame($string, $vars->toString());
+        $this->assertSame($string, (string) $vars);
     }
 
     public function test_it_injects_vars()
@@ -85,7 +85,7 @@ EOD;
             'FOOD' => 'Pizza',
         ]);
 
-        $this->assertEquals([
+        $this->assertSame([
             'NAME' => 'Josh',
             'JOB' => 'Developer',
             'FOOD' => 'Pizza',
@@ -102,7 +102,7 @@ EOD;
 
         $newVars = EnvVars::fromString($string);
 
-        $this->assertEquals([
+        $this->assertSame([
             'NAME' => 'Josh Larson',
         ], $newVars->get());
     }
@@ -121,6 +121,6 @@ EOD;
          * This is odd. But it seems to be expected, and I assume most applications
          * consuming a boolean value will also accept `1` or cast it to `true`, etc.
          */
-        $this->assertEquals("enabled='1'", $vars->toString());
+        $this->assertSame("enabled='1'", $vars->toString());
     }
 }

@@ -15,8 +15,8 @@ class HasOptionsTest extends TestCase
             'options' => [],
         ]);
 
-        $this->assertEquals('100GB', $model->getOption('size'));
-        $this->assertEquals(true, $model->getOption('backups.enabled'));
+        $this->assertSame('100GB', $model->getOption('size'));
+        $this->assertSame(true, $model->getOption('backups.enabled'));
     }
 
     public function test_options_are_merged()
@@ -30,9 +30,9 @@ class HasOptionsTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals('200GB', $model->getOption('size'));
-        $this->assertEquals(true, $model->getOption('backups.enabled'));
-        $this->assertEquals('us-central1', $model->getOption('backups.location'));
+        $this->assertSame('200GB', $model->getOption('size'));
+        $this->assertSame(true, $model->getOption('backups.enabled'));
+        $this->assertSame('us-central1', $model->getOption('backups.location'));
     }
 
     public function test_options_are_set()
@@ -46,11 +46,11 @@ class HasOptionsTest extends TestCase
         $model->options['size'] = '150GB';
         $model->options['backups.location'] = 'us-east';
 
-        $this->assertEquals('150GB', $model->getOption('size'));
-        $this->assertEquals(true, $model->getOption('backups.enabled'));
-        $this->assertEquals('us-east', $model->getOption('backups.location'));
+        $this->assertSame('150GB', $model->getOption('size'));
+        $this->assertSame(true, $model->getOption('backups.enabled'));
+        $this->assertSame('us-east', $model->getOption('backups.location'));
 
-        $this->assertEquals([
+        $this->assertSame([
             'size' => '150GB',
             'backups' => [
                 'location' => 'us-east',
@@ -61,9 +61,9 @@ class HasOptionsTest extends TestCase
             'something' => 'fun',
         ];
 
-        $this->assertEquals('fun', $model->getOption('something'));
+        $this->assertSame('fun', $model->getOption('something'));
 
-        $this->assertEquals([
+        $this->assertSame([
             'something' => 'fun',
         ], $model->options->toArray());
     }
@@ -78,7 +78,7 @@ class HasOptionsTest extends TestCase
         $model->options['size'] = '150GB';
         $model->options['backups.location'] = 'us-east';
 
-        $this->assertEquals(true, $model->getOption('access.public'));
+        $this->assertSame(true, $model->getOption('access.public'));
 
         $this->assertEquals([
             'location' => 'us-east',
@@ -86,7 +86,7 @@ class HasOptionsTest extends TestCase
             'frequency' => 'daily',
         ], $model->getOption('backups'));
 
-        $this->assertEquals([
+        $this->assertSame([
             'public' => true,
         ], $model->getOption('access'));
     }

@@ -98,7 +98,7 @@ class EnvironmentTest extends TestCase
             'url' => 'https://some.a.run.app',
         ]);
 
-        $this->assertEquals('some.a.run.app', $environment->primaryDomain());
+        $this->assertSame('some.a.run.app', $environment->primaryDomain());
 
         // Throw in an inactive mapping to ensure it doesn't count as a primary domain
         $environment->domainMappings()->create(factory('App\DomainMapping')->raw([
@@ -107,7 +107,7 @@ class EnvironmentTest extends TestCase
 
         $environment->refresh();
 
-        $this->assertEquals('some.a.run.app', $environment->primaryDomain());
+        $this->assertSame('some.a.run.app', $environment->primaryDomain());
 
         $mapping = $environment->domainMappings()->create(factory('App\DomainMapping')->raw([
             'status' => 'active',
@@ -115,7 +115,7 @@ class EnvironmentTest extends TestCase
 
         $environment->refresh();
 
-        $this->assertEquals($mapping->domain, $environment->primaryDomain());
+        $this->assertSame($mapping->domain, $environment->primaryDomain());
     }
 
     public function test_knows_additional_domains()
@@ -124,7 +124,7 @@ class EnvironmentTest extends TestCase
             'url' => 'https://some.a.run.app',
         ]);
 
-        $this->assertEquals(0, $environment->additionalDomainsCount());
+        $this->assertSame(0, $environment->additionalDomainsCount());
 
         $environment->domainMappings()->createMany(factory('App\DomainMapping', 5)->raw([
             'status' => 'active',
@@ -132,6 +132,6 @@ class EnvironmentTest extends TestCase
 
         $environment->refresh();
 
-        $this->assertEquals(5, $environment->additionalDomainsCount());
+        $this->assertSame(5, $environment->additionalDomainsCount());
     }
 }

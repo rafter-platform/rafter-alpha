@@ -18,17 +18,17 @@ class DatabaseInstanceTest extends TestCase
             'name' => 'my-db',
         ]);
 
-        $this->assertEquals('some-project:us-central1:my-db', $instance->connectionString());
+        $this->assertSame('some-project:us-central1:my-db', $instance->connectionString());
     }
 
     public function test_some_options_are_accessible_as_properties()
     {
         $instance = factory('App\DatabaseInstance')->create();
 
-        $this->assertEquals('MYSQL_5_7', $instance->version);
-        $this->assertEquals('db-f1-micro', $instance->tier);
-        $this->assertEquals('10', $instance->size);
-        $this->assertEquals('us-central1', $instance->region);
-        $this->assertEquals('notapassword', $instance->rootPassword);
+        $this->assertSame('MYSQL_5_7', $instance->version);
+        $this->assertSame('db-f1-micro', $instance->tier);
+        $this->assertSame('10', $instance->size);
+        $this->assertSame('us-central1', $instance->region);
+        $this->assertSame('notapassword', $instance->rootPassword);
     }
 }
