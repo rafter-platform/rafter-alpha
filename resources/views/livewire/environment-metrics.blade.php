@@ -3,11 +3,11 @@
         <h3 class="text-xl leading-6 font-medium text-gray-900">
             Past {{ ucfirst($this->duration) }}
         </h3>
-        <x-dropdown-menu label="Past {{ ucfirst($duration) }}">
+        <select wire:model="duration" class="form-select">
             @foreach (array_keys($this->durations) as $duration)
-                <x-dropdown-menu-item wire:click="setDuration('{{ $duration }}')">Past {{ ucfirst($duration) }}</x-dropdown-menu-item>
+                <option value={{ $duration }}>Past {{ ucfirst($duration) }}</option>
             @endforeach
-        </x-dropdown-menu>
+        </select>
     </div>
     <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
         <x-metric title="Total Requests">{{ $totalRequests }}</x-metric>
