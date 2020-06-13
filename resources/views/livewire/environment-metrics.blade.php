@@ -3,7 +3,7 @@
         <h3 class="text-xl leading-6 font-medium text-gray-900">
             Past {{ ucfirst($this->duration) }}
         </h3>
-        <select wire:model="duration" class="form-select">
+        <select wire:model="duration" class="form-select text-sm">
             @foreach (array_keys($this->durations) as $duration)
                 <option value={{ $duration }}>Past {{ ucfirst($duration) }}</option>
             @endforeach
