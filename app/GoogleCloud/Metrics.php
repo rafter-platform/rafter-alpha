@@ -16,10 +16,6 @@ use Google\Protobuf\Timestamp;
  */
 class Metrics
 {
-    const DURATION_HOUR = 60 * 60;
-    const DURATION_DAY = 60 * 60 * 24;
-    const DURATION_WEEK = 60 * 60 * 24 * 7;
-
     /**
      * @var \App\Environment
      */
@@ -66,14 +62,15 @@ class Metrics
         ]);
 
         $this->view = TimeSeriesView::FULL;
-        $this->duration = static::DURATION_DAY;
+
+        // Default duration is 1 day
+        $this->duration = 60 * 60 * 24;
     }
 
     /**
-     * Get metrics for a given duration. Accepts an enum DURATION_* from
-     * this class.
+     * Get metrics for a given duration, in seconds.
      *
-     * @param int $duration
+     * @param int $duration Duration in seconds
      */
     public function for(int $duration)
     {

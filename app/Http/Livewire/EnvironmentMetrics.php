@@ -12,9 +12,22 @@ class EnvironmentMetrics extends Component
 
     public $ready = false;
 
+    public $durations = [
+        'hour' => 60 * 60,
+        'day' => 60 * 60 * 24,
+        'week' => 60 * 60 * 24 * 7,
+    ];
+
+    public $duration = 'hour';
+
     public function mount(Environment $environment)
     {
         $this->enviroment = $environment;
+    }
+
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
     }
 
     public function loadMetrics()
@@ -33,7 +46,7 @@ class EnvironmentMetrics extends Component
         if ($this->ready) {
             $metrics = new Metrics($this->enviroment);
 
-            $metrics->for(Metrics::DURATION_HOUR);
+            $metrics->for($this->durations[$this->duration]);
 
             $requestCounts['total'] = number_format($metrics->getTotalRequests());
             $requestCounts['web'] = number_format($metrics->getWebRequests());
