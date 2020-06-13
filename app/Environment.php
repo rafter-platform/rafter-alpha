@@ -127,7 +127,7 @@ class Environment extends Model
     }
 
     /**
-     * Get the GooglE Project ID
+     * Get the Google Project ID
      *
      * @return string
      */
@@ -137,13 +137,23 @@ class Environment extends Model
     }
 
     /**
+     * Get the decoded Service Account information for the project.
+     *
+     * @return array
+     */
+    public function serviceAccountJson(): array
+    {
+        return $this->project->googleProject->service_account_json;
+    }
+
+    /**
      * Get the Service Account Email to be used for interactions with the API.
      *
      * @return string
      */
     public function serviceAccountEmail(): string
     {
-        return $this->project->googleProject->service_account_json['client_email'];
+        return $this->serviceAccountJson()['client_email'];
     }
 
     /**
