@@ -81,7 +81,11 @@ class Metrics
 
     protected function filter(): string
     {
-        return 'resource.type="cloud_run_revision" AND metric.type="run.googleapis.com/request_count"';
+        return sprintf(
+            'resource.type="cloud_run_revision" AND metric.type="run.googleapis.com/request_count" AND resource.label.service_name=one_of("%s", "%s")',
+            $this->environment->web_service_name,
+            $this->environment->worker_service_name
+        );
     }
 
     protected function interval(): TimeInterval
