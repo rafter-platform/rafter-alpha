@@ -77,7 +77,7 @@ class DeploymentTest extends TestCase
         $environment->refresh();
         $deployment->refresh();
 
-        $this->assertEquals('successful', $deployment->status);
+        $this->assertSame('successful', $deployment->status);
         $this->assertTrue($environment->activeDeployment->is($deployment));
 
         $steps = [
@@ -117,7 +117,7 @@ class DeploymentTest extends TestCase
 
         $deployment->refresh();
 
-        $this->assertEquals('failed', $deployment->status);
+        $this->assertSame('failed', $deployment->status);
     }
 
     public function test_standard_deployment_works_as_expected()
@@ -161,7 +161,7 @@ class DeploymentTest extends TestCase
         $environment->refresh();
         $deployment->refresh();
 
-        $this->assertEquals('successful', $deployment->status);
+        $this->assertSame('successful', $deployment->status);
         $this->assertTrue($environment->activeDeployment->is($deployment));
 
         $steps = [
@@ -225,7 +225,7 @@ class DeploymentTest extends TestCase
         $environment->refresh();
         $deployment->refresh();
 
-        $this->assertEquals('successful', $deployment->status);
+        $this->assertSame('successful', $deployment->status);
         $this->assertTrue($environment->activeDeployment->is($deployment));
 
         $newDeployment = $deployment->redeploy();
@@ -318,6 +318,6 @@ class DeploymentTest extends TestCase
         ];
 
         $this->assertCount(count($steps), $deployment->steps);
-        $this->assertEquals($steps, $deployment->steps()->pluck('name')->toArray());
+        $this->assertSame($steps, $deployment->steps()->pluck('name')->toArray());
     }
 }

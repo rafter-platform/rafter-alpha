@@ -50,7 +50,7 @@ class CloudRunIamPolicyTest extends TestCase
         $policy->setPublic();
 
         $this->assertTrue($policy->isPublic());
-        $this->assertEquals([
+        $this->assertSame([
             [
                 'role' => 'roles/run.invoker',
                 'members' => ['allUsers'],
@@ -75,7 +75,7 @@ class CloudRunIamPolicyTest extends TestCase
         $policy->setPublic();
 
         $this->assertTrue($policy->isPublic());
-        $this->assertEquals([
+        $this->assertSame([
             [
                 'role' => 'roles/run.invoker',
                 'members' => ['allUsers'],
