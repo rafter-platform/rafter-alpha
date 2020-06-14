@@ -29,12 +29,14 @@ class Metrics
     /**
      * @var int
      */
-    protected $view;
+    protected $view = TimeSeriesView::FULL;
 
     /**
+     * Default duration: 1 day
+     *
      * @var int
      */
-    protected $duration;
+    protected $duration = 60 * 60 * 24;
 
     /**
      * Results
@@ -60,11 +62,6 @@ class Metrics
             'credentials' => $this->environment->serviceAccountJson(),
             'projectId' => $this->environment->projectId(),
         ]);
-
-        $this->view = TimeSeriesView::FULL;
-
-        // Default duration is 1 day
-        $this->duration = 60 * 60 * 24;
     }
 
     /**
@@ -102,15 +99,21 @@ class Metrics
         return $interval;
     }
 
+    public function alignmentInterval(): int
+    {
+        // TODO: Make this more configurable
+        return $this->duration;
+    }
+
     protected function aggregation(): Aggregation
     {
         $alignmentPeriod = new Duration();
-        $alignmentPeriod->setSeconds($this->duration);
+        $alignmentPeriod->setSeconds($this->alignmentInterval());
         $aggregation = new Aggregation();
         $aggregation->setAlignmentPeriod($alignmentPeriod);
 
-        // TODO: Make this configurable.
-        $aggregation->setPerSeriesAligner(Aligner::ALIGN_SUM);
+        $aligner = Aligner::ALIGN_SUM;
+        $aggregation->setPerSeriesAligner($aligner);
 
         return $aggregation;
     }
@@ -134,7 +137,9 @@ class Metrics
                 $this->results[$service] = [];
             }
 
-            $this->results[$service][$ts->getMetric()->getLabels()['response_code_class']] = $ts->getPoints()[0]->getValue()->getInt64Value();
+            $value = $ts->getPoints()[0]->getValue()->getInt64Value();
+
+            $this->results[$service][$ts->getMetric()->getLabels()['response_code_class']] = $value;
         }
     }
 
