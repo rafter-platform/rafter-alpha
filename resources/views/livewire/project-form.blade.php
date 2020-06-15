@@ -4,23 +4,23 @@
     <x-radio-button-group>
         <x-radio-button x-model="sourceType" name="source_type" value="github">
             <x-slot name="icon">
-                <x-heroicon-o-currency-dollar class="text-current w-6 h-6" />
+                <x-icon-github class="text-current w-6 h-6" />
             </x-slot>
             GitHub
         </x-radio-button>
         <x-radio-button x-model="sourceType"  name="source_type" value="gitlab">
             <x-slot name="icon">
-                <x-heroicon-o-currency-dollar class="text-current w-6 h-6" />
+                <x-icon-gitlab class="text-current w-6 h-6" />
             </x-slot>
             Gitlab
         </x-radio-button>
         <x-radio-button x-model="sourceType"  name="source_type" value="bitbucket">
             <x-slot name="icon">
-                <x-heroicon-o-currency-dollar class="text-current w-6 h-6" />
+                <x-icon-bitbucket class="text-current w-6 h-6" />
             </x-slot>
             Bitbucket
         </x-radio-button>
-        <x-radio-button x-model="sourceType"  name="source_type" value="cli">
+        <x-radio-button @click="sourceProvider = ''" x-model="sourceType"  name="source_type" value="cli">
             <x-slot name="icon">
                 <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
             </x-slot>
@@ -31,9 +31,6 @@
     <x-radio-button-group x-show="sourceType == 'github'">
         @foreach ($sourceProviders->filter(fn ($p) => $p->type == 'GitHub') as $item)
         <x-radio-button x-model="sourceProvider" name="source_provider" value="{{ $item->id }}">
-            <x-slot name="icon">
-                <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
-            </x-slot>
             {{ $item->name }}
         </x-radio-button>
         @endforeach
@@ -87,10 +84,16 @@
         <h2 class="text-lg font-medium mb-4">What type of project?</h2>
 
         <x-radio-button-group x-data="{}">
-            @foreach (\App\Project::TYPES as $type)
+            @foreach (\App\Project::TYPES as $key => $type)
             <x-radio-button name="type" value="{{ $type }}">
                 <x-slot name="icon">
-                    <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
+                    @if ($key == 'laravel')
+                        <x-icon-laravel class="w-6 h-6" />
+                    @elseif ($key == 'nodejs')
+                        <x-icon-nodejs class="w-6 h-6" />
+                    @else
+                        <x-heroicon-o-desktop-computer class="w-6 h-6 text-current" />
+                    @endif
                 </x-slot>
                 {{ $type }}
             </x-radio-button>
@@ -105,7 +108,7 @@
             @foreach ($projects as $project)
             <x-radio-button x-model="googleProject" name="google_project_id" value="{{ $project->id }}">
                 <x-slot name="icon">
-                    <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
+                    <x-icon-google-cloud class="text-current w-6 h-6" />
                 </x-slot>
                 {{ $project->project_id }}
             </x-radio-button>
