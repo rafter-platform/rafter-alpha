@@ -1,4 +1,4 @@
-<form x-data="{ sourceType: '', sourceProvider: '', googleProject: '' }">
+<form x-data="{ sourceType: '', sourceProvider: '', googleProject: '' }" id="project-form">
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group>
@@ -34,7 +34,7 @@
             {{ $item->name }}
         </x-radio-button>
         @endforeach
-        <x-radio-button @click.prevent="window.alert('new gh install')">
+        <x-radio-button @click.prevent="startOAuthFlow('{{ $newGitHubInstallationUrl }}', 'github')">
             <x-slot name="icon">
                 <x-heroicon-o-plus class="text-current w-6 h-6" />
             </x-slot>
@@ -142,3 +142,43 @@
         <p>Instructions for adding a project via CLI go here...</p>
     </div>
 </form>
+
+@push('scripts')
+<script>
+var windowObjectReference = null;
+var previousUrl = null;
+
+function startOAuthFlow(url, name) {
+   window.removeEventListener('message', receiveMessage);
+
+   var strWindowFeatures = 'toolbar=no, menubar=no, width=1040, height=700, top=100, left=100';
+
+   if (windowObjectReference === null || windowObjectReference.closed) {
+     windowObjectReference = window.open(url, name, strWindowFeatures);
+   } else if (previousUrl !== url) {
+     windowObjectReference = window.open(url, name, strWindowFeatures);
+     windowObjectReference.focus();
+   } else {
+     windowObjectReference.focus();
+   }
+
+   window.addEventListener('message', event => receiveMessage(event), false);
+
+   previousUrl = url;
+};
+
+function receiveMessage(event) {
+    if (event.origin !== window.location.origin) {
+        return;
+    }
+
+    const { data } = event;
+
+    if (data.source === 'github') {
+        const { payload } = data;
+
+        @this.call('handleOauthCallback', payload, data.source);
+    }
+};
+</script>
+@endpush
