@@ -20,6 +20,14 @@
     @apply bg-gray-100 text-red-600 px-1;
 }
 
+.radio-group input[type="radio"]:checked + label {
+    @apply bg-blue-200 border-blue-300;
+}
+
+.radio-group input[type="radio"]:focus + label {
+    @apply shadow-outline-blue;
+}
+
 /**
  * This injects any component classes registered by plugins.
  *
