@@ -51,7 +51,11 @@ class ProjectForm extends Component
 
     public function handleOauthClose()
     {
-        // TODO: Refresh installations for GitHub
-        logger('closed');
+        auth()->user()
+            ->sourceProviders()
+            ->whereType('GitHub')
+            ->get()
+            ->each
+            ->refreshGitHubInstallation();
     }
 }

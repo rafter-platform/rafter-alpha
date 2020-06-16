@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Casts\Options;
+use Error;
 use Illuminate\Database\Eloquent\Model;
 
 class SourceProvider extends Model
@@ -36,5 +37,14 @@ class SourceProvider extends Model
     public function client()
     {
         return SourceProviderClientFactory::make($this);
+    }
+
+    public function refreshGitHubInstallation()
+    {
+        if ($this->type != 'GitHub') {
+            throw new Error('Only GitHub source providers can be refreshed.');
+        }
+
+        $this->client()->refreshInstallation();
     }
 }
