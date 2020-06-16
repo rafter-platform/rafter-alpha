@@ -22,9 +22,8 @@ class DatabaseSeeder extends Seeder
          * Connect a GitHub source provider, if provided.
          */
         $gitHubInstallationId = env('SEED_GITHUB_INSTALLATION_ID');
-        $gitHubToken = env('SEED_GITHUB_TOKEN');
 
-        if ($gitHubInstallationId && $gitHubToken) {
+        if ($gitHubInstallationId) {
             $sourceProvider = $user->sourceProviders()->create([
                 'name' => 'rafter',
                 'type' => 'GitHub',
