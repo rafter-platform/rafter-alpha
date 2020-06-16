@@ -2,12 +2,13 @@
 
 namespace App;
 
+use App\Casts\Options;
 use Illuminate\Database\Eloquent\Model;
 
 class SourceProvider extends Model
 {
     protected $casts = [
-        'meta' => 'array',
+        'meta' => Options::class,
     ];
 
     protected $guarded = [];

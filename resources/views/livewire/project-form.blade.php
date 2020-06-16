@@ -177,12 +177,18 @@ var previousUrl = null;
 function startOAuthFlow(url, name) {
    window.removeEventListener('message', receiveMessage);
 
+   if (windowObjectReference) {
+       window.removeEventListener('beforeunload', handleClose);
+   }
+
    var strWindowFeatures = 'toolbar=no, menubar=no, width=1040, height=700, top=100, left=100';
 
    if (windowObjectReference === null || windowObjectReference.closed) {
      windowObjectReference = window.open(url, name, strWindowFeatures);
+     windowObjectReference.addEventListener('beforeunload', handleClose);
    } else if (previousUrl !== url) {
      windowObjectReference = window.open(url, name, strWindowFeatures);
+     windowObjectReference.addEventListener('beforeunload', handleClose);
      windowObjectReference.focus();
    } else {
      windowObjectReference.focus();
@@ -206,5 +212,9 @@ function receiveMessage(event) {
         @this.call('handleOauthCallback', payload, data.source);
     }
 };
+
+function handleClose() {
+    @this.call('handleOauthClose');
+}
 </script>
 @endpush
