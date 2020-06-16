@@ -191,7 +191,7 @@ function startOAuthFlow(url, name) {
         windowObjectReference.focus();
     }
 
-    window.addEventListener('message', event => receiveMessage(event), false);
+    window.addEventListener('message', receiveMessage, false);
 
     closeInterval = setInterval(() => {
         if (windowObjectReference && windowObjectReference.closed) {

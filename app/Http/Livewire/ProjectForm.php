@@ -34,7 +34,7 @@ class ProjectForm extends Component
                 ]);
 
                 $installation = $source->client()->getInstallation();
-                $accountName = $installation['repositories'][0]['owner']['login'];
+                $accountName = explode('/', $installation['repositories'][0])[0];
 
                 $source->meta = $installation;
                 $source->name = $accountName;

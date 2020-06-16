@@ -5,6 +5,7 @@ namespace App;
 use App\Casts\Options;
 use Error;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\RequestException;
 
 class SourceProvider extends Model
 {
@@ -39,12 +40,39 @@ class SourceProvider extends Model
         return SourceProviderClientFactory::make($this);
     }
 
+    /**
+     * Refresh a GitHub Installation for the current source provider.
+     * If the user has removed access to the installation, a ClientException
+     * will be thrown, and the source provider will automatically be deleted.
+     *
+     * @return void
+     */
     public function refreshGitHubInstallation()
     {
         if ($this->type != 'GitHub') {
             throw new Error('Only GitHub source providers can be refreshed.');
         }
 
-        $this->client()->refreshInstallation();
+        try {
+            $this->client()->refreshInstallation();
+        } catch (RequestException $e) {
+            if ($e->getCode() === 404) {
+                $this->remove();
+            }
+
+            logger()->error($e->getMessage());
+        }
+    }
+
+    /**
+     * Remove the source provider and alert the user.
+     *
+     * @return void
+     */
+    public function remove()
+    {
+        // TODO: Emit an notification to the user that a source has been removed,
+        // and any connected projects will stop being deployed.
+        $this->delete();
     }
 }

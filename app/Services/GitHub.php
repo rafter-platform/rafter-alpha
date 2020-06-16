@@ -189,7 +189,7 @@ class GitHub implements SourceProviderClient
         return [
             'installation_token' => $token,
             'installation_token_expires_at' => $installation['expires_at'],
-            'repositories' => collect($repositories)->map->full_name,
+            'repositories' => collect($repositories)->map->full_name->toArray(),
             'avatar' => $avatar,
         ];
     }
