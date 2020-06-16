@@ -1,7 +1,7 @@
 <div class="flex flex-wrap mb-6">
-    <label for="{{ $name }}" class="block text-gray-700 text-sm font-bold mb-2">
+    <x-label for="{{ $name }}">
         {{ $label }}:
-    </label>
+    </x-label>
 
     <div class="text-sm text-gray-600 w-full mb-2">{{ $helper ?? '' }}</div>
 

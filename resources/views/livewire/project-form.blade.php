@@ -1,4 +1,14 @@
-<form x-data="{ sourceType: '', sourceProvider: '', googleProject: '' }" id="project-form">
+<form
+    x-data="{ sourceType: '', sourceProvider: '', googleProject: '', repository: '', projectName : '' }"
+    x-init="
+        $watch('repository', value => {
+            if (value.includes('/')) {
+                projectName = value.split('/')[1];
+            }
+        })
+    "
+    id="project-form"
+    class="max-w-3xl">
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group>
@@ -28,29 +38,35 @@
         </x-radio-button>
     </x-radio-button-group>
 
-    <x-radio-button-group x-show="sourceType == 'github'">
-        @foreach ($sourceProviders->filter(fn ($p) => $p->type == 'GitHub') as $item)
-        <x-radio-button x-model="sourceProvider" name="source_provider" value="{{ $item->id }}">
-            @if ($item->meta['avatar'] ?? false)
-            <x-slot name="icon">
-                <img src="{{ $item->meta['avatar'] }}" alt="Avatar" class="w-6 h-6 rounded-full">
-            </x-slot>
-            @endif
-            <div>
-                {{ $item->name }}
-                <span class="inline-flex ml-1 items-center px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800">
-                    {{ count($item->meta['repositories'] ?? []) }}
-                </span>
-            </div>
-        </x-radio-button>
-        @endforeach
-        <x-radio-button @click.prevent="startOAuthFlow('{{ $newGitHubInstallationUrl }}', 'github')">
-            <x-slot name="icon">
-                <x-heroicon-o-plus class="text-current w-6 h-6" />
-            </x-slot>
-            New Installation
-        </x-radio-button>
-    </x-radio-button-group>
+    <div x-show="sourceType == 'github'">
+        <p class="mb-4">
+            GitHub allows you to provide granular access to different repositories and organizations using <b>installations</b>.
+            Select the installation below containing your repository, or create a new installation.
+        </p>
+        <x-radio-button-group>
+            @foreach ($sourceProviders->filter(fn ($p) => $p->type == 'GitHub') as $item)
+            <x-radio-button x-model="sourceProvider" name="source_provider" value="{{ $item->id }}" small>
+                @if ($item->meta['avatar'] ?? false)
+                <x-slot name="icon">
+                    <img src="{{ $item->meta['avatar'] }}" alt="Avatar" class="w-5 h-5 rounded-full">
+                </x-slot>
+                @endif
+                <div>
+                    {{ $item->name }}
+                    <span class="inline-flex ml-1 items-center px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800">
+                        {{ count($item->meta['repositories'] ?? []) }}
+                    </span>
+                </div>
+            </x-radio-button>
+            @endforeach
+            <x-radio-button @click.prevent="startOAuthFlow('{{ $newGitHubInstallationUrl }}', 'github')" small>
+                <x-slot name="icon">
+                    <x-heroicon-o-plus class="text-current w-5 h-5" />
+                </x-slot>
+                New Installation
+            </x-radio-button>
+        </x-radio-button-group>
+    </div>
 
     <x-radio-button-group x-show="sourceType == 'gitlab'">
         @if ($gitlab = $sourceProviders->firstWhere('type', 'Gitlab'))
@@ -89,7 +105,9 @@
     </x-radio-button-group>
 
     <div x-show="sourceProvider">
-        <x-input label="Repository" name="repository" placeholder="username/repository" />
+        <x-input x-model="repository" label="Repository" name="repository" placeholder="username/repository" />
+
+        <x-input x-model="projectName" label="Project Name" name="repository" placeholder="repository" />
 
         <h2 class="text-lg font-medium mb-4">What type of project?</h2>
 
@@ -110,9 +128,7 @@
             @endforeach
         </x-radio-button-group>
 
-        <x-input label="Project Name" name="repository" placeholder="username/repository" />
-
-        <h2 class="text-lg font-medium mb-4">Please select your Google Cloud Project, or connect a new one.</h2>
+        <h2 class="text-lg font-medium mb-4">Which Google Cloud Project?</h2>
 
         <x-radio-button-group>
             @foreach ($projects as $project)
