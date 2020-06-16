@@ -8,6 +8,7 @@ use App\Deployment;
 use Exception;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class GitHub implements SourceProviderClient
@@ -146,14 +147,15 @@ class GitHub implements SourceProviderClient
      */
     public function getRepositories($token = null)
     {
-        $installationToken = $token ?: $this->source->meta['installation_token'];
+        $installationToken = $token ?: $this->token();
 
         return Http::withHeaders([
             'Accept' => "application/vnd.github.machine-man-preview+json",
             'Authorization' => "token $installationToken",
         ])
             ->get('https://api.github.com/installation/repositories')
-            ->throw();
+            ->throw()
+            ->json();
     }
 
     /**
@@ -216,7 +218,7 @@ class GitHub implements SourceProviderClient
      *
      * @return void
      */
-    public function createJwt()
+    protected function createJwt()
     {
         $secret = config('services.github.private_key');
 
@@ -240,10 +242,24 @@ class GitHub implements SourceProviderClient
     }
 
     /**
+     * Determine whether the stored installation access token is expired.
+     *
+     * @return boolean
+     */
+    protected function tokenIsExpired()
+    {
+        return now() > Carbon::parse($this->source['meta']['installation_token_expires_at']);
+    }
+
+    /**
      * Get the access token for the given SourceProvider.
      */
     protected function token()
     {
-        return $this->source->meta['installation_token'];
+        if ($this->tokenIsExpired()) {
+            $this->refreshInstallation();
+        }
+
+        return $this->source->refresh()->meta['installation_token'];
     }
 }
