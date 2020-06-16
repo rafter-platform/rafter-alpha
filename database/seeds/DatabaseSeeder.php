@@ -26,11 +26,13 @@ class DatabaseSeeder extends Seeder
 
         if ($gitHubInstallationId && $gitHubToken) {
             $sourceProvider = $user->sourceProviders()->create([
-                'name' => 'GitHub',
+                'name' => 'rafter',
                 'type' => 'GitHub',
                 'installation_id' => $gitHubInstallationId,
-                'meta' => ['token' => $gitHubToken],
+                'meta' => [],
             ]);
+
+            $sourceProvider->refreshGitHubInstallation();
         }
 
         /**
