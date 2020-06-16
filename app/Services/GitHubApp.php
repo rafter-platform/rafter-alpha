@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class GitHubApp
 {
@@ -62,5 +64,42 @@ class GitHubApp
         $hash = 'sha1=' . hash_hmac('sha1', $payload, config('services.github.webhook_secret'));
 
         return $hash === $signature;
+    }
+
+    public static function getInstallationAccessToken($installationId)
+    {
+        $jwt = static::createJwt();
+
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer $jwt",
+            'Accept' => 'application/vnd.github.machine-man-preview+json',
+        ])
+            ->post("https://api.github.com/app/installations/$installationId/access_tokens")
+            ->json();
+
+        return $response;
+    }
+
+    public static function getInstallationRepositories($installationId, $token)
+    {
+        return Http::withHeaders([
+            'Accept' => "application/vnd.github.machine-man-preview+json",
+            'Authorization' => "token $token",
+        ])
+            ->get("https://api.github.com/user/installations/$installationId/repositories")
+            ->json();
+    }
+
+    public static function createJwt()
+    {
+        $secret = config('services.github.private_key');
+
+        $payload = [
+            'iat' => time(),
+            'exp' => time() + 10 * 60,
+            'iss' => config('services.github.app_id'),
+        ];
+
+        return JWT::encode($payload, $secret, 'RS256');
     }
 }

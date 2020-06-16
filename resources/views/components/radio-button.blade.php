@@ -5,14 +5,14 @@
     <input type="radio" class="sr-only" id="{{ $name }}_{{ $value }}" {{ $attributes }}>
     <label for="{{ $name }}_{{ $value }}" class="{{ $classes }}">
         {{ $icon ?? '' }}
-        <span class="{{ empty($icon) ? '' : 'ml-2' }}">{{ $slot }}</span>
+        <div class="{{ empty($icon) ? '' : 'ml-2' }}">{{ $slot }}</div>
     </label>
 </div>
 @else
 <div>
     <button {{ $attributes }} class="{{ $classes }}">
         {{ $icon ?? '' }}
-        <span class="{{ empty($icon) ? '' : 'ml-2' }}">{{ $slot }}</span>
+        <div class="{{ empty($icon) ? '' : 'ml-2' }}">{{ $slot }}</div>
     </label>
 </div>
 @endif

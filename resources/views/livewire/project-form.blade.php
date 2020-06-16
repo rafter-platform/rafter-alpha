@@ -31,7 +31,17 @@
     <x-radio-button-group x-show="sourceType == 'github'">
         @foreach ($sourceProviders->filter(fn ($p) => $p->type == 'GitHub') as $item)
         <x-radio-button x-model="sourceProvider" name="source_provider" value="{{ $item->id }}">
-            {{ $item->name }}
+            @if ($item->meta['avatar'] ?? false)
+            <x-slot name="icon">
+                <img src="{{ $item->meta['avatar'] }}" alt="Avatar" class="w-6 h-6 rounded-full">
+            </x-slot>
+            @endif
+            <div>
+                {{ $item->name }}
+                <span class="inline-flex ml-1 items-center px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800">
+                    {{ count($item->meta['repositories'] ?? []) }}
+                </span>
+            </div>
         </x-radio-button>
         @endforeach
         <x-radio-button @click.prevent="startOAuthFlow('{{ $newGitHubInstallationUrl }}', 'github')">

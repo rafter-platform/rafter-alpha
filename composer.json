@@ -11,6 +11,7 @@
         "php": "^7.4",
         "driesvints/blade-icons": "^2.2",
         "fideloper/proxy": "^4.0",
+        "firebase/php-jwt": "^5.2",
         "google/apiclient": "^2.0",
         "google/cloud-logging": "^1.20",
         "google/cloud-monitoring": "^1.0",
