@@ -13,6 +13,12 @@
                 projectName = value.split('/')[1];
             }
         })
+
+        window.livewire.on('googleProjectAdded', projectId => {
+            googleProject = projectId;
+            showGoogleProjectForm = false;
+            $refs.serviceAccountJson.value = '';
+        })
     "
     id="project-form"
     class="max-w-3xl">
@@ -175,6 +181,7 @@
         <div x-show="showGoogleProjectForm" class="mb-8">
             <x-input
                 wire:model="serviceAccountJson"
+                x-ref="serviceAccountJson"
                 name="serviceAccountJson"
                 label="Attach the service account JSON file"
                 type="file"

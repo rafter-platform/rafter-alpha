@@ -95,13 +95,13 @@ class ProjectForm extends Component
             return;
         }
 
-        currentTeam()->googleProjects()->create([
-            'name' => $serviceAccount['project_id'],
+        $project = currentTeam()->googleProjects()->create([
             'project_id' => $serviceAccount['project_id'],
             'service_account_json' => $serviceAccount,
         ]);
 
         $this->serviceAccountJson = '';
+        $this->emit('googleProjectAdded', $project->id);
     }
 
     public function getSourceProviderProperty()
