@@ -20,8 +20,7 @@
             $refs.serviceAccountJson.value = '';
         })
     "
-    id="project-form"
-    class="max-w-3xl mx-auto">
+    wire:submit.prevent="create">
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group>
@@ -246,7 +245,6 @@
 
         <div class="text-right">
             <x-button
-                wire:click.prevent="create"
                 design="primary"
                 size="xl"
                 wire:loading.attr="disabled"
