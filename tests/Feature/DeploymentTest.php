@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\EnvVars;
+use App\Jobs\CreateCloudRunService;
 use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -321,5 +323,44 @@ class DeploymentTest extends TestCase
 
         $this->assertCount(count($steps), $deployment->steps);
         $this->assertSame($steps, $deployment->steps()->pluck('name')->toArray());
+    }
+
+    public function test_cloud_run_service_is_updated_instead_of_created_on_initial_deployment_if_already_exists()
+    {
+        Http::fake([
+            // The first attempt to create a new service will fail
+            'us-central1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/*/services' => Http::response(['error' => ['status' => 'ALREADY_EXISTS']], 409),
+
+            /**
+             * The next attempts to
+             * 1) get the current service and
+             * 2) update the service
+             * will simply get the service in response.
+             */
+            'us-central1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/*/services/*' => Http::response($this->loadStub('cloud-run-service')),
+        ]);
+
+        $environment = factory('App\Environment')->state('laravel')->create();
+
+        $this->assertEquals('', $environment->environmental_variables);
+        $this->assertEquals('', $environment->web_service_name);
+        $this->assertEquals('', $environment->worker_service_name);
+
+        $deployment = $environment->deployments()->create([
+            'commit_hash' => 'abc123',
+            'commit_message' => 'Initial Deploy',
+        ]);
+
+        CreateCloudRunService::dispatchNow($deployment);
+
+        // Ensure the vars from the existing service are re-used
+        $this->assertEquals([
+            'DB_CONNECTION' => 'sqlite',
+            'DB_DATABASE' => '/var/www/database/database.sqlite',
+        ], EnvVars::fromString($environment->refresh()->environmental_variables)->get());
+
+        // Ensure the web and worker values are now set
+        $this->assertEquals($environment->slug(), $environment->web_service_name);
+        $this->assertEquals($environment->slug() . '-worker', $environment->worker_service_name);
     }
 }

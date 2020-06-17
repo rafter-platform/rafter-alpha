@@ -227,7 +227,7 @@ class Deployment extends Model
         $service = $this->getCloudRunWebService();
         $envVars = new EnvVars($service->envVars());
 
-        $this->environment->environmental_variables = $envVars->toString();
+        $this->environment->update(['environmental_variables' => $envVars->toString()]);
     }
 
     /**
