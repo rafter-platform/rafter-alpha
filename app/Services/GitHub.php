@@ -55,8 +55,6 @@ class GitHub implements SourceProviderClient
             return false;
         }
 
-        logger($response);
-
         if (empty($branch)) {
             return true;
         }

@@ -1,5 +1,5 @@
 @php
-$classes = 'inline-flex items-center border font-medium rounded-md focus:outline-none transition ease-in-out duration-150';
+$classes = 'inline-flex items-center border font-medium rounded-md focus:outline-none transition ease-in-out duration-150 disabled:opacity-75';
 
 switch ($design ?? '') {
     case 'primary':
