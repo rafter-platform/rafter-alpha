@@ -68,7 +68,9 @@ class FakeSourceProviderClient implements SourceProviderClient
     {
         return [
             'repositories' => [
-                'fake/repository',
+                [
+                    'full_name' => 'fake/repository',
+                ],
             ],
         ];
     }
