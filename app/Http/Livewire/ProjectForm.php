@@ -131,6 +131,7 @@ class ProjectForm extends Component
                 Rule::in(currentTeam()->googleProjects()->pluck('id'))
             ],
             'repository' => [
+                'required',
                 new ValidRepository(SourceProvider::find($this->sourceProviderId))
             ],
             'name' => [

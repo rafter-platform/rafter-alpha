@@ -67,7 +67,9 @@ class FakeSourceProviderClient implements SourceProviderClient
     public function getRepositories()
     {
         return [
-            'repositories' => []
+            'repositories' => [
+                'fake/repository',
+            ],
         ];
     }
 
