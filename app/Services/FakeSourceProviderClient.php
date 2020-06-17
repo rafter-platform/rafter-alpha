@@ -67,12 +67,31 @@ class FakeSourceProviderClient implements SourceProviderClient
     public function getRepositories()
     {
         return [
-            'repositories' => []
+            'repositories' => [
+                [
+                    'full_name' => 'fake/repository',
+                ],
+            ],
         ];
     }
 
     public function cloneUrl(Deployment $deployment)
     {
         return 'https://some.url';
+    }
+
+    public function refreshInstallation()
+    {
+        // void
+    }
+
+    public function getInstallation()
+    {
+        return [];
+    }
+
+    public function token(): string
+    {
+        return 'notatoken';
     }
 }

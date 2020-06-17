@@ -82,5 +82,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('source-providers', 'SourceProviderController');
 
     // Inbound Source Provider Authorizations
-    Route::get('auth/github', 'SourceProviderController@store');
+    Route::get('auth/github', function () {
+        return view('popup-callback');
+    });
 });

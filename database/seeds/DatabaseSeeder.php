@@ -22,27 +22,26 @@ class DatabaseSeeder extends Seeder
          * Connect a GitHub source provider, if provided.
          */
         $gitHubInstallationId = env('SEED_GITHUB_INSTALLATION_ID');
-        $gitHubToken = env('SEED_GITHUB_TOKEN');
 
-        if ($gitHubInstallationId && $gitHubToken) {
+        if ($gitHubInstallationId) {
             $sourceProvider = $user->sourceProviders()->create([
-                'name' => 'GitHub',
-                'type' => 'GitHub',
+                'name' => 'rafter-platform',
+                'type' => 'github',
                 'installation_id' => $gitHubInstallationId,
-                'meta' => ['token' => $gitHubToken],
+                'meta' => [],
             ]);
+
+            $sourceProvider->refreshGitHubInstallation();
         }
 
         /**
          * Connect a Google Project, if provided.
          */
-        $googleProjectName = env('SEED_GOOGLE_PROJECT_NAME');
         $googleProjectId = env('SEED_GOOGLE_PROJECT_ID');
         $googleProjectNumber = env('SEED_GOOGLE_PROJECT_NUMBER');
 
-        if ($googleProjectName && $googleProjectId && $googleProjectNumber && File::exists(__DIR__ . '/../../service-account.json')) {
+        if ($googleProjectId && $googleProjectNumber && File::exists(__DIR__ . '/../../service-account.json')) {
             $googleProject = $team->googleProjects()->create([
-                'name' => $googleProjectName,
                 'project_id' => $googleProjectId,
                 'project_number' => $googleProjectNumber,
                 'service_account_json' => json_decode(File::get(__DIR__ . '/../../service-account.json')),

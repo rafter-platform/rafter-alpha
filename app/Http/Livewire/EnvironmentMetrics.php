@@ -43,7 +43,7 @@ class EnvironmentMetrics extends Component
             'worker' => '-',
         ];
 
-        if ($this->ready) {
+        if ($this->ready && $this->enviroment->hasBeenDeployedSuccessfully()) {
             $metrics = new Metrics($this->enviroment);
 
             $metrics->for($this->durations[$this->duration]);

@@ -82,6 +82,7 @@ class DeploymentTest extends TestCase
 
         $steps = [
             'StartDeployment',
+            'WaitForGoogleProjectToBeProvisioned',
             'SetBuildSecrets',
             'CreateImageForDeployment',
             'ConfigureQueues',
@@ -304,6 +305,7 @@ class DeploymentTest extends TestCase
 
         $steps = [
             'StartDeployment',
+            'WaitForGoogleProjectToBeProvisioned',
             'SetBuildSecrets',
             'CreateImageForDeployment',
             'ConfigureQueues',

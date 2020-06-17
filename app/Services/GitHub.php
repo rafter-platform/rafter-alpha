@@ -6,7 +6,9 @@ use App\SourceProvider;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use Exception;
-use GuzzleHttp\Exception\ClientException;
+use Firebase\JWT\JWT;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class GitHub implements SourceProviderClient
@@ -49,7 +51,7 @@ class GitHub implements SourceProviderClient
 
         try {
             $response = $this->request("repos/{$repository}/branches");
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             return false;
         }
 
@@ -143,26 +145,122 @@ class GitHub implements SourceProviderClient
      *
      * @return array
      */
-    public function getRepositories()
+    public function getRepositories($token = null)
     {
-        return $this->request("user/installations/{$this->source->installation_id}/repositories");
+        $installationToken = $token ?: $this->token();
+
+        return Http::withHeaders([
+            'Accept' => "application/vnd.github.machine-man-preview+json",
+            'Authorization' => "token $installationToken",
+        ])
+            ->get('https://api.github.com/installation/repositories')
+            ->throw()
+            ->json();
+    }
+
+    /**
+     * Fetches new information about an installation and saves it.
+     *
+     * @return void
+     */
+    public function refreshInstallation()
+    {
+        $installation = $this->getInstallation();
+
+        $this->source->meta = $installation;
+        $this->source->save();
+    }
+
+    /**
+     * Get an array of useful data about an installation.
+     *
+     * @return array
+     */
+    public function getInstallation(): array
+    {
+        $installation = $this->getInstallationAccessToken();
+        $token = $installation['token'];
+
+        $repositories = $this->getRepositories($token);
+
+        $repositories = $repositories['repositories'];
+        $avatar = $repositories[0]['owner']['avatar_url'];
+
+        return [
+            'installation_token' => $token,
+            'installation_token_expires_at' => $installation['expires_at'],
+            'repositories' => collect($repositories)->map->full_name->toArray(),
+            'avatar' => $avatar,
+        ];
+    }
+
+    /**
+     * Get an installation access token.
+     *
+     * @return array
+     */
+    public function getInstallationAccessToken(): array
+    {
+        $jwt = $this->createJwt();
+        $installationId = $this->source->installation_id;
+
+        return Http::withHeaders([
+            'Authorization' => "Bearer $jwt",
+            'Accept' => 'application/vnd.github.machine-man-preview+json',
+        ])
+            ->post("https://api.github.com/app/installations/$installationId/access_tokens")
+            ->throw()
+            ->json();
+    }
+
+    /**
+     * Create a JWT to call the GitHub API.
+     *
+     * @return void
+     */
+    protected function createJwt()
+    {
+        $secret = config('services.github.private_key');
+
+        $payload = [
+            'iat' => time(),
+            'exp' => time() + 10 * 60,
+            'iss' => config('services.github.app_id'),
+        ];
+
+        return JWT::encode($payload, $secret, 'RS256');
     }
 
     protected function request($endpoint, $method = 'get', $data = [])
     {
-        return Http::withToken($this->token())
-            ->withHeaders([
-                'Accept' => "application/vnd.github.machine-man-preview+json",
-            ])
+        return Http::withHeaders([
+            'Authorization' => "token {$this->token()}",
+            'Accept' => "application/vnd.github.machine-man-preview+json",
+        ])
             ->{$method}('https://api.github.com/' . $endpoint, $data)
+            ->throw()
             ->json();
+    }
+
+    /**
+     * Determine whether the stored installation access token is expired.
+     *
+     * @return boolean
+     */
+    protected function tokenIsExpired()
+    {
+        return now() > Carbon::parse($this->source['meta']['installation_token_expires_at']);
     }
 
     /**
      * Get the access token for the given SourceProvider.
      */
-    protected function token()
+    public function token(): string
     {
-        return $this->source->token();
+        if ($this->tokenIsExpired()) {
+            $this->refreshInstallation();
+        }
+
+        return $this->source->refresh()->meta['installation_token'];
     }
 }

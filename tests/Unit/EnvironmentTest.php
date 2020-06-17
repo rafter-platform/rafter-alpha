@@ -12,6 +12,7 @@ use App\Jobs\StartDeployment;
 use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
+use App\Jobs\WaitForGoogleProjectToBeProvisioned;
 use App\Jobs\WaitForImageToBeBuilt;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,6 +34,7 @@ class EnvironmentTest extends TestCase
         $environment->createInitialDeployment();
 
         Queue::assertPushedWithChain(StartDeployment::class, [
+            WaitForGoogleProjectToBeProvisioned::class,
             SetBuildSecrets::class,
             CreateImageForDeployment::class,
             ConfigureQueues::class,
@@ -56,6 +58,7 @@ class EnvironmentTest extends TestCase
         $environment->createInitialDeployment();
 
         Queue::assertPushedWithChain(StartDeployment::class, [
+            WaitForGoogleProjectToBeProvisioned::class,
             SetBuildSecrets::class,
             CreateImageForDeployment::class,
             ConfigureQueues::class,

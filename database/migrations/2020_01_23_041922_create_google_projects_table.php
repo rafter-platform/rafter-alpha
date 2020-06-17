@@ -16,7 +16,6 @@ class CreateGoogleProjectsTable extends Migration
         Schema::create('google_projects', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('team_id');
-            $table->string('name');
             $table->string('project_id');
             $table->string('project_number')->nullable();
             $table->string('status')->default('pending');

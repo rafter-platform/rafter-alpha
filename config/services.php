@@ -36,6 +36,8 @@ return [
         'redirect' => 'https://rafter.ngrok.io/auth/github',
         'app_name' => env('GITHUB_APP_NAME'),
         'webhook_secret' => env('GITHUB_WEBHOOK_SECRET'),
+        'app_id' => env('GITHUB_APP_ID'),
+        'private_key' => env('GITHUB_APP_PEM'),
     ],
 
 ];

@@ -1,7 +1,7 @@
 <div wire:poll>
     <div class="flex justify-between items-center">
         <x-subtitle>Recent Deployments</x-subtitle>
-        <x-white-button wire:click="deployNow">Deploy Now</x-white-button>
+        <x-button wire:click="deployNow">Deploy Now</x-button>
     </div>
     <x-table>
         <x-slot name="thead">
