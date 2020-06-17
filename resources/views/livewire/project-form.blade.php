@@ -1,21 +1,9 @@
 <form
     x-data="{
-        sourceType: '',
-        sourceProvider: '',
-        googleProject: '',
-        repository: '',
-        projectName : '',
         showGoogleProjectForm: false
     }"
     x-init="
-        $watch('repository', value => {
-            if (value.includes('/')) {
-                @this.set('name', value.split('/')[1]);
-            }
-        })
-
         window.livewire.on('googleProjectAdded', projectId => {
-            googleProject = projectId;
             showGoogleProjectForm = false;
             $refs.serviceAccountJson.value = '';
         })
@@ -24,25 +12,25 @@
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group>
-        <x-radio-button x-model="sourceType" name="source_type" value="github">
+        <x-radio-button wire:model="sourceType" name="source_type" value="github">
             <x-slot name="icon">
                 <x-icon-github class="text-current w-6 h-6" />
             </x-slot>
             GitHub
         </x-radio-button>
-        <x-radio-button x-model="sourceType"  name="source_type" value="gitlab">
+        <x-radio-button wire:model="sourceType"  name="source_type" value="gitlab">
             <x-slot name="icon">
                 <x-icon-gitlab class="text-current w-6 h-6" />
             </x-slot>
             Gitlab
         </x-radio-button>
-        <x-radio-button x-model="sourceType"  name="source_type" value="bitbucket">
+        <x-radio-button wire:model="sourceType"  name="source_type" value="bitbucket">
             <x-slot name="icon">
                 <x-icon-bitbucket class="text-current w-6 h-6" />
             </x-slot>
             Bitbucket
         </x-radio-button>
-        <x-radio-button @click="sourceProvider = ''" x-model="sourceType"  name="source_type" value="cli">
+        <x-radio-button wire:click="$set('sourceProvider', '')" wire:model="sourceType" name="source_type" value="cli">
             <x-slot name="icon">
                 <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
             </x-slot>
@@ -50,14 +38,14 @@
         </x-radio-button>
     </x-radio-button-group>
 
-    <div x-show="sourceType == 'github'">
+    @if ($sourceType == 'github')
         <p class="mb-4 text-gray-800">
             GitHub allows you to provide granular access to different repositories and organizations using <b>installations</b>.
             Select the installation below containing your repository, or create a new installation.
         </p>
         <x-radio-button-group>
             @foreach ($sourceProviders->filter(fn ($p) => $p->type == 'github') as $item)
-                <x-radio-button wire:model="sourceProviderId" x-model="sourceProvider" name="source_provider" value="{{ $item->id }}" small>
+                <x-radio-button wire:model="sourceProviderId" name="source_provider" value="{{ $item->id }}" small>
                     @if ($item->meta['avatar'] ?? false)
                     <x-slot name="icon">
                         <img src="{{ $item->meta['avatar'] }}" alt="Avatar" class="w-5 h-5 rounded-full">
@@ -78,11 +66,12 @@
                 Add or Modify Installation
             </x-radio-button>
         </x-radio-button-group>
-    </div>
+    @endif
 
-    <x-radio-button-group x-show="sourceType == 'gitlab'">
+    @if ($sourceType == 'gitlab')
+    <x-radio-button-group>
         @if ($gitlab = $sourceProviders->firstWhere('type', 'gitlab'))
-            <x-radio-button wire:model="sourceProviderId" x-model="sourceProvider" name="source_provider" value="{{ $gitlab->id }}" checked>
+            <x-radio-button wire:model="sourceProviderId" name="source_provider" value="{{ $gitlab->id }}" checked>
                 <x-slot name="icon">
                     <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
                 </x-slot>
@@ -97,10 +86,12 @@
             </x-radio-button>
         @endif
     </x-radio-button-group>
+    @endif
 
-    <x-radio-button-group x-show="sourceType == 'bitbucket'">
+    @if ($sourceType == 'bitbucket')
+    <x-radio-button-group>
         @if ($bitbucket = $sourceProviders->firstWhere('type', 'bitbucket'))
-            <x-radio-button wire:model="sourceProviderId" x-model="sourceProvider" name="source_provider" value="{{ $bitbucket->id }}" checked>
+            <x-radio-button wire:model="sourceProviderId" name="source_provider" value="{{ $bitbucket->id }}" checked>
                 <x-slot name="icon">
                     <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
                 </x-slot>
@@ -115,11 +106,11 @@
             </x-radio-button>
         @endif
     </x-radio-button-group>
+    @endif
 
-    <div x-show="sourceProvider">
+    @if ($sourceProviderId)
         <x-input
             wire:model="repository"
-            x-model="repository"
             label="Repository"
             name="repository"
             list="repos"
@@ -136,7 +127,6 @@
         @endif
 
         <x-input
-            x-model="projectName"
             wire:model="name"
             label="Project Name"
             name="name"
@@ -179,7 +169,7 @@
 
         <x-radio-button-group>
             @foreach ($projects as $project)
-            <x-radio-button wire:model="googleProjectId" x-model="googleProject" name="googleProjectId" value="{{ $project->id }}">
+            <x-radio-button wire:model="googleProjectId" name="googleProjectId" value="{{ $project->id }}">
                 <x-slot name="icon">
                     <x-icon-google-cloud class="text-current w-6 h-6" />
                 </x-slot>
@@ -225,7 +215,7 @@
             </div>
         </div>
 
-        <div x-show="googleProject">
+        @if ($googleProjectId)
             <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
 
             @error('region')
@@ -241,7 +231,7 @@
                 </x-radio-button>
                 @endforeach
             </x-radio-button-group>
-        </div>
+        @endif
 
         <div class="text-right">
             <x-button
@@ -253,11 +243,11 @@
                 Create Project
             </x-button>
         </div>
-    </div>
+    @endif
 
-    <div x-show="sourceType == 'cli'">
+    @if ($sourceType == 'cli')
         <p>Instructions for adding a project via CLI go here...</p>
-    </div>
+    @endif
 </form>
 
 @push('scripts')

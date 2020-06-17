@@ -10,6 +10,7 @@ use App\SourceProvider;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Str;
 
 class ProjectForm extends Component
 {
@@ -17,6 +18,7 @@ class ProjectForm extends Component
 
     public $repository;
     public $name;
+    public $sourceType;
     public $sourceProviderId;
     public $googleProjectId;
     public $type;
@@ -35,6 +37,13 @@ class ProjectForm extends Component
                 })
             ],
         ]);
+    }
+
+    public function updatingRepository($value)
+    {
+        if (!Str::of($value)->contains('/')) return;
+
+        $this->name = explode('/', $value)[1];
     }
 
     public function render()
@@ -68,6 +77,8 @@ class ProjectForm extends Component
                 $source->name = $accountName;
 
                 auth()->user()->sourceProviders()->save($source);
+
+                $this->sourceProviderId = $source->id;
 
                 break;
 
