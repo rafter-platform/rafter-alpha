@@ -33,9 +33,9 @@ class GoogleProjectControllerTest extends TestCase
             ->assertSuccessful();
 
         $projects->each(function ($project) use ($response) {
-            $response->assertSee(e($project->name));
+            $response->assertSee(e($project->project_id));
         });
 
-        $response->assertDontSee($this->otherProject->name);
+        $response->assertDontSee($this->otherProject->project_id);
     }
 }

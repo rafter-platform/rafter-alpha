@@ -14,7 +14,7 @@
                     <x-slot name="action">
                         <x-white-button :href="$project->productionUrl()">Visit</x-white-button>
                     </x-slot>
-                    <p>{{ \App\Project::TYPES[$project->type] }} / {{ $project->region }} / {{ $project->googleProject->name }}</p>
+                    <p>{{ \App\Project::TYPES[$project->type] }} / {{ $project->region }} / {{ $project->googleProject->project_id }}</p>
                     @if ($project->production()->activeDeployment()->exists())
                         <p>Last deployed {{ $project->environments()->first()->activeDeployment->created_at->diffForHumans() }}</p>
                     @endif
