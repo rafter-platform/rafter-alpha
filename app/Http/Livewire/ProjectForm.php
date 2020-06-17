@@ -3,9 +3,11 @@
 namespace App\Http\Livewire;
 
 use App\GoogleProject;
+use App\Project;
 use App\Rules\ValidRepository;
 use App\Services\GitHubApp;
 use App\SourceProvider;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -26,6 +28,12 @@ class ProjectForm extends Component
         $this->validateOnly($field, [
             'sourceProviderId' => ['exists:source_providers,id'],
             'repository' => [new ValidRepository(SourceProvider::find($this->sourceProviderId))],
+            'name' => [
+                'required',
+                Rule::unique('projects')->where(function ($query) {
+                    return $query->where('team_id', currentTeam()->id);
+                })
+            ],
         ]);
     }
 
@@ -110,7 +118,46 @@ class ProjectForm extends Component
 
     public function create()
     {
-        //
+        $data = $this->validate([
+            'sourceProviderId' => [
+                Rule::exists('source_providers', 'id')->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id);
+                })
+            ],
+            'googleProjectId' => [
+                'required',
+                Rule::in(currentTeam()->googleProjects()->pluck('id'))
+            ],
+            'repository' => [
+                new ValidRepository(SourceProvider::find($this->sourceProviderId))
+            ],
+            'name' => [
+                'required',
+                Rule::unique('projects')->where(function ($query) {
+                    return $query->where('team_id', currentTeam()->id);
+                })
+            ],
+            'type' => ['required', Rule::in(array_keys(Project::TYPES))],
+            'region' => [
+                'required',
+                Rule::in(array_keys(GoogleProject::REGIONS)),
+            ],
+        ]);
+
+        $project = currentTeam()->projects()->create([
+            'name' => $data['name'],
+            'region' => $data['region'],
+            'google_project_id' => $data['googleProjectId'],
+            'type' => $data['type'],
+            'source_provider_id' => $data['sourceProviderId'],
+            'repository' => $data['repository'],
+        ]);
+
+        $project->createInitialEnvironments();
+
+        session()->flash('status', 'Post successfully updated.');
+
+        return redirect()->route('projects.show', [$project]);
     }
 
     public function getSourceProviderProperty()
