@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
 
         if ($googleProjectId && $googleProjectNumber && File::exists(__DIR__ . '/../../service-account.json')) {
             $googleProject = $team->googleProjects()->create([
+                'status' => 'ready',
                 'project_id' => $googleProjectId,
                 'project_number' => $googleProjectNumber,
                 'service_account_json' => json_decode(File::get(__DIR__ . '/../../service-account.json')),

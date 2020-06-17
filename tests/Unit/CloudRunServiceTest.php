@@ -50,4 +50,14 @@ class CloudRunServiceTest extends TestCase
             $service->getError()
         );
     }
+
+    public function test_it_shows_env_vars()
+    {
+        $service = new CloudRunService($this->loadStub('cloud-run-service'));
+
+        $this->assertEquals([
+            'DB_CONNECTION' => 'sqlite',
+            'DB_DATABASE' => '/var/www/database/database.sqlite',
+        ], $service->envVars());
+    }
 }
