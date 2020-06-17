@@ -29,7 +29,7 @@ class SourceProvider extends Model
      */
     public function token(): string
     {
-        return $this->meta['token'];
+        return $this->client()->token();
     }
 
     /**

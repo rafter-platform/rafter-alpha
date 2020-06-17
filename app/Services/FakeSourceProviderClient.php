@@ -85,4 +85,9 @@ class FakeSourceProviderClient implements SourceProviderClient
     {
         return [];
     }
+
+    public function token(): string
+    {
+        return 'notatoken';
+    }
 }

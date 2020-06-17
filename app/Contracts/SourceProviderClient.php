@@ -71,4 +71,9 @@ interface SourceProviderClient
      * Only needed for GitHub.
      */
     public function getInstallation();
+
+    /**
+     * Fetch a token.
+     */
+    public function token(): string;
 }
