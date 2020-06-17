@@ -176,7 +176,7 @@
 
             <x-radio-button-group x-data="{}">
                 @foreach ($regions as $key => $region)
-                <x-radio-button name="region" value="{{ $region }}">
+                <x-radio-button name="region" value="{{ $region }}" small>
                     {{ $region }} ({{ $key }})
                 </x-radio-button>
                 @endforeach
