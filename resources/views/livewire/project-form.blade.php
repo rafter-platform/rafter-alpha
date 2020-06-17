@@ -124,7 +124,7 @@
             label="Repository"
             name="repository"
             list="repos"
-            placeholder="username/repository">
+            placeholder="account/repository">
             <x-slot name="helper">If you cannot find a repository, double-check that Rafter has access to it.</x-slot>
         </x-input>
 
@@ -147,6 +147,12 @@
 
         <h2 class="text-lg font-medium mb-4 mt-12">What type of project?</h2>
 
+        @error('type')
+            <x-validation-error class="mb-2">
+                {{ $message }}
+            </x-validation-error>
+        @enderror
+
         <x-radio-button-group x-data="{}">
             @foreach (\App\Project::TYPES as $key => $type)
             <x-radio-button wire:model="type" name="type" value="{{ $key }}">
@@ -164,13 +170,13 @@
             @endforeach
         </x-radio-button-group>
 
-        @error('type')
-            <x-validation-error>
+        <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud Project?</h2>
+
+        @error('googleProjectId')
+            <x-validation-error class="mb-2">
                 {{ $message }}
             </x-validation-error>
         @enderror
-
-        <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud Project?</h2>
 
         <x-radio-button-group>
             @foreach ($projects as $project)
@@ -223,19 +229,19 @@
         <div x-show="googleProject">
             <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
 
-            <x-radio-button-group x-data="{}">
+            @error('region')
+                <x-validation-error class="mb-2">
+                    {{ $message }}
+                </x-validation-error>
+            @enderror
+
+            <x-radio-button-group>
                 @foreach ($regions as $key => $region)
                 <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
                     {{ $region }} ({{ $key }})
                 </x-radio-button>
                 @endforeach
             </x-radio-button-group>
-
-            @error('region')
-                <x-validation-error>
-                    {{ $message }}
-                </x-validation-error>
-            @enderror
         </div>
 
         <div class="text-right">

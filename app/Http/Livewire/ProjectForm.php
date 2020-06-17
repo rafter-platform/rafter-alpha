@@ -144,6 +144,11 @@ class ProjectForm extends Component
                 'required',
                 Rule::in(array_keys(GoogleProject::REGIONS)),
             ],
+        ], [
+            'type.required' => 'You must select a project type.',
+            'googleProjectId.required' => 'You must select a Google Project.',
+            'region.required' => 'You must select a region.',
+            'name.unique' => 'This name has already been taken by a project on your team. Please choose a different name.',
         ]);
 
         $project = currentTeam()->projects()->create([
