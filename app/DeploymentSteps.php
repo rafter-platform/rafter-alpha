@@ -13,6 +13,7 @@ use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunService;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
+use App\Jobs\WaitForGoogleProjectToBeProvisioned;
 use App\Jobs\WaitForImageToBeBuilt;
 
 class DeploymentSteps
@@ -78,6 +79,10 @@ class DeploymentSteps
     public function get(): array
     {
         $this->addStep(StartDeployment::class);
+
+        if ($this->isInitialDeployment) {
+            $this->addStep(WaitForGoogleProjectToBeProvisioned::class);
+        }
 
         if (!$this->isRedeploy) {
             $this->addStep(SetBuildSecrets::class);

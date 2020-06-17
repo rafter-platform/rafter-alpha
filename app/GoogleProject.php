@@ -115,6 +115,11 @@ class GoogleProject extends Model
         $this->update(['status' => static::STATUS_READY]);
     }
 
+    public function isReady()
+    {
+        return $this->status == static::STATUS_READY;
+    }
+
     /**
      * Set status to failed
      *
