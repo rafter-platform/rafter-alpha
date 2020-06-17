@@ -23,12 +23,8 @@ class CreateCloudRunService implements ShouldQueue
             $body = $e->response->json();
 
             if ($body['error']['status'] == 'ALREADY_EXISTS') {
-                $config = new CloudRunConfig($this->model);
-
-                $this->model->environment->setWebName($config->name());
-                $this->model->environment->setWorkerName($config->forWorker()->name());
-
-                $this->model->updateCloudRunService();
+                $this->model->importExistingCloudRunService();
+                $this->model->refresh()->updateCloudRunService();
                 $this->model->updateCloudRunWorkerService();
 
                 return "Existing Cloud Run services detected. Updating those services with the latest image instead.";

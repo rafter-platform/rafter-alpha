@@ -210,6 +210,27 @@ class Deployment extends Model
     }
 
     /**
+     * When attempting to create a new Cloud Run service, and one already exists,
+     * we want to ensure that we set the web and worker service names properly so
+     * the service can be updated as expected. Further, we import the env vars from
+     * the existing service to ensure we don't lose them in the next deploy.
+     *
+     * @return void
+     */
+    public function importExistingCloudRunService()
+    {
+        $config = new CloudRunConfig($this);
+
+        $this->environment->setWebName($config->name());
+        $this->environment->setWorkerName($config->forWorker()->name());
+
+        $service = $this->getCloudRunWebService();
+        $envVars = new EnvVars($service->envVars());
+
+        $this->environment->environmental_variables = $envVars->toString();
+    }
+
+    /**
      * Redeploy a given deployment
      *
      * @param int|null $initiatorId
