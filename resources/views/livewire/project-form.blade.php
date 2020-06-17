@@ -5,6 +5,7 @@
         googleProject: '',
         repository: '',
         projectName : '',
+        showGoogleProjectForm: false
     }"
     x-init="
         $watch('repository', value => {
@@ -163,13 +164,23 @@
                 {{ $project->project_id }}
             </x-radio-button>
             @endforeach
-            <x-radio-button @click.prevent="window.alert('new google project')">
+            <x-radio-button @click.prevent="showGoogleProjectForm = !showGoogleProjectForm">
                 <x-slot name="icon">
                     <x-heroicon-o-plus class="text-current w-6 h-6" />
                 </x-slot>
                 Connect A Project
             </x-radio-button>
         </x-radio-button-group>
+
+        <div x-show="showGoogleProjectForm" class="mb-8">
+            <x-input
+                wire:model="serviceAccountJson"
+                name="serviceAccountJson"
+                label="Attach the service account JSON file"
+                type="file"
+                accept="application/json" />
+            <x-white-button wire:click.prevent="addGoogleProject">Add Project</x-white-button>
+        </div>
 
         <div x-show="googleProject">
             <h2 class="text-lg font-medium mb-4">Which Google Cloud region?</h2>
