@@ -25,8 +25,8 @@
     </div>
 
     @error($name)
-        <p class="text-red-600 text-sm mt-2" id="{{ $name }}-error">
+        <x-validation-error id="{{ $name }}-error">
             {{ $message }}
-        </p>
+        </x-validation-error>
     @enderror
 </div>

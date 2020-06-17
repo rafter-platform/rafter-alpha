@@ -145,7 +145,7 @@
 
         <x-radio-button-group x-data="{}">
             @foreach (\App\Project::TYPES as $key => $type)
-            <x-radio-button wire:model="type" name="type" value="{{ $type }}">
+            <x-radio-button wire:model="type" name="type" value="{{ $key }}">
                 <x-slot name="icon">
                     @if ($key == 'laravel')
                         <x-icon-laravel class="w-6 h-6" />
@@ -159,6 +159,12 @@
             </x-radio-button>
             @endforeach
         </x-radio-button-group>
+
+        @error('type')
+            <x-validation-error>
+                {{ $message }}
+            </x-validation-error>
+        @enderror
 
         <h2 class="text-lg font-medium mb-4">Which Google Cloud Project?</h2>
 
@@ -195,15 +201,26 @@
 
             <x-radio-button-group x-data="{}">
                 @foreach ($regions as $key => $region)
-                <x-radio-button wire:model="region" name="region" value="{{ $region }}" small>
+                <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
                     {{ $region }} ({{ $key }})
                 </x-radio-button>
                 @endforeach
             </x-radio-button-group>
+
+            @error('region')
+                <x-validation-error>
+                    {{ $message }}
+                </x-validation-error>
+            @enderror
         </div>
 
         <div class="text-right">
-            <x-button design="primary" size="xl">
+            <x-button
+                wire:click.prevent="create"
+                design="primary"
+                size="xl"
+                wire:loading.attr="disabled"
+                wire:target="create">
                 <span class="mr-2">🚀</span>
                 Create Project
             </x-button>
