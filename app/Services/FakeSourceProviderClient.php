@@ -75,4 +75,14 @@ class FakeSourceProviderClient implements SourceProviderClient
     {
         return 'https://some.url';
     }
+
+    public function refreshInstallation()
+    {
+        // void
+    }
+
+    public function getInstallation()
+    {
+        return [];
+    }
 }
