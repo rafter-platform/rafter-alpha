@@ -21,7 +21,7 @@
         })
     "
     id="project-form"
-    class="max-w-3xl">
+    class="max-w-3xl mx-auto">
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group>
@@ -52,7 +52,7 @@
     </x-radio-button-group>
 
     <div x-show="sourceType == 'github'">
-        <p class="mb-4">
+        <p class="mb-4 text-gray-800">
             GitHub allows you to provide granular access to different repositories and organizations using <b>installations</b>.
             Select the installation below containing your repository, or create a new installation.
         </p>
@@ -74,9 +74,9 @@
             @endforeach
             <x-radio-button @click.prevent="startOAuthFlow('{{ $newGitHubInstallationUrl }}', 'github')" small>
                 <x-slot name="icon">
-                    <x-heroicon-o-plus class="text-current w-5 h-5" />
+                    <x-heroicon-o-cog class="text-current w-5 h-5" />
                 </x-slot>
-                New Installation
+                Add or Modify Installation
             </x-radio-button>
         </x-radio-button-group>
     </div>
@@ -124,7 +124,9 @@
             label="Repository"
             name="repository"
             list="repos"
-            placeholder="username/repository" />
+            placeholder="username/repository">
+            <x-slot name="helper">If you cannot find a repository, double-check that Rafter has access to it.</x-slot>
+        </x-input>
 
         @if ($this->sourceProvider->isGitHub())
             <datalist id="repos">
@@ -139,9 +141,11 @@
             wire:model="name"
             label="Project Name"
             name="name"
-            placeholder="name" />
+            placeholder="name">
+            <x-slot name="helper">This will be used when creating Cloud Run services.</x-slot>
+        </x-input>
 
-        <h2 class="text-lg font-medium mb-4">What type of project?</h2>
+        <h2 class="text-lg font-medium mb-4 mt-12">What type of project?</h2>
 
         <x-radio-button-group x-data="{}">
             @foreach (\App\Project::TYPES as $key => $type)
@@ -166,7 +170,7 @@
             </x-validation-error>
         @enderror
 
-        <h2 class="text-lg font-medium mb-4">Which Google Cloud Project?</h2>
+        <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud Project?</h2>
 
         <x-radio-button-group>
             @foreach ($projects as $project)
@@ -185,19 +189,39 @@
             </x-radio-button>
         </x-radio-button-group>
 
-        <div x-show="showGoogleProjectForm" class="mb-8">
-            <x-input
-                wire:model="serviceAccountJson"
-                x-ref="serviceAccountJson"
-                name="serviceAccountJson"
-                label="Attach the service account JSON file"
-                type="file"
-                accept="application/json" />
-            <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
+        <div x-show="showGoogleProjectForm" class="bg-white shadow sm:rounded-lg mb-8">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Add Google Cloud Project</h3>
+                <div class="mt-2 text-sm leading-5 text-gray-600 mb-8 prose">
+                    <p class="mb-2">
+                        To add a Google Cloud project to Rafter, start by creating a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">service account</a> for your project.
+                        Give it a name that makes sense to you, like <code>rafter</code>.
+                    </p>
+
+                    <p class="mb-2">
+                        <b>Important:</b> You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
+                        On the final step, click <b>Create Key</b> and download a JSON-formatted key. Attach the JSON file below.
+                    </p>
+
+                    <p>
+                        Note: An active billing account must be attached to your Google Cloud project.
+                    </p>
+                </div>
+                <x-input
+                    wire:model="serviceAccountJson"
+                    x-ref="serviceAccountJson"
+                    name="serviceAccountJson"
+                    label="Attach the service account JSON file"
+                    type="file"
+                    accept="application/json" />
+                <div class="text-right">
+                    <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
+                </div>
+            </div>
         </div>
 
         <div x-show="googleProject">
-            <h2 class="text-lg font-medium mb-4">Which Google Cloud region?</h2>
+            <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
 
             <x-radio-button-group x-data="{}">
                 @foreach ($regions as $key => $region)
