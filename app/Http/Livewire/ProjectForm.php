@@ -14,7 +14,11 @@ class ProjectForm extends Component
     use WithFileUploads;
 
     public $repository;
+    public $name;
     public $sourceProviderId;
+    public $googleProjectId;
+    public $type;
+    public $region;
     public $serviceAccountJson;
 
     public function updated($field)
@@ -102,6 +106,11 @@ class ProjectForm extends Component
 
         $this->serviceAccountJson = '';
         $this->emit('googleProjectAdded', $project->id);
+    }
+
+    public function create()
+    {
+        //
     }
 
     public function getSourceProviderProperty()

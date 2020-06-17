@@ -10,7 +10,7 @@
     x-init="
         $watch('repository', value => {
             if (value.includes('/')) {
-                projectName = value.split('/')[1];
+                @this.set('name', value.split('/')[1]);
             }
         })
 
@@ -136,6 +136,7 @@
 
         <x-input
             x-model="projectName"
+            wire:model="name"
             label="Project Name"
             name="name"
             placeholder="name" />
@@ -144,7 +145,7 @@
 
         <x-radio-button-group x-data="{}">
             @foreach (\App\Project::TYPES as $key => $type)
-            <x-radio-button name="type" value="{{ $type }}">
+            <x-radio-button wire:model="type" name="type" value="{{ $type }}">
                 <x-slot name="icon">
                     @if ($key == 'laravel')
                         <x-icon-laravel class="w-6 h-6" />
@@ -163,7 +164,7 @@
 
         <x-radio-button-group>
             @foreach ($projects as $project)
-            <x-radio-button x-model="googleProject" name="google_project_id" value="{{ $project->id }}">
+            <x-radio-button wire:model="googleProjectId" x-model="googleProject" name="googleProjectId" value="{{ $project->id }}">
                 <x-slot name="icon">
                     <x-icon-google-cloud class="text-current w-6 h-6" />
                 </x-slot>
@@ -186,7 +187,7 @@
                 label="Attach the service account JSON file"
                 type="file"
                 accept="application/json" />
-            <x-white-button wire:click.prevent="addGoogleProject">Add Project</x-white-button>
+            <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
         </div>
 
         <div x-show="googleProject">
@@ -194,16 +195,19 @@
 
             <x-radio-button-group x-data="{}">
                 @foreach ($regions as $key => $region)
-                <x-radio-button name="region" value="{{ $region }}" small>
+                <x-radio-button wire:model="region" name="region" value="{{ $region }}" small>
                     {{ $region }} ({{ $key }})
                 </x-radio-button>
                 @endforeach
             </x-radio-button-group>
         </div>
 
-        Database? Y/N
-
-        Which Database instance?
+        <div class="text-right">
+            <x-button design="primary" size="xl">
+                <span class="mr-2">🚀</span>
+                Create Project
+            </x-button>
+        </div>
     </div>
 
     <div x-show="sourceType == 'cli'">
