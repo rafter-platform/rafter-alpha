@@ -7,7 +7,7 @@ use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use Exception;
 use Firebase\JWT\JWT;
-use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -51,9 +51,11 @@ class GitHub implements SourceProviderClient
 
         try {
             $response = $this->request("repos/{$repository}/branches");
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             return false;
         }
+
+        logger($response);
 
         if (empty($branch)) {
             return true;
@@ -238,6 +240,7 @@ class GitHub implements SourceProviderClient
             'Accept' => "application/vnd.github.machine-man-preview+json",
         ])
             ->{$method}('https://api.github.com/' . $endpoint, $data)
+            ->throw()
             ->json();
     }
 

@@ -10,7 +10,7 @@ $factory->define(SourceProvider::class, function (Faker $faker) {
     return [
         'user_id' => factory('App\User'),
         'name' => 'GitHub ' . $faker->text(10),
-        'type' => 'GitHub',
+        'type' => 'github',
         'installation_id' => $faker->randomNumber(),
         'meta' => ['token' => 'notatoken'],
     ];

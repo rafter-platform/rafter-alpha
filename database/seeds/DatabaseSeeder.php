@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
 
         if ($gitHubInstallationId) {
             $sourceProvider = $user->sourceProviders()->create([
-                'name' => 'rafter',
-                'type' => 'GitHub',
+                'name' => 'rafter-platform',
+                'type' => 'github',
                 'installation_id' => $gitHubInstallationId,
                 'meta' => [],
             ]);

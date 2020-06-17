@@ -9,6 +9,8 @@ use Illuminate\Http\Client\RequestException;
 
 class SourceProvider extends Model
 {
+    const TYPE_GITHUB = 'github';
+
     protected $casts = [
         'meta' => Options::class,
     ];
@@ -49,7 +51,7 @@ class SourceProvider extends Model
      */
     public function refreshGitHubInstallation()
     {
-        if ($this->type != 'GitHub') {
+        if ($this->type != static::TYPE_GITHUB) {
             throw new Error('Only GitHub source providers can be refreshed.');
         }
 
@@ -74,5 +76,10 @@ class SourceProvider extends Model
         // TODO: Emit an notification to the user that a source has been removed,
         // and any connected projects will stop being deployed.
         $this->delete();
+    }
+
+    public function isGitHub()
+    {
+        return $this->type == static::TYPE_GITHUB;
     }
 }

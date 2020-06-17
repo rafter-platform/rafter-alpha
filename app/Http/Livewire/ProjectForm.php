@@ -3,12 +3,24 @@
 namespace App\Http\Livewire;
 
 use App\GoogleProject;
+use App\Rules\ValidRepository;
 use App\Services\GitHubApp;
 use App\SourceProvider;
 use Livewire\Component;
 
 class ProjectForm extends Component
 {
+    public $repository;
+    public $sourceProviderId;
+
+    public function updated($field)
+    {
+        $this->validateOnly($field, [
+            'sourceProviderId' => ['exists:source_providers,id'],
+            'repository' => [new ValidRepository(SourceProvider::find($this->sourceProviderId))],
+        ]);
+    }
+
     public function render()
     {
         return view('livewire.project-form', [
@@ -29,7 +41,7 @@ class ProjectForm extends Component
                 $installationid = $query['installation_id'];
 
                 $source = new SourceProvider([
-                    'type' => 'GitHub',
+                    'type' => 'github',
                     'installation_id' => $installationid,
                 ]);
 
@@ -57,5 +69,10 @@ class ProjectForm extends Component
             ->get()
             ->each
             ->refreshGitHubInstallation();
+    }
+
+    public function getSourceProviderProperty()
+    {
+        return optional(SourceProvider::find($this->sourceProviderId));
     }
 }
