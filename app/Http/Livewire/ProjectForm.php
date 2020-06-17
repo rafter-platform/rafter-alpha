@@ -114,7 +114,8 @@ class ProjectForm extends Component
 
         $project->provision();
 
-        $this->serviceAccountJson = '';
+        $this->reset('serviceAccountJson');
+        $this->googleProjectId = $project->id;
         $this->emit('googleProjectAdded', $project->id);
     }
 
