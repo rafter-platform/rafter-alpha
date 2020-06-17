@@ -30,7 +30,7 @@
             </x-slot>
             Bitbucket
         </x-radio-button>
-        <x-radio-button wire:click="$set('sourceProvider', '')" wire:model="sourceType" name="source_type" value="cli">
+        <x-radio-button wire:model="sourceType" name="source_type" value="cli">
             <x-slot name="icon">
                 <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
             </x-slot>
@@ -108,13 +108,13 @@
     </x-radio-button-group>
     @endif
 
-    @if ($sourceProviderId)
+    @if ($sourceProviderId && $sourceType != 'cli')
         <x-input
             wire:model="repository"
             label="Repository"
             name="repository"
             list="repos"
-            placeholder="account/repository">
+            placeholder="{{ $sourceType == 'github' && $this->sourceProvider->isGitHub() ? $this->sourceProvider->name : 'account' }}/repository">
             <x-slot name="helper">If you cannot find a repository, double-check that Rafter has access to it.</x-slot>
         </x-input>
 
