@@ -4,7 +4,7 @@
             <x-subtitle>Deployment Details</x-subtitle>
             <form action="{{ route('projects.environments.deployments.redeploy', [$project, $environment, $deployment]) }}" method="POST">
                 @csrf
-                <x-white-button>Redeploy</x-white-button>
+                <x-button>Redeploy</x-button>
             </form>
         </div>
         <div class="overflow-hidden shadow rounded-lg">

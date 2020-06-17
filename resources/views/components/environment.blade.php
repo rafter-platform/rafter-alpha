@@ -18,7 +18,7 @@
     </x-header-meta>
 </x-slot>
 <x-slot name="actions">
-    <x-white-button :href="$environment->url">View</x-white-button>
+    <x-button :href="$environment->url">View</x-button>
 </x-slot>
 
 <div class="mb-4 sm:mb-0 sm:flex justify-between items-center ">
