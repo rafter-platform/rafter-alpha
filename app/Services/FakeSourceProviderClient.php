@@ -94,4 +94,14 @@ class FakeSourceProviderClient implements SourceProviderClient
     {
         return 'notatoken';
     }
+
+    public function createDeployment(Deployment $deployment)
+    {
+        //
+    }
+
+    public function updateDeploymentStatus(Deployment $deployment, string $state)
+    {
+        //
+    }
 }

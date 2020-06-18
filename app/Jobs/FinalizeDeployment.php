@@ -15,6 +15,7 @@ class FinalizeDeployment implements ShouldQueue
     public function handle()
     {
         $this->model->markAsSuccessful();
+        $this->model->updateSourceProviderDeploymentStatus('success');
 
         $environment = $this->model->environment;
 

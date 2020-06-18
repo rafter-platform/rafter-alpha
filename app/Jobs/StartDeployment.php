@@ -15,6 +15,7 @@ class StartDeployment implements ShouldQueue
     public function handle()
     {
         $this->model->markAsInProgress();
+        $this->model->createSourceProviderDeployment();
 
         return true;
     }

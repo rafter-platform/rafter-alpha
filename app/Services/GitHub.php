@@ -79,7 +79,7 @@ class GitHub implements SourceProviderClient
 
         try {
             $response = $this->request("repos/{$repository}/commits/{$hash}");
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             return false;
         }
 
@@ -213,6 +213,34 @@ class GitHub implements SourceProviderClient
             ->json();
     }
 
+    public function createDeployment(Deployment $deployment)
+    {
+        $response = $this->request("repos/{$deployment->repository()}/deployments", 'POST', [
+            'ref' => $deployment->commit_hash,
+            'environment' => $deployment->environment->name,
+            'description' => 'Deploy request from Rafter',
+        ]);
+
+        $deploymentId = $response['id'];
+        $deployment->meta['github_deployment_id'] = $deploymentId;
+        $deployment->save();
+
+        $this->updateDeploymentStatus($deployment, 'in_progress');
+    }
+
+    public function updateDeploymentStatus(Deployment $deployment, $state)
+    {
+        $this->request("repos/{$deployment->repository()}/deployments/{$deployment->meta['github_deployment_id']}/statuses", 'POST', [
+            'state' => $state,
+            'log_url' => route('projects.environments.deployments.show', [
+                $deployment->project(),
+                $deployment->environment,
+                $deployment
+            ]),
+            'environment_url' => $deployment->environment->url,
+        ]);
+    }
+
     /**
      * Create a JWT to call the GitHub API.
      *
@@ -233,13 +261,17 @@ class GitHub implements SourceProviderClient
 
     protected function request($endpoint, $method = 'get', $data = [])
     {
-        return Http::withHeaders([
-            'Authorization' => "token {$this->token()}",
-            'Accept' => "application/vnd.github.machine-man-preview+json",
-        ])
-            ->{$method}('https://api.github.com/' . $endpoint, $data)
-            ->throw()
-            ->json();
+        try {
+            return Http::withToken($this->token(), 'token')
+                ->accept("application/vnd.github.machine-man-preview+json, application/vnd.github.ant-man-preview+json, application/vnd.github.flash-preview+json")
+                ->{$method}('https://api.github.com/' . $endpoint, $data)
+                ->throw()
+                ->json();
+        } catch (RequestException $exception) {
+            logger()->error($exception->response->body());
+
+            throw $exception;
+        }
     }
 
     /**
