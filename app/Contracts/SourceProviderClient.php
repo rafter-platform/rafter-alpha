@@ -76,4 +76,14 @@ interface SourceProviderClient
      * Fetch a token.
      */
     public function token(): string;
+
+    /**
+     * Create a new deployment within the provider's API.
+     */
+    public function createDeployment(Deployment $deployment);
+
+    /**
+     * Update a deployment's status.
+     */
+    public function updateDeploymentStatus(Deployment $deployment, string $state);
 }

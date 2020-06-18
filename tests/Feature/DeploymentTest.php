@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\EnvVars;
 use App\Jobs\CreateCloudRunService;
+use App\Jobs\StartDeployment;
+use App\Services\FakeSourceProviderClient;
 use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Options;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudRunConfig;
 use App\Services\GoogleApi;
@@ -13,6 +14,10 @@ class Deployment extends Model
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_SUCCESSFUL = 'successful';
     const STATUS_FAILED = 'failed';
+
+    protected $casts = [
+        'meta' => Options::class,
+    ];
 
     protected $guarded = [];
 
@@ -97,6 +102,7 @@ class Deployment extends Model
     public function markAsFailed()
     {
         $this->update(['status' => static::STATUS_FAILED]);
+        $this->sourceProvider()->updateDeploymentStatus($this, 'failure');
     }
 
     /**
@@ -280,6 +286,16 @@ class Deployment extends Model
         }
 
         return $vars;
+    }
+
+    public function createSourceProviderDeployment()
+    {
+        $this->sourceProvider()->createDeployment($this);
+    }
+
+    public function updateSourceProviderDeploymentStatus(string $state)
+    {
+        $this->sourceProvider()->updateDeploymentStatus($this, $state);
     }
 
     public function getRoute(): string

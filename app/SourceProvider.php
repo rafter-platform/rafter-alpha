@@ -82,4 +82,14 @@ class SourceProvider extends Model
     {
         return $this->type == static::TYPE_GITHUB;
     }
+
+    public function createDeployment(Deployment $deployment)
+    {
+        $this->client()->createDeployment($deployment);
+    }
+
+    public function updateDeploymentStatus(Deployment $deployment, string $state)
+    {
+        $this->client()->updateDeploymentStatus($deployment, $state);
+    }
 }
