@@ -1,19 +1,20 @@
-FROM gcr.io/rafter/php-7.4-grpc:latest
+FROM php:7.4-apache
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 
 # Install production dependencies
 RUN apt-get update && apt-get install -y \
+    curl \
+    zip \
+    unzip \
+    git \
+    libpng-dev \
     libjpeg-dev \
     nodejs
 
 # Install MySQL driver extensions
 RUN docker-php-ext-install \
     pdo_mysql
-
-# Enable PECL and PEAR extensions
-RUN docker-php-ext-enable \
-    grpc
 
 # Configure php extensions
 RUN docker-php-ext-configure \
