@@ -28,6 +28,19 @@ class Environment extends Model
         'options' => Options::class,
     ];
 
+    protected $defaultOptions = [
+        'web_memory' => '1 GiB',
+        'worker_memory' => '1 GiB',
+        'web_cpu' => 1,
+        'worker_cpu' => 1,
+        'web_request_timeout' => 300,
+        'worker_request_timeout' => 300,
+        'web_max_requests_per_container' => 80,
+        'worker_max_requests_per_container' => 80,
+        'web_max_instances' => 1000,
+        'worker_max_instances' => 1000,
+    ];
+
     public function project()
     {
         return $this->belongsTo('App\Project');

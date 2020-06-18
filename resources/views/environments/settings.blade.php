@@ -1,5 +1,9 @@
 <x-layout>
     <x-environment :project="$project" :environment="$environment">
+        <livewire:environment-service-settings :environment="$environment" type="web" />
+        <x-settings-form-spacer />
+        <livewire:environment-service-settings :environment="$environment" type="worker" />
+        <x-settings-form-spacer />
         <x-slot name="title">Settings</x-slot>
 
         <p class="mb-4 text-gray-600">
