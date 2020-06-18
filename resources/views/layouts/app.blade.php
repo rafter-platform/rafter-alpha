@@ -19,14 +19,14 @@
         <div class="flex">
             <div class="min-h-screen flex flex-col">
                 <div class="bg-blue-900 p-2 px-4">
-                    <a href="{{ url('/home') }}" class="block text-lg font-semibold text-gray-100 no-underline">
+                    <a href="{{ url('/dashboard') }}" class="block text-lg font-semibold text-gray-100 no-underline">
                         <span class="mr-2 inline-block">@include('logo', ['width' => 40, 'height' => 40])</span>
                         <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
                     </a>
                 </div>
                 <div class="p-4 bg-blue-800 text-blue-100 w-64 flex-1">
                     <div class="mb-8">
-                        <a href="{{ route('home') }}">Dashboard</a>
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
                     </div>
 
                     <div class="text-sm text-blue-200 uppercase font-bold tracking-widest">Projects</div>

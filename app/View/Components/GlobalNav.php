@@ -30,7 +30,7 @@ class GlobalNav extends Component
     public function items(): array
     {
         return [
-            'Dashboard' => route('home'),
+            'Dashboard' => route('dashboard'),
             'Databases' => route('database-instances.index'),
         ];
     }

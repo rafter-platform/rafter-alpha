@@ -37,7 +37,7 @@ Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {
     // Dashboard
-    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
     // Google Projects
     Route::resource('google-projects', 'GoogleProjectController');
