@@ -35,7 +35,7 @@
         </x-slot>
 
         @foreach ($commands as $idx => $command)
-            <x-tr :idx="$idx">
+            <x-tr>
                 <x-td>
                     <a href="{{ $command->url() }}"><code>{{ $command->prefix() }} {{ $command->command }}</code></a>
                 </x-td>

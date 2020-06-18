@@ -14,25 +14,25 @@
     <x-radio-button-group>
         <x-radio-button wire:model="sourceType" name="source_type" value="github">
             <x-slot name="icon">
-                <x-icon-github class="text-current w-6 h-6" />
+                <x-source-provider-logo type="github" class="text-current w-6 h-6" />
             </x-slot>
             GitHub
         </x-radio-button>
         <x-radio-button wire:model="sourceType"  name="source_type" value="gitlab">
             <x-slot name="icon">
-                <x-icon-gitlab class="text-current w-6 h-6" />
+                <x-source-provider-logo type="gitlab" class="text-current w-6 h-6" />
             </x-slot>
             Gitlab
         </x-radio-button>
         <x-radio-button wire:model="sourceType"  name="source_type" value="bitbucket">
             <x-slot name="icon">
-                <x-icon-bitbucket class="text-current w-6 h-6" />
+                <x-source-provider-logo type="bitbucket" class="text-current w-6 h-6" />
             </x-slot>
             Bitbucket
         </x-radio-button>
         <x-radio-button wire:model="sourceType" name="source_type" value="cli">
             <x-slot name="icon">
-                <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
+                <x-source-provider-logo type="cli" class="text-current w-6 h-6" />
             </x-slot>
             Command Line
         </x-radio-button>
@@ -146,13 +146,7 @@
             @foreach (\App\Project::TYPES as $key => $type)
             <x-radio-button wire:model="type" name="type" value="{{ $key }}">
                 <x-slot name="icon">
-                    @if ($key == 'laravel')
-                        <x-icon-laravel class="w-6 h-6" />
-                    @elseif ($key == 'nodejs')
-                        <x-icon-nodejs class="w-6 h-6" />
-                    @else
-                        <x-heroicon-o-desktop-computer class="w-6 h-6 text-current" />
-                    @endif
+                    <x-project-logo :type="$key" class="w-6 h-6" />
                 </x-slot>
                 {{ $type }}
             </x-radio-button>

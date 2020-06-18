@@ -24,7 +24,7 @@
         </x-slot>
 
         @foreach ($deployments as $idx => $deployment)
-            <x-tr :idx="$idx">
+            <x-tr>
                 <x-td>
                     <a class="max-w-md overflow-hidden whitespace-no-wrap block" style="text-overflow: ellipsis" href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
                 </x-td>

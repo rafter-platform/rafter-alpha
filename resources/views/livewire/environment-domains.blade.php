@@ -32,7 +32,7 @@
             </x-slot>
 
             @foreach ($mappings as $idx => $mapping)
-                <x-tr :idx="$idx">
+                <x-tr>
                     <x-td class="font-medium">
                         <a href="https://{{ $mapping->domain }}" target="_blank">{{ $mapping->domain }}</a>
                     </x-td>
