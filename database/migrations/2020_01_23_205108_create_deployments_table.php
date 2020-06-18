@@ -22,6 +22,7 @@ class CreateDeploymentsTable extends Migration
             $table->string('image')->nullable();
             $table->string('commit_hash')->nullable();
             $table->string('commit_message')->nullable();
+            $table->text('meta')->nullable();
             $table->timestamps();
 
             $table->foreign('environment_id')

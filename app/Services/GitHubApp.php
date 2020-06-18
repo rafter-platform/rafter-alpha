@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class GitHubApp
 {

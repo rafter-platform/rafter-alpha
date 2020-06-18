@@ -1,7 +1,7 @@
 <div wire:poll>
     <div class="flex justify-between items-center">
         <x-subtitle>Recent Deployments</x-subtitle>
-        <x-white-button wire:click="deployNow">Deploy Now</x-white-button>
+        <x-button wire:click="deployNow">Deploy Now</x-button>
     </div>
     <x-table>
         <x-slot name="thead">
@@ -26,7 +26,7 @@
         @foreach ($deployments as $idx => $deployment)
             <x-tr :idx="$idx">
                 <x-td>
-                    <a href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
+                    <a class="max-w-md overflow-hidden whitespace-no-wrap block" style="text-overflow: ellipsis" href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
                 </x-td>
                 <x-td>
                     <x-status :status="$deployment->status" />

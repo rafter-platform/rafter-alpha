@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Options;
 use App\GoogleCloud\CloudBuildConfig;
 use App\GoogleCloud\CloudRunConfig;
 use App\Services\GoogleApi;
@@ -13,6 +14,10 @@ class Deployment extends Model
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_SUCCESSFUL = 'successful';
     const STATUS_FAILED = 'failed';
+
+    protected $casts = [
+        'meta' => Options::class,
+    ];
 
     protected $guarded = [];
 
@@ -97,6 +102,7 @@ class Deployment extends Model
     public function markAsFailed()
     {
         $this->update(['status' => static::STATUS_FAILED]);
+        $this->sourceProvider()->updateDeploymentStatus($this, 'failure');
     }
 
     /**
@@ -210,6 +216,27 @@ class Deployment extends Model
     }
 
     /**
+     * When attempting to create a new Cloud Run service, and one already exists,
+     * we want to ensure that we set the web and worker service names properly so
+     * the service can be updated as expected. Further, we import the env vars from
+     * the existing service to ensure we don't lose them in the next deploy.
+     *
+     * @return void
+     */
+    public function importExistingCloudRunService()
+    {
+        $config = new CloudRunConfig($this);
+
+        $this->environment->setWebName($config->name());
+        $this->environment->setWorkerName($config->forWorker()->name());
+
+        $service = $this->getCloudRunWebService();
+        $envVars = new EnvVars($service->envVars());
+
+        $this->environment->update(['environmental_variables' => $envVars->toString()]);
+    }
+
+    /**
      * Redeploy a given deployment
      *
      * @param int|null $initiatorId
@@ -259,6 +286,16 @@ class Deployment extends Model
         }
 
         return $vars;
+    }
+
+    public function createSourceProviderDeployment()
+    {
+        $this->sourceProvider()->createDeployment($this);
+    }
+
+    public function updateSourceProviderDeploymentStatus(string $state)
+    {
+        $this->sourceProvider()->updateDeploymentStatus($this, $state);
     }
 
     public function getRoute(): string

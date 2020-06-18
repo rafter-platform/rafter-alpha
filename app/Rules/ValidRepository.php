@@ -29,12 +29,13 @@ class ValidRepository implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (! $this->source instanceof SourceProvider) {
+        if (!$this->source instanceof SourceProvider) {
             return false;
         }
 
         return $this->source->client()->validRepository(
-            $value, $this->branch
+            $value,
+            $this->branch
         );
     }
 
@@ -45,6 +46,6 @@ class ValidRepository implements Rule
      */
     public function message()
     {
-        return 'The given repository or branch is invalid.';
+        return 'The given repository or branch is not valid.';
     }
 }

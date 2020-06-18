@@ -6,7 +6,9 @@ use App\SourceProvider;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use Exception;
-use GuzzleHttp\Exception\ClientException;
+use Firebase\JWT\JWT;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class GitHub implements SourceProviderClient
@@ -49,7 +51,7 @@ class GitHub implements SourceProviderClient
 
         try {
             $response = $this->request("repos/{$repository}/branches");
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             return false;
         }
 
@@ -77,7 +79,7 @@ class GitHub implements SourceProviderClient
 
         try {
             $response = $this->request("repos/{$repository}/commits/{$hash}");
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             return false;
         }
 
@@ -143,26 +145,170 @@ class GitHub implements SourceProviderClient
      *
      * @return array
      */
-    public function getRepositories()
+    public function getRepositories($token = null)
     {
-        return $this->request("user/installations/{$this->source->installation_id}/repositories");
+        $installationToken = $token ?: $this->token();
+
+        return Http::withHeaders([
+            'Accept' => "application/vnd.github.machine-man-preview+json",
+            'Authorization' => "token $installationToken",
+        ])
+            ->get('https://api.github.com/installation/repositories')
+            ->throw()
+            ->json();
+    }
+
+    /**
+     * Fetches new information about an installation and saves it.
+     *
+     * @return void
+     */
+    public function refreshInstallation()
+    {
+        $installation = $this->getInstallation();
+
+        $this->source->meta = $installation;
+        $this->source->save();
+    }
+
+    /**
+     * Get an array of useful data about an installation.
+     *
+     * @return array
+     */
+    public function getInstallation(): array
+    {
+        $installation = $this->getInstallationAccessToken();
+        $token = $installation['token'];
+
+        $repositories = $this->getRepositories($token);
+
+        $repositories = $repositories['repositories'];
+        $avatar = $repositories[0]['owner']['avatar_url'];
+
+        return [
+            'installation_token' => $token,
+            'installation_token_expires_at' => $installation['expires_at'],
+            'repositories' => collect($repositories)->map->full_name->toArray(),
+            'avatar' => $avatar,
+        ];
+    }
+
+    /**
+     * Get an installation access token.
+     *
+     * @return array
+     */
+    public function getInstallationAccessToken(): array
+    {
+        $jwt = $this->createJwt();
+        $installationId = $this->source->installation_id;
+
+        return Http::withHeaders([
+            'Authorization' => "Bearer $jwt",
+            'Accept' => 'application/vnd.github.machine-man-preview+json',
+        ])
+            ->post("https://api.github.com/app/installations/$installationId/access_tokens")
+            ->throw()
+            ->json();
+    }
+
+    public function createDeployment(Deployment $deployment)
+    {
+        try {
+            $response = $this->request("repos/{$deployment->repository()}/deployments", 'POST', [
+                'ref' => $deployment->commit_hash,
+                'environment' => $deployment->environment->name,
+                'description' => 'Deploy request from Rafter',
+
+                // We tell GitHub we want to start this deployment regardless of whether tests have passed.
+                // TODO: Implement user's preference about whether we should wait for tests.
+                'required_contexts' => [],
+            ]);
+
+            $deploymentId = $response['id'];
+            $deployment->meta['github_deployment_id'] = $deploymentId;
+            $deployment->save();
+
+            $this->updateDeploymentStatus($deployment, 'in_progress');
+        } catch (RequestException $e) {
+            /**
+             * TODO:
+             * 1. Inspect what error it is
+             * 2. If it's about commit statuses not being ready, bubble it up somehow?
+             * 3. If it's about the fact that a merge commit was done, bubble it up so we somehow don't deploy until the merge
+             * commit comes through.
+             */
+        }
+    }
+
+    public function updateDeploymentStatus(Deployment $deployment, $state)
+    {
+        if (empty($deployment->meta['github_deployment_id'])) return;
+
+        $this->request("repos/{$deployment->repository()}/deployments/{$deployment->meta['github_deployment_id']}/statuses", 'POST', [
+            'state' => $state,
+            'log_url' => route('projects.environments.deployments.show', [
+                $deployment->project(),
+                $deployment->environment,
+                $deployment
+            ]),
+            'environment_url' => $deployment->environment->url,
+        ]);
+    }
+
+    /**
+     * Create a JWT to call the GitHub API.
+     *
+     * @return void
+     */
+    protected function createJwt()
+    {
+        $secret = config('services.github.private_key');
+
+        $payload = [
+            'iat' => time(),
+            'exp' => time() + 10 * 60,
+            'iss' => config('services.github.app_id'),
+        ];
+
+        return JWT::encode($payload, $secret, 'RS256');
     }
 
     protected function request($endpoint, $method = 'get', $data = [])
     {
-        return Http::withToken($this->token())
-            ->withHeaders([
-                'Accept' => "application/vnd.github.machine-man-preview+json",
-            ])
-            ->{$method}('https://api.github.com/' . $endpoint, $data)
-            ->json();
+        try {
+            return Http::withToken($this->token(), 'token')
+                ->accept("application/vnd.github.machine-man-preview+json, application/vnd.github.ant-man-preview+json, application/vnd.github.flash-preview+json")
+                ->{$method}('https://api.github.com/' . $endpoint, $data)
+                ->throw()
+                ->json();
+        } catch (RequestException $exception) {
+            logger()->error($exception->response->body());
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Determine whether the stored installation access token is expired.
+     *
+     * @return boolean
+     */
+    protected function tokenIsExpired()
+    {
+        return now() > Carbon::parse($this->source['meta']['installation_token_expires_at']);
     }
 
     /**
      * Get the access token for the given SourceProvider.
      */
-    protected function token()
+    public function token(): string
     {
-        return $this->source->token();
+        if ($this->tokenIsExpired()) {
+            $this->refreshInstallation();
+        }
+
+        return $this->source->refresh()->meta['installation_token'];
     }
 }

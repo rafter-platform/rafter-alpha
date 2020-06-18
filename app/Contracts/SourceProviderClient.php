@@ -61,4 +61,29 @@ interface SourceProviderClient
      * @return string
      */
     public function cloneUrl(Deployment $deployment);
+
+    /**
+     * Only needed for GitHub.
+     */
+    public function refreshInstallation();
+
+    /**
+     * Only needed for GitHub.
+     */
+    public function getInstallation();
+
+    /**
+     * Fetch a token.
+     */
+    public function token(): string;
+
+    /**
+     * Create a new deployment within the provider's API.
+     */
+    public function createDeployment(Deployment $deployment);
+
+    /**
+     * Update a deployment's status.
+     */
+    public function updateDeploymentStatus(Deployment $deployment, string $state);
 }

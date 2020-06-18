@@ -16,7 +16,7 @@ class DatabaseInstanceConfigTest extends TestCase
 
         $config = (new DatabaseInstanceConfig($instance))->config();
 
-        $this->assertEquals('MYSQL_5_7', $config['databaseVersion']);
+        $this->assertSame('MYSQL_5_7', $config['databaseVersion']);
         $this->assertEquals([
             'tier' => 'db-f1-micro',
             'kind' => 'sql#settings',
@@ -27,8 +27,8 @@ class DatabaseInstanceConfigTest extends TestCase
                 'binaryLogEnabled' => true,
             ],
         ], $config['settings']);
-        $this->assertEquals($instance->name, $config['name']);
-        $this->assertEquals('us-central1', $config['region']);
-        $this->assertEquals('notapassword', $config['rootPassword']);
+        $this->assertSame($instance->name, $config['name']);
+        $this->assertSame('us-central1', $config['region']);
+        $this->assertSame('notapassword', $config['rootPassword']);
     }
 }

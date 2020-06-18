@@ -10,7 +10,7 @@
             <x-slot name="title">Your Google Projects</x-slot>
             @foreach ($googleProjects as $project)
                 <h2 class="flex items-center justify-between">
-                    <span>{{ $project->name }}</span>
+                    <span>{{ $project->project_id }}</span>
                     <x-status :status="$project->status" />
                 </h2>
             @endforeach

@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
+use App\GoogleCloud\CloudRunConfig;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
@@ -14,8 +16,22 @@ class CreateCloudRunService implements ShouldQueue
 
     public function handle()
     {
-        $this->model->createCloudRunService();
-        $this->model->createCloudRunWorkerService();
+        try {
+            $this->model->createCloudRunService();
+            $this->model->createCloudRunWorkerService();
+        } catch (RequestException $e) {
+            $body = $e->response->json();
+
+            if ($body['error']['status'] == 'ALREADY_EXISTS') {
+                $this->model->importExistingCloudRunService();
+                $this->model->refresh()->updateCloudRunService();
+                $this->model->updateCloudRunWorkerService();
+
+                return "Existing Cloud Run services detected. Updating those services with the latest image instead.";
+            }
+
+            throw $e;
+        }
 
         return true;
     }

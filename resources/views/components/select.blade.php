@@ -1,12 +1,13 @@
 <div class="flex flex-wrap mb-6" {{ $attributes->only('x-show') }}>
-    <label for="{{ $name }}" class="block text-gray-700 text-sm font-bold mb-2">
+    <x-label for="{{ $name }}">
         {{ $label }}:
-    </label>
+    </x-label>
 
     <select
         id="{{ $name }}"
         class="form-select w-full @error($name) border-red-500 @enderror"
         value="{{ old($name) }}"
+        @error($name) aria-invalid="true" aria-describedby="{{ $name }}-error" @enderror
         {{ $attributes->except('options', 'x-show') }}>
         @foreach ($options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
@@ -14,8 +15,8 @@
     </select>
 
     @error($name)
-        <p class="text-red-500 text-xs italic mt-4">
+        <x-validation-error id="{{ $name }}-error">
             {{ $message }}
-        </p>
+        </x-validation-error>
     @enderror
 </div>

@@ -37,7 +37,12 @@ class GoogleProject extends Model
     const REGIONS = [
         'us-central1' => 'Iowa',
         'us-east1' => 'South Carolina',
+        'us-east4' => 'Northern Virginia',
+        'us-west1' => 'Oregon',
         'europe-west1' => 'Belgium',
+        'europe-north1' => 'Finland',
+        'europe-west4' => 'Netherlands',
+        'asia-east1' => 'Taiwan',
         'asia-northeast1' => 'Tokyo',
     ];
 
@@ -108,6 +113,11 @@ class GoogleProject extends Model
     public function setReady()
     {
         $this->update(['status' => static::STATUS_READY]);
+    }
+
+    public function isReady()
+    {
+        return $this->status == static::STATUS_READY;
     }
 
     /**

@@ -6,7 +6,7 @@
     </x-header-meta>
     <x-header-meta>
         <x:heroicon-o-folder class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-        {{ $project->googleProject->name }}
+        {{ $project->googleProject->project_id }}
     </x-header-meta>
     <x-header-meta>
         <x:heroicon-o-location-marker class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
@@ -18,7 +18,7 @@
     </x-header-meta>
 </x-slot>
 <x-slot name="actions">
-    <x-white-button :href="$environment->url">View</x-white-button>
+    <x-button :href="$environment->url">View</x-button>
 </x-slot>
 
 <div class="mb-4 sm:mb-0 sm:flex justify-between items-center ">

@@ -8,7 +8,8 @@ class CloudRunService
 {
     protected $service;
 
-    public function __construct($service) {
+    public function __construct($service)
+    {
         $this->service = $service;
     }
 
@@ -29,7 +30,7 @@ class CloudRunService
      */
     public function hasStatus()
     {
-        return ! empty($this->status());
+        return !empty($this->status());
     }
 
     /**
@@ -112,14 +113,15 @@ class CloudRunService
         return $this->status()['url'] ?? null;
     }
 
-    /**
-     * Get the metadata
-     *
-     * @return array
-     */
-    public function metadata()
+    public function envVars(): array
     {
-        return $this->services['metadata'];
+        $vars = [];
+
+        foreach ($this->service['spec']['template']['spec']['containers'][0]['env'] ?? [] as $var) {
+            $vars[$var['name']] = $var['value'];
+        }
+
+        return $vars;
     }
 
     /**
@@ -144,4 +146,6 @@ class CloudRunService
 }
 
 
-class InvalidConditionException extends Exception {}
+class InvalidConditionException extends Exception
+{
+}

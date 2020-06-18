@@ -1,8 +1,8 @@
 <div wire:poll>
     <div class="bg-white">
         <div class="p-4 border-b">
-            <div class="flex items-center justify-between mb-1">
-                <div class="flex items-center">
+            <div class="flex flex-wrap items-center justify-between mb-1">
+                <div class="flex flex-wrap items-center">
                     <h1 class="text-xl mr-4">{{ $deployment->commit_message }}</h1>
                     <x-status :status="$deployment->status" />
                 </div>

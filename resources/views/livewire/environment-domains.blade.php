@@ -43,10 +43,10 @@
                         </div>
                         @if ($mapping->isUnverified())
                             <div class="mt-4">
-                                <x-white-button wire:click="verifyDomain({{ $mapping->id }})">
+                                <x-button wire:click="verifyDomain({{ $mapping->id }})">
                                     <x-heroicon-o-check-circle class="w-5 h-5 mr-1 text-green-600" />
                                     I have added the service account
-                                </x-white-button>
+                                </x-button>
                             </div>
                         @endif
                     </x-td>

@@ -41,7 +41,7 @@ class DomainMappingTest extends TestCase
 
         $mapping->checkStatus();
 
-        $this->assertEquals(DomainMapping::STATUS_UNVERIFIED, $mapping->status);
+        $this->assertSame(DomainMapping::STATUS_UNVERIFIED, $mapping->status);
         $this->assertRegExp('/verified owner/i', $mapping->message);
 
         Queue::assertNothingPushed();
@@ -57,7 +57,7 @@ class DomainMappingTest extends TestCase
 
         $mapping->checkStatus();
 
-        $this->assertEquals(DomainMapping::STATUS_PENDING_DNS, $mapping->status);
+        $this->assertSame(DomainMapping::STATUS_PENDING_DNS, $mapping->status);
         $this->assertRegExp('/CNAME/i', $mapping->message);
         $this->assertRegExp('/www/i', $mapping->message);
         $this->assertRegExp('/ghs.googlehosted.com./i', $mapping->message);
@@ -77,8 +77,8 @@ class DomainMappingTest extends TestCase
 
         $mapping->checkStatus();
 
-        $this->assertEquals(DomainMapping::STATUS_ACTIVE, $mapping->status);
-        $this->assertEquals('', $mapping->message);
+        $this->assertSame(DomainMapping::STATUS_ACTIVE, $mapping->status);
+        $this->assertSame('', $mapping->message);
 
         Queue::assertNothingPushed();
     }
@@ -93,7 +93,7 @@ class DomainMappingTest extends TestCase
 
         $mapping->checkStatus();
 
-        $this->assertEquals(DomainMapping::STATUS_INACTIVE, $mapping->status);
+        $this->assertSame(DomainMapping::STATUS_INACTIVE, $mapping->status);
 
         Queue::assertPushed(CheckDomainMappingStatus::class);
     }

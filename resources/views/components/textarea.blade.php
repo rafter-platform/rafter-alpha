@@ -1,7 +1,7 @@
 <div class="flex flex-wrap mb-6">
-    <label for="{{ $name }}" class="block text-gray-700 text-sm font-bold mb-2">
+    <x-label for="{{ $name }}">
         {{ $label }}:
-    </label>
+    </x-label>
 
     <div class="text-sm text-gray-600 w-full mb-2">{{ $helper ?? '' }}</div>
 
@@ -10,14 +10,15 @@
         class="form-textarea w-full @error($name) border-red-500 @enderror {{ $classes ?? '' }}"
         name="{{ $name }}"
         value="{{ $value ?? old($name) }}"
+        @error($name) aria-invalid="true" aria-describedby="{{ $name }}-error" @enderror
         rows="10"
         {{ ($required ?? false) ? 'required' : ''}}
         {{ ($disabled ?? false) ? 'disabled' : ''}}
     >{{ $value ?? '' }}</textarea>
 
     @error($name)
-        <p class="text-red-500 text-xs italic mt-4">
+        <x-validation-error id="{{ $name }}-error">
             {{ $message }}
-        </p>
+        </x-validation-error>
     @enderror
 </div>
