@@ -102,6 +102,7 @@ class Deployment extends Model
     public function markAsFailed()
     {
         $this->update(['status' => static::STATUS_FAILED]);
+        $this->sourceProvider()->updateDeploymentStatus($this, 'failure');
     }
 
     /**
