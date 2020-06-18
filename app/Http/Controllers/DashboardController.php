@@ -13,6 +13,10 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        if (currentTeam()->projects()->count() == 0) {
+            return redirect('/projects/create');
+        }
+
         return view('dashboard');
     }
 }

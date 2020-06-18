@@ -47,7 +47,9 @@
                     {{ $project->googleProject->project_id }}
                 </x-td>
                 <x-td>
-                    {{ $project->environments()->first()->activeDeployment->created_at->diffForHumans() }}
+                    @if ($project->environments()->first()->activeDeployment)
+                        {{ $project->environments()->first()->activeDeployment->created_at->diffForHumans() }}
+                    @endif
                 </x-td>
                 <x-td last>
                     <x-button :href="$project->productionUrl()" size="sm">Open</x-button>
