@@ -215,21 +215,37 @@ class GitHub implements SourceProviderClient
 
     public function createDeployment(Deployment $deployment)
     {
-        $response = $this->request("repos/{$deployment->repository()}/deployments", 'POST', [
-            'ref' => $deployment->commit_hash,
-            'environment' => $deployment->environment->name,
-            'description' => 'Deploy request from Rafter',
-        ]);
+        try {
+            $response = $this->request("repos/{$deployment->repository()}/deployments", 'POST', [
+                'ref' => $deployment->commit_hash,
+                'environment' => $deployment->environment->name,
+                'description' => 'Deploy request from Rafter',
 
-        $deploymentId = $response['id'];
-        $deployment->meta['github_deployment_id'] = $deploymentId;
-        $deployment->save();
+                // We tell GitHub we want to start this deployment regardless of whether tests have passed.
+                // TODO: Implement user's preference about whether we should wait for tests.
+                'required_contexts' => [],
+            ]);
 
-        $this->updateDeploymentStatus($deployment, 'in_progress');
+            $deploymentId = $response['id'];
+            $deployment->meta['github_deployment_id'] = $deploymentId;
+            $deployment->save();
+
+            $this->updateDeploymentStatus($deployment, 'in_progress');
+        } catch (RequestException $e) {
+            /**
+             * TODO:
+             * 1. Inspect what error it is
+             * 2. If it's about commit statuses not being ready, bubble it up somehow?
+             * 3. If it's about the fact that a merge commit was done, bubble it up so we somehow don't deploy until the merge
+             * commit comes through.
+             */
+        }
     }
 
     public function updateDeploymentStatus(Deployment $deployment, $state)
     {
+        if (empty($deployment->meta['github_deployment_id'])) return;
+
         $this->request("repos/{$deployment->repository()}/deployments/{$deployment->meta['github_deployment_id']}/statuses", 'POST', [
             'state' => $state,
             'log_url' => route('projects.environments.deployments.show', [
