@@ -26,7 +26,7 @@
         @foreach ($deployments as $idx => $deployment)
             <x-tr :idx="$idx">
                 <x-td>
-                    <a href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
+                    <a class="max-w-md overflow-hidden whitespace-no-wrap block" style="text-overflow: ellipsis" href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
                 </x-td>
                 <x-td>
                     <x-status :status="$deployment->status" />
