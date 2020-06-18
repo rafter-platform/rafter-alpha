@@ -13,7 +13,8 @@ module.exports = {
     }
   },
   variants: {
-    opacity: [...defaultConfig.variants.opacity, "disabled"]
+    opacity: [...defaultConfig.variants.opacity, "disabled"],
+    backgroundColor: [...defaultConfig.variants.backgroundColor, "even"]
   },
   plugins: [require("@tailwindcss/ui")]
 };

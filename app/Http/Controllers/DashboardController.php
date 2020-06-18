@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\GitHubApp;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
     /**
      * Show the application dashboard.
@@ -13,8 +13,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', [
-            'githubAppUrl' => GitHubApp::installationUrl(),
-        ]);
+        if (currentTeam()->projects()->count() == 0) {
+            return redirect('/projects/create');
+        }
+
+        return view('dashboard');
     }
 }
