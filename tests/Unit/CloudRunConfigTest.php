@@ -29,8 +29,8 @@ class CloudRunConfigTest extends TestCase
         $config = (new CloudRunConfig($deployment))->config();
         $limits = $config['spec']['template']['spec']['containers'][0]['resources']['limits'];
 
-        $this->assertEquals('2Gi', $limits['memory']);
-        $this->assertEquals(2, $limits['cpu']);
+        $this->assertSame('2Gi', $limits['memory']);
+        $this->assertSame('2', $limits['cpu']);
     }
 
     public function test_other_container_limits_are_set()
@@ -41,8 +41,8 @@ class CloudRunConfigTest extends TestCase
         $spec = $config['spec']['template']['spec'];
         $annotations = $config['spec']['template']['metadata']['annotations'];
 
-        $this->assertEquals(300, $spec['timeoutSeconds']);
-        $this->assertEquals(80, $spec['containerConcurrency']);
-        $this->assertEquals(1000, $annotations['autoscaling.knative.dev/maxScale']);
+        $this->assertSame(300, $spec['timeoutSeconds']);
+        $this->assertSame(80, $spec['containerConcurrency']);
+        $this->assertSame('1000', $annotations['autoscaling.knative.dev/maxScale']);
     }
 }

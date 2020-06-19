@@ -81,7 +81,7 @@ class CloudRunConfig
     public function revisionMetadata()
     {
         $annotations = [
-            'autoscaling.knative.dev/maxScale' => $this->getEnvironmentOption('max_instances'),
+            'autoscaling.knative.dev/maxScale' => (string) $this->getEnvironmentOption('max_instances'),
         ];
 
         if ($this->environment->usesDatabase()) {
@@ -124,8 +124,8 @@ class CloudRunConfig
     {
         return [
             'limits' => [
-                'memory' => $this->getEnvironmentOption('memory'),
-                'cpu' => $this->getEnvironmentOption('cpu'),
+                'memory' => (string) $this->getEnvironmentOption('memory'),
+                'cpu' => (string) $this->getEnvironmentOption('cpu'),
             ],
         ];
     }
