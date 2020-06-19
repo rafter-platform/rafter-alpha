@@ -7,8 +7,8 @@
     <x-label for="{{ $type }}_memory">Memory allocated</x-label>
     <div class="text-sm text-gray-600 w-full mb-2">Memory to allocate to each container instance.</div>
     <x-radio-button-group>
-        @foreach ($memoryOptions as $option)
-            <x-radio-button wire:model="memory" :value="$option" name="{{ $type }}_memory">{{ $option }}</x-radio-button>
+        @foreach ($memoryOptions as $key => $option)
+            <x-radio-button wire:model="memory" :value="$key" name="{{ $type }}_memory">{{ $option }}</x-radio-button>
         @endforeach
     </x-radio-button-group>
 

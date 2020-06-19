@@ -8,8 +8,6 @@ use App\Http\Livewire\EnvironmentServiceSettings;
 use App\Project;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\App;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -39,7 +37,7 @@ class EnvironmentServiceSettingsTest extends TestCase
         $this->actingAs($this->user);
 
         Livewire::test(EnvironmentServiceSettings::class, ['environment' => $this->environment, 'type' => 'web'])
-            ->set('memory', '1 GiB')
+            ->set('memory', '1Gi')
             ->set('cpu', 1)
             ->set('requestTimeout', 1000)
             ->set('maxRequestsPerContainer', 1000)
@@ -56,7 +54,7 @@ class EnvironmentServiceSettingsTest extends TestCase
         $this->actingAs($this->user);
 
         Livewire::test(EnvironmentServiceSettings::class, ['environment' => $this->environment, 'type' => 'web'])
-            ->set('memory', '2 GiB')
+            ->set('memory', '2Gi')
             ->set('cpu', 2)
             ->set('requestTimeout', 400)
             ->set('maxRequestsPerContainer', 50)
@@ -65,7 +63,7 @@ class EnvironmentServiceSettingsTest extends TestCase
 
         $this->environment->refresh();
 
-        $this->assertSame('2 GiB', $this->environment->getOption('web_memory'));
+        $this->assertSame('2Gi', $this->environment->getOption('web_memory'));
         $this->assertSame(2, $this->environment->getOption('web_cpu'));
         $this->assertSame(400, $this->environment->getOption('web_request_timeout'));
         $this->assertSame(50, $this->environment->getOption('web_max_requests_per_container'));

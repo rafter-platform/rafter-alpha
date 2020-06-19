@@ -21,11 +21,11 @@ class EnvironmentServiceSettings extends Component
     public $maxInstances;
 
     public $memoryOptions = [
-        '128 MiB',
-        '256 MiB',
-        '512 MiB',
-        '1 GiB',
-        '2 GiB',
+        '128Mi' => '128 MB',
+        '256Mi' => '256 MB',
+        '512Mi' => '512 MB',
+        '1Gi' => '1 GB',
+        '2Gi' => '2 GB',
     ];
 
     public function mount(Environment $environment, $type)
@@ -48,7 +48,7 @@ class EnvironmentServiceSettings extends Component
     protected function rules()
     {
         return [
-            'memory' => ['required', Rule::in($this->memoryOptions)],
+            'memory' => ['required', Rule::in(array_keys($this->memoryOptions))],
             'cpu' => ['required', Rule::in([1, 2])],
             'requestTimeout' => ['required', 'integer', 'between:1,900'],
             'maxRequestsPerContainer' => ['required', 'integer', 'between:1,80'],

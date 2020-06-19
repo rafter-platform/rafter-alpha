@@ -29,8 +29,8 @@ class Environment extends Model
     ];
 
     protected $defaultOptions = [
-        'web_memory' => '1 GiB',
-        'worker_memory' => '1 GiB',
+        'web_memory' => '1Gi',
+        'worker_memory' => '1Gi',
         'web_cpu' => 1,
         'worker_cpu' => 1,
         'web_request_timeout' => 300,
