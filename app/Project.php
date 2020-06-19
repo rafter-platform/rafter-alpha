@@ -15,6 +15,7 @@ class Project extends Model
     const TYPES = [
         'laravel' => "Laravel",
         'nodejs' => "Node.js",
+        'rails' => "Rails",
     ];
 
     protected $guarded = [];
@@ -58,14 +59,14 @@ class Project extends Model
             });
     }
 
-    /**
-     * Whether this project is a Laravel project
-     *
-     * @return boolean
-     */
     public function isLaravel()
     {
         return $this->type === 'laravel';
+    }
+
+    public function isRails()
+    {
+        return $this->type === 'rails';
     }
 
     public function production()
