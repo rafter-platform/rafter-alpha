@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             $project = $team->projects()->create([
-                'name' => 'Laravel Example',
+                'name' => 'rafter-example-laravel',
                 'type' => 'laravel',
                 'google_project_id' => $googleProject->id,
                 'source_provider_id' => $sourceProvider->id ?? null,
