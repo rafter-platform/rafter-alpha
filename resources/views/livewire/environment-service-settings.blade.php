@@ -5,16 +5,16 @@
     </x-slot>
 
     <x-label for="{{ $type }}_memory">Memory allocated</x-label>
-    <div class="text-sm text-gray-600 w-full mb-2">Memory to allocate to each container instance.</div>
-    <x-radio-button-group>
+    <x-radio-button-group name="memory">
+        <x-slot name="helper">Memory to allocate to each container instance.</x-slot>
         @foreach ($memoryOptions as $key => $option)
             <x-radio-button wire:model="memory" :value="$key" name="{{ $type }}_memory">{{ $option }}</x-radio-button>
         @endforeach
     </x-radio-button-group>
 
     <x-label for="{{ $type }}_cpu">CPUs allocated</x-label>
-    <div class="text-sm text-gray-600 w-full mb-2">Number of vCPUs allocated to each container instance.</div>
-    <x-radio-button-group>
+    <x-radio-button-group name="cpu">
+        <x-slot name="helper">Number of vCPUs allocated to each container instance</x-slot>
         @foreach ([1, 2] as $option)
             <x-radio-button wire:model="cpu" :value="$option" name="{{ $type }}_cpu">{{ $option }} vCPU{{ $option > 1 ? 's' : '' }}</x-radio-button>
         @endforeach

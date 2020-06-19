@@ -3,7 +3,9 @@
         {{ $label }}:
     </x-label>
 
-    <div class="text-sm text-gray-600 w-full mb-2">{{ $helper ?? '' }}</div>
+    @if ($helper ?? false)
+        <x-helper-text>{{ $helper }}</x-helper-text>
+    @endif
 
     <textarea
         id="{{ $name }}"
