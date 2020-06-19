@@ -223,6 +223,14 @@ class Environment extends Model
             ]);
         }
 
+        if ($this->project->isRails()) {
+            $vars->inject([
+                'RAILS_ENV' => $this->name,
+                'RAILS_SERVE_STATIC_FILES' => true,
+                'RAILS_LOG_TO_STDOUT' => true,
+            ]);
+        }
+
         $this->environmental_variables = $vars->toString();
         $this->save();
     }
