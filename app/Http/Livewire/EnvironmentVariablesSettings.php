@@ -29,9 +29,11 @@ class EnvironmentVariablesSettings extends Component
         $this->authorize('update', $this->environment);
 
         $this->validate([
-            'evariables' => ['string'],
+            'variables' => ['string'],
         ]);
 
         $this->environment->update(['environmental_variables' => $this->variables]);
+
+        $this->dispatchBrowserEvent('notify', 'Settings saved!');
     }
 }

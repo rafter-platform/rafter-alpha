@@ -72,5 +72,7 @@ class EnvironmentServiceSettings extends Component
         $this->environment->setOption($this->type . '_request_timeout', $data['requestTimeout']);
         $this->environment->setOption($this->type . '_max_requests_per_container', $data['maxRequestsPerContainer']);
         $this->environment->setOption($this->type . '_max_instances', $data['maxInstances']);
+
+        $this->dispatchBrowserEvent('notify', "Settings saved!");
     }
 }

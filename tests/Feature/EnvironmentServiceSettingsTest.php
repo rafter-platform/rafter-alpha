@@ -59,7 +59,8 @@ class EnvironmentServiceSettingsTest extends TestCase
             ->set('requestTimeout', 400)
             ->set('maxRequestsPerContainer', 50)
             ->set('maxInstances', 900)
-            ->call('handle');
+            ->call('handle')
+            ->assertDispatchedBrowserEvent('notify');
 
         $this->environment->refresh();
 
