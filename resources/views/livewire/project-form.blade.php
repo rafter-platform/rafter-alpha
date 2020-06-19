@@ -11,26 +11,26 @@
     wire:submit.prevent="create">
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
-    <x-radio-button-group>
-        <x-radio-button wire:model="sourceType" name="source_type" value="github">
+    <x-radio-button-group name="sourceType">
+        <x-radio-button wire:model="sourceType" name="sourceType" value="github">
             <x-slot name="icon">
                 <x-source-provider-logo type="github" class="text-current w-6 h-6" />
             </x-slot>
             GitHub
         </x-radio-button>
-        <x-radio-button wire:model="sourceType"  name="source_type" value="gitlab">
+        <x-radio-button wire:model="sourceType"  name="sourceType" value="gitlab">
             <x-slot name="icon">
                 <x-source-provider-logo type="gitlab" class="text-current w-6 h-6" />
             </x-slot>
             Gitlab
         </x-radio-button>
-        <x-radio-button wire:model="sourceType"  name="source_type" value="bitbucket">
+        <x-radio-button wire:model="sourceType"  name="sourceType" value="bitbucket">
             <x-slot name="icon">
                 <x-source-provider-logo type="bitbucket" class="text-current w-6 h-6" />
             </x-slot>
             Bitbucket
         </x-radio-button>
-        <x-radio-button wire:model="sourceType" name="source_type" value="cli">
+        <x-radio-button wire:model="sourceType" name="sourceType" value="cli">
             <x-slot name="icon">
                 <x-source-provider-logo type="cli" class="text-current w-6 h-6" />
             </x-slot>
@@ -43,9 +43,9 @@
             GitHub allows you to provide granular access to different repositories and organizations using <b>installations</b>.
             Select the installation below containing your repository, or create a new installation.
         </p>
-        <x-radio-button-group>
+        <x-radio-button-group name="sourceProviderId">
             @foreach ($sourceProviders->filter(fn ($p) => $p->type == 'github') as $item)
-                <x-radio-button wire:model="sourceProviderId" name="source_provider" value="{{ $item->id }}" small>
+                <x-radio-button wire:model="sourceProviderId" name="sourceProviderId" value="{{ $item->id }}" small>
                     @if ($item->meta['avatar'] ?? false)
                     <x-slot name="icon">
                         <img src="{{ $item->meta['avatar'] }}" alt="Avatar" class="w-5 h-5 rounded-full">
@@ -71,7 +71,7 @@
     @if ($sourceType == 'gitlab')
     <x-radio-button-group>
         @if ($gitlab = $sourceProviders->firstWhere('type', 'gitlab'))
-            <x-radio-button wire:model="sourceProviderId" name="source_provider" value="{{ $gitlab->id }}" checked>
+            <x-radio-button wire:model="sourceProviderId" name="sourceProviderId" value="{{ $gitlab->id }}" checked>
                 <x-slot name="icon">
                     <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
                 </x-slot>
@@ -91,7 +91,7 @@
     @if ($sourceType == 'bitbucket')
     <x-radio-button-group>
         @if ($bitbucket = $sourceProviders->firstWhere('type', 'bitbucket'))
-            <x-radio-button wire:model="sourceProviderId" name="source_provider" value="{{ $bitbucket->id }}" checked>
+            <x-radio-button wire:model="sourceProviderId" name="sourceProviderId" value="{{ $bitbucket->id }}" checked>
                 <x-slot name="icon">
                     <x-heroicon-o-desktop-computer class="text-current w-6 h-6" />
                 </x-slot>
@@ -136,13 +136,7 @@
 
         <h2 class="text-lg font-medium mb-4 mt-12">What type of project?</h2>
 
-        @error('type')
-            <x-validation-error class="mb-2">
-                {{ $message }}
-            </x-validation-error>
-        @enderror
-
-        <x-radio-button-group x-data="{}">
+        <x-radio-button-group name="type">
             @foreach (\App\Project::TYPES as $key => $type)
             <x-radio-button wire:model="type" name="type" value="{{ $key }}">
                 <x-slot name="icon">
@@ -155,13 +149,7 @@
 
         <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud Project?</h2>
 
-        @error('googleProjectId')
-            <x-validation-error class="mb-2">
-                {{ $message }}
-            </x-validation-error>
-        @enderror
-
-        <x-radio-button-group>
+        <x-radio-button-group name="googleProjectId">
             @foreach ($projects as $project)
             <x-radio-button wire:model="googleProjectId" name="googleProjectId" value="{{ $project->id }}">
                 <x-slot name="icon">
@@ -212,13 +200,7 @@
         @if ($googleProjectId)
             <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
 
-            @error('region')
-                <x-validation-error class="mb-2">
-                    {{ $message }}
-                </x-validation-error>
-            @enderror
-
-            <x-radio-button-group>
+            <x-radio-button-group name="region">
                 @foreach ($regions as $key => $region)
                 <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
                     {{ $region }} ({{ $key }})

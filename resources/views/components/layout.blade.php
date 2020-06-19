@@ -51,6 +51,8 @@
         </main>
     </div>
 
+    <x-toast />
+
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
     @livewireScripts

@@ -4,7 +4,7 @@
     </x-label>
 
     @if ($helper ?? false)
-    <div class="text-sm text-gray-600 w-full mb-2">{{ $helper }}</div>
+        <x-helper-text>{{ $helper }}</x-helper-text>
     @endif
 
     <div class="relative w-full">
