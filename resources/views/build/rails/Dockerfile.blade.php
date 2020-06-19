@@ -19,7 +19,7 @@ ADD . $APP_HOME
 # Run Yarn Install
 RUN yarn install --check-files
 
-# Precompmile assets
+# Precompile assets
 RUN RAILS_ENV=production bundle exec rake assets:precompile
 
 RUN chmod 755 docker-entrypoint.sh
