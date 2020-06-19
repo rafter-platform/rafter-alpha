@@ -16,7 +16,8 @@ class CloudRunConfig
      */
     protected $isWorker = false;
 
-    public function __construct(Deployment $deployment) {
+    public function __construct(Deployment $deployment)
+    {
         $this->deployment = $deployment;
         $this->environment = $deployment->environment;
     }
@@ -31,6 +32,13 @@ class CloudRunConfig
         $this->isWorker = true;
 
         return $this;
+    }
+
+    protected function getEnvironmentOption($key)
+    {
+        $prefix = $this->isWorker ? 'worker' : 'web';
+
+        return $this->environment->getOption($prefix . '_' . $key);
     }
 
     /**
@@ -72,17 +80,18 @@ class CloudRunConfig
      */
     public function revisionMetadata()
     {
+        $annotations = [
+            'autoscaling.knative.dev/maxScale' => $this->getEnvironmentOption('max_instances'),
+        ];
+
         if ($this->environment->usesDatabase()) {
             $connectionString = $this->environment->database->databaseInstance->connectionString();
-
-            return [
-                'annotations' => [
-                    'run.googleapis.com/cloudsql-instances' => $connectionString,
-                ],
-            ];
+            $annotations['run.googleapis.com/cloudsql-instances'] = $connectionString;
         }
 
-        return [];
+        return [
+            'annotations' => $annotations,
+        ];
     }
 
     public function image()
@@ -115,7 +124,8 @@ class CloudRunConfig
     {
         return [
             'limits' => [
-                'memory' => '1Gi',
+                'memory' => $this->getEnvironmentOption('memory'),
+                'cpu' => $this->getEnvironmentOption('cpu'),
             ],
         ];
     }
@@ -135,6 +145,8 @@ class CloudRunConfig
             'template' => array_filter([
                 'metadata' => $this->revisionMetadata(),
                 'spec' => [
+                    'timeoutSeconds' => $this->getEnvironmentOption('request_timeout'),
+                    'containerConcurrency' => $this->getEnvironmentOption('max_requests_per_container'),
                     'containers' => [
                         $this->container(),
                     ]
