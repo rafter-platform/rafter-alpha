@@ -20,6 +20,12 @@
     @apply bg-gray-100 text-red-600 px-1;
 }
 
+.prose p:not(:last-child),
+.prose ul:not(:last-child),
+.prose ol:not(:last-child) {
+    @apply mb-4;
+}
+
 .radio-group input[type="radio"]:checked + label {
     @apply bg-blue-200 border-blue-300;
 }

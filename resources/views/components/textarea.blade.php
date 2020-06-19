@@ -1,4 +1,4 @@
-<div class="flex flex-wrap mb-6">
+<div class="flex flex-wrap mb-6" {{ $attributes->only('x-show') }}>
     <x-label for="{{ $name }}">
         {{ $label }}:
     </x-label>
@@ -14,8 +14,7 @@
         value="{{ $value ?? old($name) }}"
         @error($name) aria-invalid="true" aria-describedby="{{ $name }}-error" @enderror
         rows="10"
-        {{ ($required ?? false) ? 'required' : ''}}
-        {{ ($disabled ?? false) ? 'disabled' : ''}}
+        {{ $attributes->except(['name', 'value', 'x-show']) }}
     >{{ $value ?? '' }}</textarea>
 
     @error($name)
