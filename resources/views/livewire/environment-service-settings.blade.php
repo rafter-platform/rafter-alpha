@@ -14,7 +14,7 @@
 
     <x-label for="{{ $type }}_cpu">CPUs allocated</x-label>
     <x-radio-button-group name="cpu">
-        <x-slot name="helper">Number of vCPUs allocated to each container instance</x-slot>
+        <x-slot name="helper">Number of vCPUs allocated to each container instance.</x-slot>
         @foreach ([1, 2] as $option)
             <x-radio-button wire:model="cpu" :value="$option" name="{{ $type }}_cpu">{{ $option }} vCPU{{ $option > 1 ? 's' : '' }}</x-radio-button>
         @endforeach
