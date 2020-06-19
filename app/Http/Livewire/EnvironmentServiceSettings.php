@@ -3,11 +3,14 @@
 namespace App\Http\Livewire;
 
 use App\Environment;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class EnvironmentServiceSettings extends Component
 {
+    use AuthorizesRequests;
+
     public $environment;
     public $type;
 
@@ -60,6 +63,8 @@ class EnvironmentServiceSettings extends Component
 
     public function handle()
     {
+        $this->authorize('update', $this->environment);
+
         $data = $this->validate($this->rules());
 
         $this->environment->setOption($this->type . '_memory', $data['memory']);
