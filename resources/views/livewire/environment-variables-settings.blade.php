@@ -13,7 +13,13 @@
         :value="$variables"
     />
     <p>
-        <x-button x-show="!show" @click.prevent="show = true">Show environmental variables</x-button>
-        <x-button x-show="show" @click.prevent="show = false">Hide environmental variables</x-button>
+        <x-button x-show="!show" @click.prevent="show = true">
+            <x-heroicon-o-eye class="mr-1 w-4 h-4 text-current inline-block" />
+            Show environmental variables
+        </x-button>
+        <x-button x-show="show" @click.prevent="show = false">
+            <x-heroicon-o-eye-off class="mr-1 w-4 h-4 text-current inline-block" />
+            Hide environmental variables
+        </x-button>
     </p>
 </x-settings-form>
