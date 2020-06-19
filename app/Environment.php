@@ -289,7 +289,13 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
+        $steps = DeploymentSteps::for($deployment);
+
+        if (!$this->hasBeenDeployedSuccessfully()) {
+            $steps->initialDeployment();
+        }
+
+        Bus::dispatchChain($steps->get());
 
         return $deployment;
     }
