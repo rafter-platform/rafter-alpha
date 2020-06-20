@@ -33,7 +33,6 @@ class EnvironmentVariablesSettings extends Component
         ]);
 
         $this->environment->update(['environmental_variables' => $this->variables]);
-        logger($this->variables);
 
         $this->dispatchBrowserEvent('notify', 'Settings saved!');
     }
