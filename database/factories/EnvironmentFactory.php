@@ -23,3 +23,9 @@ $factory->state(Environment::class, 'nodejs', function ($faker) {
         'project_id' => factory('App\Project')->state('nodejs'),
     ];
 });
+
+$factory->state(Environment::class, 'rails', function ($faker) {
+    return [
+        'project_id' => factory('App\Project')->state('rails'),
+    ];
+});

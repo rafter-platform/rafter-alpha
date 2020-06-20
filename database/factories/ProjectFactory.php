@@ -24,3 +24,7 @@ $factory->state(Project::class, 'laravel', [
 $factory->state(Project::class, 'nodejs', [
     'type' => 'nodejs',
 ]);
+
+$factory->state(Project::class, 'rails', [
+    'type' => 'rails',
+]);

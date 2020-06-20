@@ -123,4 +123,14 @@ EOD;
          */
         $this->assertSame("enabled='1'", $vars->toString());
     }
+
+    public function test_it_offers_has_method()
+    {
+        $vars = new EnvVars([
+            'enabled' => true,
+        ]);
+
+        $this->assertTrue($vars->has('enabled'));
+        $this->assertFalse($vars->has('somethingelse'));
+    }
 }

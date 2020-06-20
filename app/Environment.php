@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Casts\Options;
+use App\GoogleCloud\CloudBuildSecrets;
 use App\GoogleCloud\SchedulerJobConfig;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
@@ -253,6 +254,37 @@ class Environment extends Model
     }
 
     /**
+     * Whether an env var exists
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function hasEnvVar(string $key)
+    {
+        $vars = EnvVars::fromString($this->environmental_variables);
+
+        return $vars->has($key);
+    }
+
+    /**
+     * Get an env var.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getEnvVar(string $key)
+    {
+        $vars = EnvVars::fromString($this->environmental_variables);
+
+        return $vars->get($key);
+    }
+
+    public function buildSecrets(): CloudBuildSecrets
+    {
+        return new CloudBuildSecrets($this);
+    }
+
+    /**
      * Create an initial deployment on Cloud Run.
      */
     public function createInitialDeployment()
@@ -416,20 +448,6 @@ class Environment extends Model
     public function setSecret(string $key, string $value)
     {
         return $this->client()->setSecret($key, $value);
-    }
-
-    /**
-     * The git token secret name to be used during Cloud Build.
-     *
-     * @return string
-     */
-    public function gitTokenSecretName(): string
-    {
-        return sprintf(
-            '%s-%s',
-            'rafter-git-token',
-            $this->slug()
-        );
     }
 
     /**

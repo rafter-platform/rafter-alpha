@@ -20,7 +20,7 @@ ADD . $APP_HOME
 RUN yarn install --check-files
 
 # Precompile assets
-RUN RAILS_ENV=production bundle exec rake assets:precompile
+RUN SECRET_KEY_BASE=`bin/rake secret` RAILS_ENV=production bundle exec rake assets:precompile
 
 RUN chmod 755 docker-entrypoint.sh
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

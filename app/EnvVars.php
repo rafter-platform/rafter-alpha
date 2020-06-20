@@ -19,7 +19,8 @@ class EnvVars
      *
      * @param array $vars
      */
-    public function __construct(array $vars = []) {
+    public function __construct(array $vars = [])
+    {
         foreach ($vars as $key => $value) {
             $this->set($key, $value);
         }
@@ -89,6 +90,17 @@ class EnvVars
         }
 
         return $this->vars[$key] ?? null;
+    }
+
+    /**
+     * Whether an env var exists.
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function has(string $key)
+    {
+        return !empty($this->get($key));
     }
 
     /**
