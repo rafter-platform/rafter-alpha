@@ -47,14 +47,16 @@ class Project extends Model
     /**
      * Create the initial environments for the project
      */
-    public function createInitialEnvironments()
+    public function createInitialEnvironments($options = [])
     {
+        $variables = $options['variables'] ?? '';
+
         collect(Environment::INITIAL_ENVIRONMENTS)
-            ->each(function ($name) {
+            ->each(function ($name) use ($variables) {
                 tap($this->environments()->create([
                     'name' => $name
-                ]), function ($environment) {
-                    $environment->provision();
+                ]), function ($environment) use ($variables) {
+                    $environment->provision($variables);
                 });
             });
     }

@@ -24,6 +24,7 @@ class ProjectForm extends Component
     public $type;
     public $region;
     public $serviceAccountJson;
+    public $variables;
 
     public function updated($field)
     {
@@ -157,6 +158,7 @@ class ProjectForm extends Component
                 'required',
                 Rule::in(array_keys(GoogleProject::REGIONS)),
             ],
+            'variables' => ['nullable', 'string'],
         ], [
             'type.required' => 'You must select a project type.',
             'googleProjectId.required' => 'You must select a Google Project.',
@@ -173,9 +175,9 @@ class ProjectForm extends Component
             'repository' => $data['repository'],
         ]);
 
-        $project->createInitialEnvironments();
-
-        session()->flash('status', 'Post successfully updated.');
+        $project->createInitialEnvironments([
+            'variables' => $data['variables'],
+        ]);
 
         return redirect()->route('projects.show', [$project]);
     }

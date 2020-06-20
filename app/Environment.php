@@ -195,9 +195,9 @@ class Environment extends Model
      *
      * @return void
      */
-    public function provision()
+    public function provision($initialVariables = '')
     {
-        $this->setInitialEnvironmentVariables();
+        $this->setInitialEnvironmentVariables($initialVariables);
         $this->createInitialDeployment();
     }
 
@@ -210,9 +210,9 @@ class Environment extends Model
      *
      * @return void
      */
-    public function setInitialEnvironmentVariables()
+    public function setInitialEnvironmentVariables($initialVariables = '')
     {
-        $vars = new EnvVars();
+        $vars = EnvVars::fromString($initialVariables);
 
         if ($this->project->isLaravel()) {
             $appKey = 'base64:' . base64_encode(Encrypter::generateKey(config('app.cipher')));
