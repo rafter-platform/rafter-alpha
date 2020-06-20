@@ -14,12 +14,13 @@ class SetBuildSecrets implements ShouldQueue
 
     public function handle()
     {
-        $token = $this->model->sourceProvider()->token();
+        $environment = $this->model->environment;
 
-        $enviroment = $this->model->environment;
-        $secretName = $enviroment->gitTokenSecretName();
+        $secrets = $environment->buildSecrets()->get();
 
-        $this->model->environment->setSecret($secretName, $token);
+        $secrets->each(function ($secret) {
+            $this->model->environment->setSecret($secret['name'], $secret['value']);
+        });
 
         return true;
     }

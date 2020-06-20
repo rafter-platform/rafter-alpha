@@ -3,8 +3,6 @@
         <h1>Google Cloud Projects</h1>
     </x-title>
 
-    <x-flash />
-
     @if (count($googleProjects) > 0)
         <x-card>
             <x-slot name="title">Your Google Projects</x-slot>

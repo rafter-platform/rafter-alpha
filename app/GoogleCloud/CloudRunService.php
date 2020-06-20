@@ -118,7 +118,7 @@ class CloudRunService
         $vars = [];
 
         foreach ($this->service['spec']['template']['spec']['containers'][0]['env'] ?? [] as $var) {
-            $vars[$var['name']] = $var['value'];
+            $vars[$var['name']] = $var['value'] ?? '';
         }
 
         return $vars;

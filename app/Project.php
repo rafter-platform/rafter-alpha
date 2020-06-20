@@ -15,6 +15,7 @@ class Project extends Model
     const TYPES = [
         'laravel' => "Laravel",
         'nodejs' => "Node.js",
+        'rails' => "Rails",
     ];
 
     protected $guarded = [];
@@ -46,26 +47,28 @@ class Project extends Model
     /**
      * Create the initial environments for the project
      */
-    public function createInitialEnvironments()
+    public function createInitialEnvironments($options = [])
     {
+        $variables = $options['variables'] ?? '';
+
         collect(Environment::INITIAL_ENVIRONMENTS)
-            ->each(function ($name) {
+            ->each(function ($name) use ($variables) {
                 tap($this->environments()->create([
                     'name' => $name
-                ]), function ($environment) {
-                    $environment->provision();
+                ]), function ($environment) use ($variables) {
+                    $environment->provision($variables);
                 });
             });
     }
 
-    /**
-     * Whether this project is a Laravel project
-     *
-     * @return boolean
-     */
     public function isLaravel()
     {
         return $this->type === 'laravel';
+    }
+
+    public function isRails()
+    {
+        return $this->type === 'rails';
     }
 
     public function production()

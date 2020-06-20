@@ -13,7 +13,6 @@
             </div>
         </div>
     </x-title>
-    <x-flash />
 
     <x-card>
         <x-slot name="title">Databases in {{ $instance->name }}</x-slot>

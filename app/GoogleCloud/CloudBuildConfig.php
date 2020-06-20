@@ -138,85 +138,92 @@ class CloudBuildConfig
      */
     public function steps()
     {
-        $steps = [
-            // Pull the image down so we can build from cache
-            [
-                'name' => 'gcr.io/cloud-builders/docker',
-                'entrypoint' => 'bash',
-                'args' => ['-c', "docker pull {$this->imageLocation()}:latest || exit 0"],
-            ],
+        $steps = collect();
 
-            // Pull down git token secret data
-            [
+        // Pull the image down so we can build from cache
+        $steps->push([
+            'name' => 'gcr.io/cloud-builders/docker',
+            'entrypoint' => 'bash',
+            'args' => ['-c', "docker pull {$this->imageLocation()}:latest || exit 0"],
+        ]);
+
+        // Pull in all build secrets
+        $secrets = new CloudBuildSecrets($this->environment);
+
+        $secrets->get()->each(function ($secret) use ($steps) {
+            $steps->push([
                 'name' => 'gcr.io/cloud-builders/gcloud',
                 'entrypoint' => 'bash',
-                'args' => ['-c', 'gcloud secrets versions access latest --secret=' . $this->deployment->environment->gitTokenSecretName() . ' > git-token.txt'],
-            ],
+                'args' => ['-c', "gcloud secrets versions access latest --secret=\"{$secret['name']}\" > {$secret['name']}.txt"],
+            ]);
 
-            // Store the token in a variable
-            [
+            $steps->push([
                 'name' => 'ubuntu',
                 'entrypoint' => 'bash',
-                'args' => ['-c', 'TOKEN=$(cat git-token.txt)'],
-            ],
+                'args' => ['-c', "{$secret['env_var']}=$(cat {$secret['name']}.txt)"],
+            ]);
+        });
 
-            $this->isGitBased() ? $this->downloadGitRepoStep() : [],
+        if ($this->isGitBased()) {
+            $steps->push($this->downloadGitRepoStep());
+        }
 
-            // DEBUG
-            [
-                'name' => 'ubuntu',
-                'args' => ['ls', '-la', './'],
-            ],
+        // DEBUG
+        $steps->push([
+            'name' => 'ubuntu',
+            'args' => ['ls', '-la', './'],
+        ]);
 
-            // Extract the tarball
-            $this->isGitBased() ? [
+        // Extract the tarball
+        if ($this->isGitBased()) {
+            $steps->push([
                 'name' => 'ubuntu',
                 'entrypoint' => 'bash',
                 'args' => ['-c', 'tar xzvf repo.tar.gz'],
-            ] : [],
+            ]);
+        }
 
-            // Copy the Dockerfile we need
-            [
-                'name' => 'gcr.io/cloud-builders/curl',
-                'args' => [$this->buildInstructions('Dockerfile'), '--output', 'Dockerfile'],
-                'dir' => $this->isGitBased() ? $this->repoName() : '',
+        // Copy the Dockerfile we need
+        $steps->push([
+            'name' => 'gcr.io/cloud-builders/curl',
+            'args' => [$this->buildInstructions('Dockerfile'), '--output', 'Dockerfile'],
+            'dir' => $this->isGitBased() ? $this->repoName() : '',
+        ]);
+
+        // Copy the entrypoint we need
+        $steps->push([
+            'name' => 'gcr.io/cloud-builders/curl',
+            'args' => [$this->buildInstructions('docker-entrypoint'), '--output', 'docker-entrypoint.sh'],
+            'dir' => $this->isGitBased() ? $this->repoName() : '',
+        ]);
+
+        // DEBUG
+        $steps->push([
+            'name' => 'ubuntu',
+            'args' => ['ls', '-la', './'],
+            'dir' => $this->isGitBased() ? $this->repoName() : '',
+        ]);
+
+        // Build the image
+        $steps->push([
+            'name' => 'gcr.io/cloud-builders/docker',
+            'args' => [
+                'build',
+                '-t', $this->imageLocation(),
+                '--cache-from', "{$this->imageLocation()}:latest",
+                '.'
             ],
+            'dir' => $this->isGitBased() ? $this->repoName() : '',
+        ]);
 
-            // Copy the entrypoint we need
-            [
-                'name' => 'gcr.io/cloud-builders/curl',
-                'args' => [$this->buildInstructions('docker-entrypoint'), '--output', 'docker-entrypoint.sh'],
-                'dir' => $this->isGitBased() ? $this->repoName() : '',
-            ],
+        // Upload it to GCR
+        $steps->push([
+            'name' => 'gcr.io/cloud-builders/docker',
+            'args' => ['push', $this->imageLocation()],
+            'dir' => $this->isGitBased() ? $this->repoName() : '',
+        ]);
 
-            // DEBUG
-            [
-                'name' => 'ubuntu',
-                'args' => ['ls', '-la', './'],
-                'dir' => $this->isGitBased() ? $this->repoName() : '',
-            ],
-
-            // Build the image
-            [
-                'name' => 'gcr.io/cloud-builders/docker',
-                'args' => [
-                    'build',
-                    '-t', $this->imageLocation(),
-                    '--cache-from', "{$this->imageLocation()}:latest",
-                    '.'
-                ],
-                'dir' => $this->isGitBased() ? $this->repoName() : '',
-            ],
-
-            // Upload it to GCR
-            [
-                'name' => 'gcr.io/cloud-builders/docker',
-                'args' => ['push', $this->imageLocation()],
-                'dir' => $this->isGitBased() ? $this->repoName() : '',
-            ],
-        ];
-
-        return collect($steps)->filter();
+        return $steps;
     }
 
     /**

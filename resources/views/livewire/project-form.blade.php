@@ -137,15 +137,28 @@
         <h2 class="text-lg font-medium mb-4 mt-12">What type of project?</h2>
 
         <x-radio-button-group name="type">
-            @foreach (\App\Project::TYPES as $key => $type)
+            @foreach (\App\Project::TYPES as $key => $label)
             <x-radio-button wire:model="type" name="type" value="{{ $key }}">
                 <x-slot name="icon">
                     <x-project-logo :type="$key" class="w-6 h-6" />
                 </x-slot>
-                {{ $type }}
+                {{ $label }}
             </x-radio-button>
             @endforeach
         </x-radio-button-group>
+
+        <x-textarea
+        label="Add any initial environment variables"
+        name="variables"
+        wire:model="variables"
+        classes="font-mono">
+            <x-slot name="helper">
+                @if ($type == 'rails')
+                    <x-heroicon-s-exclamation class="w-5 h-5 text-current text-yellow-300 inline-block" />
+                    Rails requires <code>RAILS_MASTER_KEY</code> to be set.
+                @endif
+            </x-slot>
+        </x-textarea>
 
         <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud Project?</h2>
 

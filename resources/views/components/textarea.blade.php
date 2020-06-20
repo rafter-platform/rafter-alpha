@@ -15,7 +15,7 @@
         @error($name) aria-invalid="true" aria-describedby="{{ $name }}-error" @enderror
         rows="10"
         {{ $attributes->except(['name', 'value', 'x-show']) }}
-    >{{ $value ?? '' }}</textarea>
+    ></textarea>
 
     @error($name)
         <x-validation-error id="{{ $name }}-error">

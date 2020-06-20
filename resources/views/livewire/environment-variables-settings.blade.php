@@ -7,7 +7,8 @@
     </x-slot>
     <x-textarea
         x-show="show"
-        name="environmental_variables"
+        wire:model="variables"
+        name="variables"
         label="Environment Variables"
         classes="font-mono"
         :value="$variables"

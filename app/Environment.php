@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Casts\Options;
+use App\GoogleCloud\CloudBuildSecrets;
 use App\GoogleCloud\SchedulerJobConfig;
 use App\Services\GoogleApi;
 use Illuminate\Database\Eloquent\Model;
@@ -194,9 +195,9 @@ class Environment extends Model
      *
      * @return void
      */
-    public function provision()
+    public function provision($initialVariables = '')
     {
-        $this->setInitialEnvironmentVariables();
+        $this->setInitialEnvironmentVariables($initialVariables);
         $this->createInitialDeployment();
     }
 
@@ -209,9 +210,9 @@ class Environment extends Model
      *
      * @return void
      */
-    public function setInitialEnvironmentVariables()
+    public function setInitialEnvironmentVariables($initialVariables = '')
     {
-        $vars = new EnvVars();
+        $vars = EnvVars::fromString($initialVariables);
 
         if ($this->project->isLaravel()) {
             $appKey = 'base64:' . base64_encode(Encrypter::generateKey(config('app.cipher')));
@@ -220,6 +221,14 @@ class Environment extends Model
                 'APP_NAME' => $this->project->name,
                 'APP_ENV' => $this->name,
                 'APP_KEY' => $appKey,
+            ]);
+        }
+
+        if ($this->project->isRails()) {
+            $vars->inject([
+                'RAILS_ENV' => $this->name,
+                'RAILS_SERVE_STATIC_FILES' => true,
+                'RAILS_LOG_TO_STDOUT' => true,
             ]);
         }
 
@@ -242,6 +251,37 @@ class Environment extends Model
 
         $this->environmental_variables = $vars->toString();
         $this->save();
+    }
+
+    /**
+     * Whether an env var exists
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function hasEnvVar(string $key)
+    {
+        $vars = EnvVars::fromString($this->environmental_variables);
+
+        return $vars->has($key);
+    }
+
+    /**
+     * Get an env var.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getEnvVar(string $key)
+    {
+        $vars = EnvVars::fromString($this->environmental_variables);
+
+        return $vars->get($key);
+    }
+
+    public function buildSecrets(): CloudBuildSecrets
+    {
+        return new CloudBuildSecrets($this);
     }
 
     /**
@@ -281,7 +321,13 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
-        Bus::dispatchChain(DeploymentSteps::for($deployment)->get());
+        $steps = DeploymentSteps::for($deployment);
+
+        if (!$this->hasBeenDeployedSuccessfully()) {
+            $steps->initialDeployment();
+        }
+
+        Bus::dispatchChain($steps->get());
 
         return $deployment;
     }
@@ -402,20 +448,6 @@ class Environment extends Model
     public function setSecret(string $key, string $value)
     {
         return $this->client()->setSecret($key, $value);
-    }
-
-    /**
-     * The git token secret name to be used during Cloud Build.
-     *
-     * @return string
-     */
-    public function gitTokenSecretName(): string
-    {
-        return sprintf(
-            '%s-%s',
-            'rafter-git-token',
-            $this->slug()
-        );
     }
 
     /**

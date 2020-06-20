@@ -15,6 +15,6 @@ class RedeployDeploymentController extends Controller
         $newDeployment = $deployment->redeploy(auth()->user()->id);
 
         return redirect()->route('projects.environments.deployments.show', [$project, $environment, $newDeployment])
-            ->with('status', 'Deployment has been redeployed');
+            ->with('notify', 'Deployment has been redeployed');
     }
 }
