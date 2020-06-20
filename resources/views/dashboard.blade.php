@@ -7,7 +7,6 @@
             </div>
         </div>
     </x-slot>
-    <x-flash />
 
     <x-table>
         <x-slot name="thead">

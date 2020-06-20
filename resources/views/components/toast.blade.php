@@ -2,8 +2,12 @@
     class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end"
 >
     <div
-        x-data="{ show: false, message: '' }"
+        x-data="{ show: false, message: '{{ session('notify') ?? '' }}' }"
         x-show="show"
+        x-init="
+            show = Boolean(message);
+            show && setTimeout(() => show = false, 2500);
+        "
         x-on:notify.window="show = true; message = $event.detail; setTimeout(() => show = false, 2500)"
         x-description="Notification panel, show/hide based on alert state."
         x-transition:enter="transform ease-out duration-300 transition"

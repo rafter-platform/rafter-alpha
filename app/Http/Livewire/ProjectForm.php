@@ -179,6 +179,8 @@ class ProjectForm extends Component
             'variables' => $data['variables'],
         ]);
 
+        session()->flash('notify', 'Project created!');
+
         return redirect()->route('projects.show', [$project]);
     }
 

@@ -72,6 +72,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        session()->keep('notify');
+
         return redirect()->route('projects.environments.show', [$project, $project->production()]);
     }
 

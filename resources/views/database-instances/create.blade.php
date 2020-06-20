@@ -3,8 +3,6 @@
         <h2>Create a Database Instance</h2>
     </x-title>
 
-    <x-flash />
-
     <x-card>
         <form action="{{ route('database-instances.store') }}" method="POST">
             @csrf

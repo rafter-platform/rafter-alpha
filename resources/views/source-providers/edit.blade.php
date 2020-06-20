@@ -1,5 +1,4 @@
 <x-layout>
-    <x-flash />
     <x-card>
         <x-slot name="title"><h1>Edit GitHub Installation</h1></x-slot>
 
