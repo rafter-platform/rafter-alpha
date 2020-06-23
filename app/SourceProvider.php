@@ -85,7 +85,17 @@ class SourceProvider extends Model
 
     public function createDeployment(Deployment $deployment)
     {
-        $this->client()->createDeployment($deployment);
+        $response = $this->client()->createDeployment(
+            $deployment->repository(),
+            $deployment->commit_hash,
+            $deployment->environment->name
+        );
+
+        $deploymentId = $response['id'];
+        $deployment->meta['github_deployment_id'] = $deploymentId;
+        $deployment->save();
+
+        $this->updateDeploymentStatus($deployment, 'in_progress');
     }
 
     public function updateDeploymentStatus(Deployment $deployment, string $state)

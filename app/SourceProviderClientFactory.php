@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Services\FakeSourceProviderClient;
 use App\Services\GitHub;
 use InvalidArgumentException;
 
@@ -16,13 +15,9 @@ class SourceProviderClientFactory
      */
     public static function make(SourceProvider $provider)
     {
-        if (app()->environment('testing')) {
-            return new FakeSourceProviderClient($provider);
-        }
-
         switch ($provider->type) {
             case SourceProvider::TYPE_GITHUB:
-                return new GitHub($provider);
+                return app(GitHub::class, [$provider]);
             default:
                 throw new InvalidArgumentException("Invalid provider type.");
         }

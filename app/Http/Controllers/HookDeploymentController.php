@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Environment;
 use App\Services\GitHubApp;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 
 class HookDeploymentController extends Controller
@@ -41,7 +42,26 @@ class HookDeploymentController extends Controller
             })
             ->get();
 
-        $environments->each(function ($environment) use ($senderEmail, $hash, $message) {
+        foreach ($environments as $environment) {
+            if ($environment->sourceProvider()->isGitHub() && $environment->getOption('wait_for_checks')) {
+                if (!$environment->sourceProvider()->client()->commitChecksSuccessful($repository, $hash)) {
+                    continue;
+                }
+            }
+
+            try {
+                $environment->sourceProvider()->client()->createDeployment(
+                    $repository,
+                    $hash,
+                    $environment->name
+                );
+            } catch (Exception $e) {
+                $name = class_basename($e);
+                logger("Canceled deployment for {$repository}#{$hash} because received {$name} from GitHub");
+
+                continue;
+            }
+
             $user = User::where('email', $senderEmail)->first();
             $initiatorId = null;
 
@@ -50,7 +70,7 @@ class HookDeploymentController extends Controller
             }
 
             $environment->deployHash($hash, $message, $initiatorId);
-        });
+        }
 
         return response('', 200);
     }
