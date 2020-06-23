@@ -4,8 +4,7 @@ namespace Tests\Feature;
 
 use App\EnvVars;
 use App\Jobs\CreateCloudRunService;
-use App\Jobs\StartDeployment;
-use App\Services\FakeSourceProviderClient;
+use App\Services\GitHub;
 use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,6 +25,8 @@ class DeploymentTest extends TestCase
         $this->app->bind(SecretManagerServiceClient::class, function () {
             return new FakeGoogleSecretManagerClient;
         });
+
+        $this->mockGitHubForDeployment();
     }
 
     public function test_initial_deployment_works_as_expected()

@@ -80,10 +80,19 @@ interface SourceProviderClient
     /**
      * Create a new deployment within the provider's API.
      */
-    public function createDeployment(Deployment $deployment);
+    public function createDeployment($repository, $commitHash, $environmentName);
 
     /**
      * Update a deployment's status.
      */
     public function updateDeploymentStatus(Deployment $deployment, string $state);
+
+    /**
+     * Whether the checks for a given commit are successful and complete.
+     *
+     * @param string $repository
+     * @param string $hash
+     * @return boolean
+     */
+    public function commitChecksSuccessful(string $repository, string $hash): bool;
 }

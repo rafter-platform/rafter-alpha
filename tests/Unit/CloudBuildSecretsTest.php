@@ -13,6 +13,8 @@ class CloudBuildSecretsTest extends TestCase
 
     public function test_it_always_includes_git_token()
     {
+        $this->mockGitHubForDeployment();
+
         $environment = factory(Environment::class)->create();
 
         $secrets = new CloudBuildSecrets($environment);
@@ -28,6 +30,8 @@ class CloudBuildSecretsTest extends TestCase
 
     public function test_it_includes_master_key_if_rails_and_env_var_exists()
     {
+        $this->mockGitHubForDeployment();
+
         $environment = factory(Environment::class)->state('rails')->create();
 
         // First, assume the user has NOT provided a RAILS_MASTER_KEY env var

@@ -18,6 +18,8 @@ class SourceProviderControllerTest extends TestCase
 
         $this->user = factory('App\User')->create();
         $this->other = factory('App\SourceProvider')->create();
+
+        $this->mockGitHubForDeployment();
     }
 
     public function test_user_can_view_their_source_providers()

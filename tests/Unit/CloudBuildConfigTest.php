@@ -13,6 +13,8 @@ class CloudBuildConfigTest extends TestCase
 
     public function test_has_basic_items()
     {
+        $this->mockGitHubForDeployment();
+
         $deployment = factory(Deployment::class)->create();
 
         $config = new CloudBuildConfig($deployment);
@@ -23,6 +25,8 @@ class CloudBuildConfigTest extends TestCase
 
     public function test_has_basic_steps()
     {
+        $this->mockGitHubForDeployment();
+
         $deployment = factory(Deployment::class)->create();
 
         $config = new CloudBuildConfig($deployment);
