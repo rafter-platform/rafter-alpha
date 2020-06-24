@@ -22,7 +22,7 @@ if (app()->environment('local')) {
 Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
 // Incoming GitHub webhooks
-Route::post('/hooks/{type}', 'HookDeploymentController@store');
+Route::post('/hooks/github', 'GitHubHookController');
 
 // TODO: Remove
 Route::get('/test', function () {

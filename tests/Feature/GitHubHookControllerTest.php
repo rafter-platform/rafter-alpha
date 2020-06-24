@@ -9,10 +9,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use Mockery;
 use Tests\TestCase;
 
-class HookDeploymentControllerTest extends TestCase
+class GitHubHookControllerTest extends TestCase
 {
     use RefreshDatabase;
 

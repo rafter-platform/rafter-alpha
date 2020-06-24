@@ -7,12 +7,11 @@ use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
 use App\Services\GitHubApp;
 use App\User;
-use Exception;
 use Illuminate\Http\Request;
 
-class HookDeploymentController extends Controller
+class GitHubHookController extends Controller
 {
-    public function store(Request $request, $type)
+    public function __invoke(Request $request)
     {
         if (!GitHubApp::verifyWebhookPayload($request)) {
             return response('', 403);
@@ -22,13 +21,13 @@ class HookDeploymentController extends Controller
         $methodName = 'handle' . ucfirst($event);
 
         if (method_exists($this, $methodName)) {
-            return $this->{$methodName}($request, $type);
+            return $this->{$methodName}($request);
         }
 
         return response('', 200);
     }
 
-    public function handlePush(Request $request, $type)
+    public function handlePush(Request $request)
     {
         // TODO: Make this accessible in a FormRequest
         $installationId = $request->installation['id'];
@@ -40,10 +39,10 @@ class HookDeploymentController extends Controller
 
         $environments = Environment::query()
             ->where('branch', $branch)
-            ->whereHas('project.sourceProvider', function ($query) use ($installationId, $type) {
+            ->whereHas('project.sourceProvider', function ($query) use ($installationId) {
                 $query->where([
                     ['installation_id', $installationId],
-                    ['type', $type],
+                    ['type', 'github'],
                 ]);
             })
             ->whereHas('project', function ($query) use ($repository) {
@@ -87,7 +86,7 @@ class HookDeploymentController extends Controller
         return response('', 200);
     }
 
-    public function handleStatus(Request $request, $type)
+    public function handleStatus(Request $request)
     {
         $installationId = $request->installation['id'];
         $repository = $request->name;
@@ -98,10 +97,10 @@ class HookDeploymentController extends Controller
 
         $environments = Environment::query()
             ->whereIn('branch', $branches)
-            ->whereHas('project.sourceProvider', function ($query) use ($installationId, $type) {
+            ->whereHas('project.sourceProvider', function ($query) use ($installationId) {
                 $query->where([
                     ['installation_id', $installationId],
-                    ['type', $type],
+                    ['type', 'github'],
                 ]);
             })
             ->whereHas('project', function ($query) use ($repository) {
