@@ -6,6 +6,7 @@ use App\SourceProvider;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
 use App\Exceptions\GitHubAutoMergedException;
+use App\Exceptions\GitHubDeploymentConflictException;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Client\RequestException;
@@ -32,7 +33,7 @@ class GitHub implements SourceProviderClient
         return $mock;
     }
 
-    public static function parialMock(): MockInterface
+    public static function partialMock(): MockInterface
     {
         $mock = Mockery::mock(GitHub::class);
 
@@ -293,23 +294,31 @@ class GitHub implements SourceProviderClient
 
     public function createDeployment($repository, $commitHash, $environmentName)
     {
-        $response = $this->request("repos/{$repository}/deployments", 'POST', [
-            'ref' => $commitHash,
-            'environment' => $environmentName,
-            'description' => 'Deploy request from Rafter',
+        try {
+            $response = $this->request("repos/{$repository}/deployments", 'POST', [
+                'ref' => $commitHash,
+                'environment' => $environmentName,
+                'description' => 'Deploy request from Rafter',
 
-            // We tell GitHub we want to start this deployment regardless of whether tests have passed.
-            // If the user wants us to wait for checks to pass, we handle that within the HookDeploymentController
-            'required_contexts' => [],
-        ]);
+                // We tell GitHub we want to start this deployment regardless of whether tests have passed.
+                // If the user wants us to wait for checks to pass, we handle that within the HookDeploymentController
+                'required_contexts' => [],
+            ]);
 
-        // If GitHub auto-merges upstream into a topic branch, it will return this message.
-        // We don't want to continue with a deployment, because we'll soon be getting another `push` webhook.
-        if (preg_match('/^auto-merged/i', $response['message'] ?? '')) {
-            throw new GitHubAutoMergedException;
+            // If GitHub auto-merges upstream into a topic branch, it will return this message.
+            // We don't want to continue with a deployment, because we'll soon be getting another `push` webhook.
+            if (preg_match('/^auto-merged/i', $response['message'] ?? '')) {
+                throw new GitHubAutoMergedException($response['message']);
+            }
+
+            return $response;
+        } catch (RequestException $e) {
+            if ($e->getCode() == 409) {
+                throw new GitHubDeploymentConflictException($e->getMessage());
+            }
+
+            throw $e;
         }
-
-        return $response;
     }
 
     public function updateDeploymentStatus(Deployment $deployment, $state)

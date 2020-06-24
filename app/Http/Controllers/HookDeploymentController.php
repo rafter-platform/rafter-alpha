@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Environment;
+use App\Exceptions\GitHubAutoMergedException;
+use App\Exceptions\GitHubDeploymentConflictException;
 use App\Services\GitHubApp;
 use App\User;
 use Exception;
@@ -12,16 +14,23 @@ class HookDeploymentController extends Controller
 {
     public function store(Request $request, $type)
     {
-        if ($request->header('X-GitHub-Event') !== 'push') {
-            return response('', 200);
-        }
-
         if (!GitHubApp::verifyWebhookPayload($request)) {
             return response('', 403);
         }
 
-        // Log::info($request->all());
+        $event = $request->header('X-GitHub-Event');
+        $methodName = 'handle' . ucfirst($event);
 
+        if (method_exists($this, $methodName)) {
+            return $this->{$methodName}($request, $type);
+        }
+
+        return response('', 200);
+    }
+
+    public function handlePush(Request $request, $type)
+    {
+        // TODO: Make this accessible in a FormRequest
         $installationId = $request->installation['id'];
         $branch = str_replace("refs/heads/", "", $request->ref);
         $repository = $request->repository['full_name'];
@@ -55,9 +64,12 @@ class HookDeploymentController extends Controller
                     $hash,
                     $environment->name
                 );
-            } catch (Exception $e) {
-                $name = class_basename($e);
-                logger("Canceled deployment for {$repository}#{$hash} because received {$name} from GitHub");
+            } catch (GitHubAutoMergedException $e) {
+                logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
+
+                continue;
+            } catch (GitHubDeploymentConflictException $e) {
+                logger("Canceled deployment for {$repository}#{$hash}: {$e->getMessage()}");
 
                 continue;
             }
@@ -73,5 +85,68 @@ class HookDeploymentController extends Controller
         }
 
         return response('', 200);
+    }
+
+    public function handleStatus(Request $request, $type)
+    {
+        $installationId = $request->installation['id'];
+        $repository = $request->name;
+        $hash = $request->sha;
+        $message = $request->commit['commit']['message'];
+        $senderEmail = $request->commit['commit']['author']['email'] ?? null;
+        $branches = collect($request->branches)->map(fn ($branch) => $branch['name']);
+
+        $environments = Environment::query()
+            ->whereIn('branch', $branches)
+            ->whereHas('project.sourceProvider', function ($query) use ($installationId, $type) {
+                $query->where([
+                    ['installation_id', $installationId],
+                    ['type', $type],
+                ]);
+            })
+            ->whereHas('project', function ($query) use ($repository) {
+                $query->where('repository', $repository);
+            })
+            ->get();
+
+        foreach ($environments as $environment) {
+            if (!$environment->getOption('wait_for_checks')) {
+                continue;
+            }
+
+            $latestHashOnBranch = $environment->sourceProvider()->client()->latestHashFor(
+                $repository,
+                $environment->branch
+            );
+
+            if ($latestHashOnBranch != $hash) {
+                continue;
+            }
+
+            try {
+                $environment->sourceProvider()->client()->createDeployment(
+                    $repository,
+                    $hash,
+                    $environment->name
+                );
+            } catch (GitHubAutoMergedException $e) {
+                logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
+
+                continue;
+            } catch (GitHubDeploymentConflictException $e) {
+                logger("Canceled deployment for {$repository}#{$hash}: {$e->getMessage()}");
+
+                continue;
+            }
+
+            $user = User::where('email', $senderEmail)->first();
+            $initiatorId = null;
+
+            if ($user && $environment->project->team->hasUser($user)) {
+                $initiatorId = $user->id;
+            }
+
+            $environment->deployHash($hash, $message, $initiatorId);
+        }
     }
 }
