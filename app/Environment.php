@@ -377,6 +377,10 @@ class Environment extends Model
             'initiator_id' => $initiatorId,
         ]);
 
+        $newDeployment->createSourceProviderDeployment([
+            'manual' => true,
+        ]);
+
         $steps = DeploymentSteps::for($newDeployment);
 
         if ($this->hasBeenDeployedSuccessfully()) {
