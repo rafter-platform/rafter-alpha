@@ -6,6 +6,7 @@ use App\Environment;
 use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
 use App\Http\Requests\GitHubHookPushRequest;
+use App\PendingSourceProviderDeployment;
 use App\Services\GitHubApp;
 use App\User;
 use Illuminate\Http\Request;
@@ -37,15 +38,13 @@ class GitHubHookController extends Controller
                 continue;
             }
 
-            $initiator = $environment->getInitiator($request->senderEmail());
+            $pendingDeployment = PendingSourceProviderDeployment::make()
+                ->forEnvironment($environment)
+                ->forHash($request->hash())
+                ->byUserId($environment->getInitiator($request->senderEmail())->id);
 
             try {
-                $environment->sourceProvider()->client()->createDeployment(
-                    $request->repository(),
-                    $request->hash(),
-                    $environment,
-                    $initiator->id
-                );
+                $environment->sourceProvider()->client()->createDeployment($pendingDeployment);
             } catch (GitHubAutoMergedException $e) {
                 logger("Canceled deployment for {$request->repository()}#{$request->hash()} because it auto-merged an upstream branch.");
 
@@ -95,20 +94,13 @@ class GitHubHookController extends Controller
                 continue;
             }
 
-            $user = User::where('email', $senderEmail)->first();
-            $initiatorId = null;
-
-            if ($user && $environment->project->team->hasUser($user)) {
-                $initiatorId = $user->id;
-            }
+            $pendingDeployment = PendingSourceProviderDeployment::make()
+                ->forEnvironment($environment)
+                ->forHash($hash)
+                ->byUserId($environment->getInitiator($senderEmail)->id);
 
             try {
-                $environment->sourceProvider()->client()->createDeployment(
-                    $repository,
-                    $hash,
-                    $environment,
-                    $initiatorId
-                );
+                $environment->sourceProvider()->client()->createDeployment($pendingDeployment);
             } catch (GitHubAutoMergedException $e) {
                 logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
 

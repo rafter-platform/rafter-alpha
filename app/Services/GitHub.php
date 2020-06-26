@@ -8,6 +8,7 @@ use App\Deployment;
 use App\Environment;
 use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
+use App\PendingSourceProviderDeployment;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Client\RequestException;
@@ -296,17 +297,17 @@ class GitHub implements SourceProviderClient
             ->json();
     }
 
-    public function createDeployment($repository, $commitHash, Environment $environment, $initiatorId)
+    public function createDeployment(PendingSourceProviderDeployment $pendingDeployment)
     {
         try {
-            $response = $this->request("repos/{$repository}/deployments", 'POST', [
-                'ref' => $commitHash,
-                'environment' => $environment->name,
+            $response = $this->request("repos/{$pendingDeployment->getRepository()}/deployments", 'POST', [
+                'ref' => $pendingDeployment->getHash(),
+                'environment' => $pendingDeployment->getEnvironment()->name,
                 'description' => 'Deploy request from Rafter',
-                'payload' => [
-                    'environment_id' => $environment->id,
-                    'initiator_id' => $initiatorId,
-                ],
+                'payload' => array_merge($pendingDeployment->getPayload(), [
+                    'environment_id' => $pendingDeployment->getEnvironment()->id,
+                    'initiator_id' => $pendingDeployment->getUserId(),
+                ]),
 
                 // We tell GitHub we want to start this deployment regardless of whether tests have passed.
                 // If the user wants us to wait for checks to pass, we handle that within the HookDeploymentController

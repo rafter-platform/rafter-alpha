@@ -297,6 +297,10 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
+        $deployment->createSourceProviderDeployment([
+            'manual' => true,
+        ]);
+
         $jobs = DeploymentSteps::for($deployment)
             ->initialDeployment()
             ->get();
@@ -308,6 +312,7 @@ class Environment extends Model
 
     /**
      * Deploy the HEAD of the current branch.
+     * Always done manually by a user.
      *
      * @param int|null $initiatorId
      * @return Deployment
@@ -322,6 +327,10 @@ class Environment extends Model
             'commit_hash' => $sha,
             'commit_message' => $message,
             'initiator_id' => $initiatorId,
+        ]);
+
+        $deployment->createSourceProviderDeployment([
+            'manual' => true,
         ]);
 
         $steps = DeploymentSteps::for($deployment);

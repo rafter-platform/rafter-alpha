@@ -4,6 +4,7 @@ namespace App\Contracts;
 
 use App\Deployment;
 use App\Environment;
+use App\PendingSourceProviderDeployment;
 
 interface SourceProviderClient
 {
@@ -99,7 +100,7 @@ interface SourceProviderClient
     /**
      * Create a new deployment within the provider's API.
      */
-    public function createDeployment($repository, $commitHash, Environment $environment, $initiatorId);
+    public function createDeployment(PendingSourceProviderDeployment $pendingDeployment);
 
     /**
      * Update a deployment's status.
