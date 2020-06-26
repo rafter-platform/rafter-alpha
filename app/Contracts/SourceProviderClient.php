@@ -34,7 +34,7 @@ interface SourceProviderClient
     public function validCommit($repository, $hash);
 
     /**
-     * Git the commit message for a given hash.
+     * Get the commit message for a given hash.
      *
      * @param string $repository
      * @param string $hash
