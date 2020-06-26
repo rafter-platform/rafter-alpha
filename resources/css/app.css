@@ -34,6 +34,22 @@
     @apply shadow-outline-blue;
 }
 
+input[type="checkbox"].toggle + label {
+    @apply bg-gray-200;
+}
+
+input[type="checkbox"]:checked.toggle + label {
+    @apply bg-blue-600;
+}
+
+input[type="checkbox"].toggle + label > span {
+    @apply translate-x-0;
+}
+
+input[type="checkbox"]:checked.toggle + label > span {
+    @apply translate-x-5;
+}
+
 /**
  * This injects any component classes registered by plugins.
  *

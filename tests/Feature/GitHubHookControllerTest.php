@@ -78,7 +78,7 @@ class GitHubHookControllerTest extends TestCase
 
         Http::fake(array_merge([
             "api.github.com/repos/{$this->environment->project->repository}/commits/abc123/status" => Http::sequence()
-                ->push(['state' => 'pending'])
+                ->push(['state' => 'pending', 'statuses' => [['id' => 1]]])
                 ->push(['state' => 'success']),
         ], $this->getGitHubHttpMock()));
 
@@ -104,7 +104,35 @@ class GitHubHookControllerTest extends TestCase
         });
     }
 
-    public function test_it_attempts_to_create_github_deployment_and_deploys_if_successful()
+    public function test_also_deploys_on_push_if_state_is_pending_but_status_are_empty()
+    {
+        Queue::fake();
+
+        $this->environment->setOption('wait_for_checks', true);
+        $this->environment->save();
+
+        $payload = $this->generatePushPayload();
+
+        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
+
+        Http::fake(array_merge([
+            "api.github.com/repos/{$this->environment->project->repository}/commits/abc123/status" => Http::response(
+                ['state' => 'pending', 'statuses' => []],
+            ),
+        ], $this->getGitHubHttpMock()));
+
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'push',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
+
+        Http::assertSent(function ($request) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
+        });
+    }
+
+    public function test_it_attempts_to_create_github_deployment_on_push()
     {
         Queue::fake();
         Http::fake($this->getGitHubHttpMock());

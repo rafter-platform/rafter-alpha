@@ -375,6 +375,8 @@ class GitHub implements SourceProviderClient
     {
         $response = $this->request("repos/$repository/commits/$hash/status");
 
-        return $response['state'] == 'success';
+        // TODO: Ensure an empty statuses array is not possible even when e.g. GitHub Checks are
+        // waiting to be kicked off.
+        return $response['state'] == 'success' || count($response['statuses']) == 0;
     }
 }
