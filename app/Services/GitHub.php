@@ -5,13 +5,13 @@ namespace App\Services;
 use App\SourceProvider;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
-use App\Environment;
 use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
 use App\PendingSourceProviderDeployment;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Mockery;
@@ -24,6 +24,32 @@ class GitHub implements SourceProviderClient
     public function __construct(SourceProvider $source)
     {
         $this->source = $source;
+    }
+
+    /**
+     * Get the URL to the installation configuration page on GitHub
+     *
+     * @return string
+     */
+    public static function installationUrl($installationId = null): string
+    {
+        return "https://github.com/apps/" . config('services.github.app_name') . "/installations/" . ($installationId ?: 'new');
+    }
+
+    /**
+     * Verify whether an incoming payload matches a SHA1 webhook secret signature
+     *
+     * @param string $payload
+     * @param string $signature
+     * @return boolean
+     */
+    public static function verifyWebhookPayload(Request $request)
+    {
+        $payload = $request->instance()->getContent();
+        $signature = $request->header('X-Hub-Signature');
+        $hash = 'sha1=' . hash_hmac('sha1', $payload, config('services.github.webhook_secret'));
+
+        return $hash === $signature;
     }
 
     public static function mock(): MockInterface

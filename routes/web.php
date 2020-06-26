@@ -78,9 +78,6 @@ Route::group(['middleware' => ['auth']], function () {
     // Database Instances
     Route::resource('database-instances', 'DatabaseInstanceController');
 
-    // Source Providers
-    Route::resource('source-providers', 'SourceProviderController');
-
     // Inbound Source Provider Authorizations
     Route::get('auth/github', function () {
         return view('popup-callback');

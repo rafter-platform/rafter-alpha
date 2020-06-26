@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Environment;
 use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
 use App\Http\Requests\GitHubHookDeploymentRequest;
 use App\Http\Requests\GitHubHookPushRequest;
 use App\Http\Requests\GitHubHookStatusRequest;
 use App\PendingSourceProviderDeployment;
-use App\Services\GitHubApp;
-use App\User;
+use App\Services\GitHub;
 use Illuminate\Http\Request;
 
 class GitHubHookController extends Controller
 {
     public function __invoke(Request $request)
     {
-        if (!GitHubApp::verifyWebhookPayload($request)) {
+        if (!GitHub::verifyWebhookPayload($request)) {
             return response('', 403);
         }
 

@@ -5,7 +5,7 @@ namespace App\Http\Livewire;
 use App\GoogleProject;
 use App\Project;
 use App\Rules\ValidRepository;
-use App\Services\GitHubApp;
+use App\Services\GitHub;
 use App\SourceProvider;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -53,7 +53,7 @@ class ProjectForm extends Component
             'projects' => auth()->user()->currentTeam->googleProjects,
             'sourceProviders' => auth()->user()->sourceProviders,
             'regions' => GoogleProject::REGIONS,
-            'newGitHubInstallationUrl' => GitHubApp::installationUrl(),
+            'newGitHubInstallationUrl' => GitHub::installationUrl(),
         ]);
     }
 
