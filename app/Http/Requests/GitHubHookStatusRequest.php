@@ -5,11 +5,13 @@ namespace App\Http\Requests;
 use App\Environment;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GitHubHookPushRequest extends FormRequest
+class GitHubHookStatusRequest extends FormRequest
 {
     public function rules()
     {
-        return [];
+        return [
+            //
+        ];
     }
 
     public function installationid()
@@ -17,30 +19,30 @@ class GitHubHookPushRequest extends FormRequest
         return $this->installation['id'];
     }
 
-    public function branch()
+    public function repository()
     {
-        return str_replace("refs/heads/", "", $this->ref);
+        return $this->name;
     }
 
-    public function getRepository()
+    public function getBranches()
     {
-        return $this->repository['full_name'];
+        return collect($this->branches)->map(fn ($branch) => $branch['name']);
     }
 
     public function hash()
     {
-        return $this->head_commit['id'];
+        return $this->sha;
     }
 
     public function senderEmail()
     {
-        return $this->pusher['email'] ?? null;
+        return $this->commit['commit']['author']['email'] ?? null;
     }
 
     public function environments()
     {
         return Environment::query()
-            ->where('branch', $this->branch())
+            ->whereIn('branch', $this->getBranches())
             ->whereHas('project.sourceProvider', function ($query) {
                 $query->where([
                     ['installation_id', $this->installationId()],
@@ -48,7 +50,7 @@ class GitHubHookPushRequest extends FormRequest
                 ]);
             })
             ->whereHas('project', function ($query) {
-                $query->where('repository', $this->getRepository());
+                $query->where('repository', $this->repository());
             })
             ->get();
     }
