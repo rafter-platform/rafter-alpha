@@ -40,7 +40,7 @@ class Environment extends Model
         'worker_max_requests_per_container' => 80,
         'web_max_instances' => 1000,
         'worker_max_instances' => 1000,
-        'wait_for_checks' => true,
+        'wait_for_checks' => false,
     ];
 
     public function project()
