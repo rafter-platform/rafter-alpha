@@ -88,7 +88,8 @@ class SourceProvider extends Model
         $response = $this->client()->createDeployment(
             $deployment->repository(),
             $deployment->commit_hash,
-            $deployment->environment->name
+            $deployment->environment,
+            $deployment->initiator_id
         );
 
         $deploymentId = $response['id'];

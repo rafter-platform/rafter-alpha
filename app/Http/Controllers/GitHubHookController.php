@@ -51,25 +51,7 @@ class GitHubHookController extends Controller
             ->get();
 
         foreach ($environments as $environment) {
-            if ($environment->sourceProvider()->isGitHub() && $environment->getOption('wait_for_checks')) {
-                if (!$environment->sourceProvider()->client()->commitChecksSuccessful($repository, $hash)) {
-                    continue;
-                }
-            }
-
-            try {
-                $environment->sourceProvider()->client()->createDeployment(
-                    $repository,
-                    $hash,
-                    $environment->name
-                );
-            } catch (GitHubAutoMergedException $e) {
-                logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
-
-                continue;
-            } catch (GitHubDeploymentConflictException $e) {
-                logger("Canceled deployment for {$repository}#{$hash}: {$e->getMessage()}");
-
+            if ($environment->getOption('wait_for_checks') && !$environment->sourceProvider()->client()->commitChecksSuccessful($repository, $hash)) {
                 continue;
             }
 
@@ -80,7 +62,22 @@ class GitHubHookController extends Controller
                 $initiatorId = $user->id;
             }
 
-            $environment->deployHash($hash, $message, $initiatorId);
+            try {
+                $environment->sourceProvider()->client()->createDeployment(
+                    $repository,
+                    $hash,
+                    $environment,
+                    $initiatorId
+                );
+            } catch (GitHubAutoMergedException $e) {
+                logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
+
+                continue;
+            } catch (GitHubDeploymentConflictException $e) {
+                logger("Canceled deployment for {$repository}#{$hash}: {$e->getMessage()}");
+
+                continue;
+            }
         }
 
         return response('', 200);
@@ -122,11 +119,19 @@ class GitHubHookController extends Controller
                 continue;
             }
 
+            $user = User::where('email', $senderEmail)->first();
+            $initiatorId = null;
+
+            if ($user && $environment->project->team->hasUser($user)) {
+                $initiatorId = $user->id;
+            }
+
             try {
                 $environment->sourceProvider()->client()->createDeployment(
                     $repository,
                     $hash,
-                    $environment->name
+                    $environment,
+                    $initiatorId
                 );
             } catch (GitHubAutoMergedException $e) {
                 logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
@@ -137,15 +142,26 @@ class GitHubHookController extends Controller
 
                 continue;
             }
-
-            $user = User::where('email', $senderEmail)->first();
-            $initiatorId = null;
-
-            if ($user && $environment->project->team->hasUser($user)) {
-                $initiatorId = $user->id;
-            }
-
-            $environment->deployHash($hash, $message, $initiatorId);
         }
+    }
+
+    public function handleDeployment(Request $request)
+    {
+        $installationId = $request->installation['id'];
+        $environmentId = $request->deployment['payload']['environment_id'] ?? null;
+        $manual = $request->deployment['payload']['manual'] ?? false;
+        $initiatorId = $request->deployment['payload']['initiator_id'];
+        $hash = $request->deployment['sha'];
+        $message = 'nothing';
+
+        $environment = Environment::find($environmentId);
+
+        if (!$environment || $environment->sourceProvider()->installation_id != $installationId || $manual) {
+            return response('');
+        }
+
+        $environment->deployHash($hash, $message, $initiatorId);
+
+        return response('');
     }
 }

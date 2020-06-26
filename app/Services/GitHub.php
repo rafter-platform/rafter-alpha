@@ -5,6 +5,7 @@ namespace App\Services;
 use App\SourceProvider;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
+use App\Environment;
 use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
 use Exception;
@@ -292,13 +293,17 @@ class GitHub implements SourceProviderClient
             ->json();
     }
 
-    public function createDeployment($repository, $commitHash, $environmentName)
+    public function createDeployment($repository, $commitHash, Environment $environment, $initiatorId)
     {
         try {
             $response = $this->request("repos/{$repository}/deployments", 'POST', [
                 'ref' => $commitHash,
-                'environment' => $environmentName,
+                'environment' => $environment->name,
                 'description' => 'Deploy request from Rafter',
+                'payload' => [
+                    'environment_id' => $environment->id,
+                    'initiator_id' => $initiatorId,
+                ],
 
                 // We tell GitHub we want to start this deployment regardless of whether tests have passed.
                 // If the user wants us to wait for checks to pass, we handle that within the HookDeploymentController

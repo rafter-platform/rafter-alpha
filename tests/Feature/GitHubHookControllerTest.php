@@ -57,9 +57,11 @@ class GitHubHookControllerTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertCount(1, $this->environment->refresh()->deployments);
+        // We don't expect this specific hook to initiate the Rafter deployment;
+        // a separate webhook from GitHub initiates that.
+        $this->assertCount(0, $this->environment->refresh()->deployments);
 
-        Queue::assertPushed(StartDeployment::class);
+        Queue::assertNotPushed(StartDeployment::class);
     }
 
     public function test_it_does_not_deploy_if_checks_are_not_passing_and_user_has_opted_to_wait()
@@ -68,8 +70,6 @@ class GitHubHookControllerTest extends TestCase
 
         $this->environment->setOption('wait_for_checks', true);
         $this->environment->save();
-
-        $this->assertCount(0, $this->environment->deployments);
 
         $payload = $this->generatePushPayload();
 
@@ -87,9 +87,9 @@ class GitHubHookControllerTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertCount(0, $this->environment->refresh()->deployments);
-
-        Queue::assertNotPushed(StartDeployment::class);
+        Http::assertNotSent(function ($request) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
+        });
 
         // But if the checks are passing instantly, it will deploy:
         $this->postJson('/hooks/github', $payload, [
@@ -98,9 +98,9 @@ class GitHubHookControllerTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertCount(1, $this->environment->refresh()->deployments);
-
-        Queue::assertPushed(StartDeployment::class);
+        Http::assertSent(function ($request) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
+        });
     }
 
     public function test_it_attempts_to_create_github_deployment_and_deploys_if_successful()
@@ -121,10 +121,6 @@ class GitHubHookControllerTest extends TestCase
         Http::assertSent(function ($request) {
             return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
         });
-
-        $this->assertCount(1, $this->environment->refresh()->deployments);
-
-        Queue::assertPushed(StartDeployment::class);
     }
 
     public function test_it_attempts_to_create_github_deployment_and_does_not_deploy_if_not_successful()
@@ -166,15 +162,11 @@ class GitHubHookControllerTest extends TestCase
                 return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
             });
 
-            $this->assertCount(0, $this->environment->refresh()->deployments);
-
-            Queue::assertNotPushed(StartDeployment::class);
-
             $times++;
         }
     }
 
-    public function test_it_starts_deployment_on_status_webhook_if_commit_is_ready()
+    public function test_it_creates_deployment_on_status_webhook_if_commit_is_ready()
     {
         Queue::fake();
 
@@ -193,18 +185,15 @@ class GitHubHookControllerTest extends TestCase
         ])
             ->assertOk();
 
-        Http::assertSent(function ($request) {
-            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
+        Http::assertSent(function ($request) use ($payload) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments"
+                && $request['payload'] == [
+                    'environment_id' => $this->environment->id,
+                    'initiator_id' => $this->sourceProvider->user->id,
+                ]
+                && $request['environment'] == $this->environment->name
+                && $request['ref'] == $payload['sha'];
         });
-
-        $this->assertCount(1, $this->environment->refresh()->deployments);
-        $deployment = $this->environment->deployments->first();
-
-        $this->assertEquals('abc123', $deployment->commit_hash);
-        $this->assertEquals('Doing some stuff', $deployment->commit_message);
-        $this->assertTrue($deployment->initiator->is($this->sourceProvider->user));
-
-        Queue::assertPushed(StartDeployment::class);
     }
 
     public function test_it_does_not_start_deployment_on_status_webhook_if_not_waiting_on_checks()
@@ -223,9 +212,6 @@ class GitHubHookControllerTest extends TestCase
             ->assertOk();
 
         Http::assertNothingSent();
-
-        $this->assertCount(0, $this->environment->refresh()->deployments);
-        Queue::assertNotPushed(StartDeployment::class);
     }
 
     public function test_it_does_not_start_deployment_on_status_webhook_if_head_commit_does_not_match()
@@ -245,6 +231,75 @@ class GitHubHookControllerTest extends TestCase
             ->assertOk();
 
         Http::assertNothingSent();
+    }
+
+    public function test_it_starts_deployment_with_deployment_webhook()
+    {
+        Queue::fake();
+
+        $payload = $this->generateDeploymentPayload();
+        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
+
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'deployment',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
+
+        $this->assertCount(1, $this->environment->refresh()->deployments);
+        Queue::assertPushed(StartDeployment::class);
+    }
+
+    public function test_it_does_not_start_deployment_if_conditions_not_met()
+    {
+        Queue::fake();
+
+        // The Installation ID doesn't match
+        $payload = $this->generateDeploymentPayload([
+            'installation' => [
+                'id' => 99999,
+            ],
+        ]);
+        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
+
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'deployment',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
+
+        $this->assertCount(0, $this->environment->refresh()->deployments);
+        Queue::assertNotPushed(StartDeployment::class);
+
+        // An environment ID was not provided
+        $payload = $this->generateDeploymentPayload();
+        unset($payload['deployment']['payload']['environment_id']);
+        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
+
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'deployment',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
+
+        $this->assertCount(0, $this->environment->refresh()->deployments);
+        Queue::assertNotPushed(StartDeployment::class);
+
+        // A deployment was already started manually elsewhere in Rafter
+        $payload = $this->generateDeploymentPayload([
+            'deployment' => [
+                'payload' => [
+                    'manual' => true,
+                ]
+            ]
+        ]);
+        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
+
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'deployment',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
 
         $this->assertCount(0, $this->environment->refresh()->deployments);
         Queue::assertNotPushed(StartDeployment::class);
@@ -296,11 +351,33 @@ class GitHubHookControllerTest extends TestCase
         ];
     }
 
+    protected function generateDeploymentPayload($overrides = [])
+    {
+        return array_merge_recursive([
+            'action' => 'created',
+            'deployment' => [
+                'id' => 12345,
+                'sha' => 'abc123',
+                'environment' => 'production',
+                'payload' => [
+                    'environment_id' => $this->environment->id,
+                    'initiator_id' => $this->sourceProvider->user->id,
+                ],
+            ],
+            'repository' => [
+                'full_name' => $this->environment->repository(),
+            ],
+            'installation' => [
+                'id' => $this->sourceProvider->installation_id,
+            ],
+        ], $overrides);
+    }
+
     protected function getGitHubHttpMock()
     {
         return [
             "api.github.com/repos/{$this->environment->project->repository}/deployments" => Http::response([
-                'id' => '12345',
+                'id' => 12345,
             ]),
 
             "api.github.com/repos/{$this->environment->project->repository}/commits/*/status" => Http::response([

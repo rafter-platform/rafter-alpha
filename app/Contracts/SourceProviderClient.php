@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use App\Deployment;
+use App\Environment;
 
 interface SourceProviderClient
 {
@@ -80,7 +81,7 @@ interface SourceProviderClient
     /**
      * Create a new deployment within the provider's API.
      */
-    public function createDeployment($repository, $commitHash, $environmentName);
+    public function createDeployment($repository, $commitHash, Environment $environment, $initiatorId);
 
     /**
      * Update a deployment's status.
