@@ -1,6 +1,6 @@
 <div class="flex flex-wrap mb-6">
     <x-label for="{{ $name }}">
-        {{ $label }}:
+        {{ $label }}
     </x-label>
 
     @if ($helper ?? false)
