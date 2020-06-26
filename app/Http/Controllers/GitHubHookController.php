@@ -110,7 +110,11 @@ class GitHubHookController extends Controller
             return response('');
         }
 
-        $environment->deployHash($request->hash(), $request->initiatorId());
+        $deployment = $environment->deployHash($request->hash(), $request->initiatorId());
+        $deployment->meta = [
+            'github_deployment_id' => $request->id(),
+        ];
+        $deployment->save();
 
         return response('');
     }

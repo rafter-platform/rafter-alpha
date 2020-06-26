@@ -96,8 +96,6 @@ class SourceProvider extends Model
         $deploymentId = $response['id'];
         $deployment->meta['github_deployment_id'] = $deploymentId;
         $deployment->save();
-
-        $this->updateDeploymentStatus($deployment, 'in_progress');
     }
 
     public function updateDeploymentStatus(Deployment $deployment, string $state)

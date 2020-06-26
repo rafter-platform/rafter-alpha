@@ -249,6 +249,8 @@ class GitHubHookControllerTest extends TestCase
 
         $this->assertCount(1, $this->environment->refresh()->deployments);
         Queue::assertPushed(StartDeployment::class);
+
+        $this->assertEquals(12345, $this->environment->deployments->first()->meta['github_deployment_id']);
     }
 
     public function test_it_does_not_start_deployment_if_conditions_not_met()

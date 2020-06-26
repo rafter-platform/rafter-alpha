@@ -14,6 +14,11 @@ class GitHubHookDeploymentRequest extends FormRequest
         ];
     }
 
+    public function id()
+    {
+        return $this->deployment['id'];
+    }
+
     public function installationid()
     {
         return $this->installation['id'];
