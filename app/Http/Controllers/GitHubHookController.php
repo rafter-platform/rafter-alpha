@@ -60,7 +60,10 @@ class GitHubHookController extends Controller
         $request = app(GitHubHookStatusRequest::class);
 
         foreach ($request->environments() as $environment) {
-            if (!$environment->getOption('wait_for_checks')) {
+            if (
+                !$environment->getOption('wait_for_checks') ||
+                !$environment->sourceProvider()->client()->commitChecksSuccessful($request->repository(), $request->hash())
+            ) {
                 continue;
             }
 

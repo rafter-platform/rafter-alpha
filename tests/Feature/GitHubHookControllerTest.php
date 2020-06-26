@@ -184,6 +184,10 @@ class GitHubHookControllerTest extends TestCase
             ->assertOk();
 
         Http::assertSent(function ($request) use ($payload) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/commits/{$payload['sha']}/status";
+        });
+
+        Http::assertSent(function ($request) use ($payload) {
             return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments"
                 && $request['payload'] == [
                     'environment_id' => $this->environment->id,
@@ -191,6 +195,44 @@ class GitHubHookControllerTest extends TestCase
                 ]
                 && $request['environment'] == $this->environment->name
                 && $request['ref'] == $payload['sha'];
+        });
+    }
+
+    public function test_it_does_not_start_deployment_on_status_webhook_if_checks_not_ready()
+    {
+        Queue::fake();
+
+        $this->environment->setOption('wait_for_checks', false);
+
+        $payload = $this->generateStatusPayload();
+        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
+
+        Http::fake([
+            "api.github.com/repos/{$this->environment->project->repository}/commits/*/status" => Http::sequence()
+                ->push(['state' => 'pending'])
+                ->push(['state' => 'failure']),
+        ]);
+
+        // pending
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'status',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
+
+        Http::assertNotSent(function ($request) use ($payload) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
+        });
+
+        // failure
+        $this->postJson('/hooks/github', $payload, [
+            'X-GitHub-Event' => 'status',
+            'X-Hub-Signature' => $signature,
+        ])
+            ->assertOk();
+
+        Http::assertNotSent(function ($request) use ($payload) {
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
         });
     }
 
