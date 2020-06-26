@@ -303,6 +303,7 @@ class DeploymentTest extends TestCase
         $failedDeployment = factory('App\Deployment')->create([
             'environment_id' => $environment->id,
             'status' => 'failed',
+            'commit_hash' => 'abc123',
         ]);
 
         $deployment = $failedDeployment->redeploy();
