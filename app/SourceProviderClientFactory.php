@@ -17,7 +17,7 @@ class SourceProviderClientFactory
     {
         switch ($provider->type) {
             case SourceProvider::TYPE_GITHUB:
-                return app(GitHub::class, [$provider]);
+                return app(GitHub::class, ['source' => $provider]);
             default:
                 throw new InvalidArgumentException("Invalid provider type.");
         }
