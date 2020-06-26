@@ -48,7 +48,16 @@ interface SourceProviderClient
      * @param  string  $branch
      * @return string
      */
-    public function latestHashFor($repository, $branch);
+    public function latestHashFor($repository, $branch): string;
+
+    /**
+     * Get the latest commit for the given repository and branch.
+     *
+     * @param  string  $repository
+     * @param  string  $branch
+     * @return array
+     */
+    public function latestCommitFor($repository, $branch): array;
 
     /**
      * Get the tarball URL for the given deployment.

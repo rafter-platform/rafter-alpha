@@ -314,11 +314,13 @@ class Environment extends Model
      */
     public function deploy($initiatorId): Deployment
     {
-        $hash = $this->sourceProvider()->client()->latestHashFor($this->repository(), $this->branch);
+        $commit = $this->sourceProvider()->client()->latestCommitFor($this->repository(), $this->branch);
+        $sha = $commit['sha'];
+        $message = $commit['commit']['message'];
 
         $deployment = $this->deployments()->create([
-            'commit_hash' => $hash,
-            'commit_message' => 'Manual deploy',
+            'commit_hash' => $sha,
+            'commit_message' => $message,
             'initiator_id' => $initiatorId,
         ]);
 

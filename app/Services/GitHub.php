@@ -171,16 +171,14 @@ class GitHub implements SourceProviderClient
         return $this->request("repos/{$repository}/commits/{$hash}")['commit']['message'];
     }
 
-    /**
-     * Get the latest commit hash for the given repository and branch.
-     *
-     * @param  string  $repository
-     * @param  string  $branch
-     * @return string
-     */
-    public function latestHashFor($repository, $branch)
+    public function latestHashFor($repository, $branch): string
     {
-        return $this->request("repos/{$repository}/commits?sha={$branch}&per_page=1")[0]['sha'];
+        return $this->latestCommitFor($repository, $branch)['sha'];
+    }
+
+    public function latestCommitFor($repository, $branch): array
+    {
+        return $this->request("repos/{$repository}/commits?sha={$branch}&per_page=1")[0];
     }
 
     /**
