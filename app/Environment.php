@@ -336,8 +336,9 @@ class Environment extends Model
     /**
      * Create a new deployment on Cloud Run for a specific hash.
      */
-    public function deployHash($commitHash, $commitMessage, $initiatorId): Deployment
+    public function deployHash($commitHash, $initiatorId): Deployment
     {
+        $commitMessage = $this->sourceProvider()->client()->messageForHash($this->repository(), $commitHash);
         $deployment = $this->deployments()->create([
             'commit_hash' => $commitHash,
             'commit_message' => $commitMessage,
@@ -487,6 +488,37 @@ class Environment extends Model
         });
 
         return $mapping;
+    }
+
+    /**
+     * Whether this environment is set to wait for checks, and those checks are not yet finished.
+     *
+     * @param string $repository
+     * @param string $hash
+     * @return boolean
+     */
+    public function shouldWaitForChecks(string $repository, string $hash)
+    {
+        return $this->getOption('wait_for_checks') && !$this->sourceProvider()->client()->commitChecksSuccessful($repository, $hash);
+    }
+
+    /**
+     * Get an optional initiator, provided an email address. It's possible another teammate on
+     * a source provider will have initiated a deploy, but not be a part of this Rafter team.
+     * In which case, we return null.
+     *
+     * @param string $email
+     * @return User|\Illuminate\Support\Optional
+     */
+    public function getInitiator($email)
+    {
+        $user = User::where('email', $email)->first();
+
+        if ($user && $this->project->team->hasUser($user)) {
+            return $user;
+        }
+
+        return optional();
     }
 
     public function client(): GoogleApi

@@ -166,6 +166,11 @@ class GitHub implements SourceProviderClient
         return $response['sha'] === $hash;
     }
 
+    public function messageForHash($repository, $hash): string
+    {
+        return $this->request("repos/{$repository}/commits/{$hash}")['commit']['message'];
+    }
+
     /**
      * Get the latest commit hash for the given repository and branch.
      *

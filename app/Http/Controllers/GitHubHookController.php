@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Environment;
 use App\Exceptions\GitHubAutoMergedException;
 use App\Exceptions\GitHubDeploymentConflictException;
+use App\Http\Requests\GitHubHookPushRequest;
 use App\Services\GitHubApp;
 use App\User;
 use Illuminate\Http\Request;
@@ -27,54 +28,30 @@ class GitHubHookController extends Controller
         return response('', 200);
     }
 
-    public function handlePush(Request $request)
+    public function handlePush($_request)
     {
-        // TODO: Make this accessible in a FormRequest
-        $installationId = $request->installation['id'];
-        $branch = str_replace("refs/heads/", "", $request->ref);
-        $repository = $request->repository['full_name'];
-        $hash = $request->head_commit['id'];
-        $message = $request->head_commit['message'];
-        $senderEmail = $request->pusher['email'] ?? null;
+        $request = app(GitHubHookPushRequest::class);
 
-        $environments = Environment::query()
-            ->where('branch', $branch)
-            ->whereHas('project.sourceProvider', function ($query) use ($installationId) {
-                $query->where([
-                    ['installation_id', $installationId],
-                    ['type', 'github'],
-                ]);
-            })
-            ->whereHas('project', function ($query) use ($repository) {
-                $query->where('repository', $repository);
-            })
-            ->get();
-
-        foreach ($environments as $environment) {
-            if ($environment->getOption('wait_for_checks') && !$environment->sourceProvider()->client()->commitChecksSuccessful($repository, $hash)) {
+        foreach ($request->environments() as $environment) {
+            if ($environment->shouldWaitForChecks($request->repository(), $request->hash())) {
                 continue;
             }
 
-            $user = User::where('email', $senderEmail)->first();
-            $initiatorId = null;
-
-            if ($user && $environment->project->team->hasUser($user)) {
-                $initiatorId = $user->id;
-            }
+            $initiator = $environment->getInitiator($request->senderEmail());
 
             try {
                 $environment->sourceProvider()->client()->createDeployment(
-                    $repository,
-                    $hash,
+                    $request->repository(),
+                    $request->hash(),
                     $environment,
-                    $initiatorId
+                    $initiator->id
                 );
             } catch (GitHubAutoMergedException $e) {
-                logger("Canceled deployment for {$repository}#{$hash} because it auto-merged an upstream branch.");
+                logger("Canceled deployment for {$request->repository()}#{$request->hash()} because it auto-merged an upstream branch.");
 
                 continue;
             } catch (GitHubDeploymentConflictException $e) {
-                logger("Canceled deployment for {$repository}#{$hash}: {$e->getMessage()}");
+                logger("Canceled deployment for {$request->repository()}#{$request->hash()}: {$e->getMessage()}");
 
                 continue;
             }
@@ -88,7 +65,6 @@ class GitHubHookController extends Controller
         $installationId = $request->installation['id'];
         $repository = $request->name;
         $hash = $request->sha;
-        $message = $request->commit['commit']['message'];
         $senderEmail = $request->commit['commit']['author']['email'] ?? null;
         $branches = collect($request->branches)->map(fn ($branch) => $branch['name']);
 
@@ -152,7 +128,6 @@ class GitHubHookController extends Controller
         $manual = $request->deployment['payload']['manual'] ?? false;
         $initiatorId = $request->deployment['payload']['initiator_id'];
         $hash = $request->deployment['sha'];
-        $message = 'nothing';
 
         $environment = Environment::find($environmentId);
 
@@ -160,7 +135,7 @@ class GitHubHookController extends Controller
             return response('');
         }
 
-        $environment->deployHash($hash, $message, $initiatorId);
+        $environment->deployHash($hash, $initiatorId);
 
         return response('');
     }

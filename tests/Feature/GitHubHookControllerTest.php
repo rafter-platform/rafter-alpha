@@ -27,6 +27,7 @@ class GitHubHookControllerTest extends TestCase
 
         $this->gitHubMock = GitHub::partialMock();
         $this->gitHubMock->shouldReceive('token')->andReturn('notatoken');
+        $this->gitHubMock->shouldReceive('messageForHash')->andReturn('some message');
 
         $this->environment = factory(Environment::class)->create([
             'branch' => 'master',

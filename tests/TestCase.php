@@ -25,6 +25,7 @@ abstract class TestCase extends BaseTestCase
     {
         $mock = GitHub::mock();
         $mock->shouldReceive('token')->andReturn('notatoken');
+        $mock->shouldReceive('messageForHash')->andReturn('some message');
         $mock->shouldReceive('tarballUrl')->andReturn('https://something.tar.gz');
         $mock->shouldReceive('latestHashFor')->andReturn('abc123');
         $mock->shouldReceive('createDeployment')->andReturn(['id' => 123]);

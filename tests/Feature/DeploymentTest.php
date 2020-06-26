@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\EnvVars;
 use App\Jobs\CreateCloudRunService;
-use App\Services\GitHub;
 use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
 use Google_Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -162,7 +161,7 @@ class DeploymentTest extends TestCase
 
         $environment = factory('App\Environment')->state('laravel')->create();
 
-        $deployment = $environment->deployHash('abc123', 'commit message', null);
+        $deployment = $environment->deployHash('abc123', null);
 
         $environment->refresh();
         $deployment->refresh();
@@ -226,7 +225,7 @@ class DeploymentTest extends TestCase
 
         $environment = factory('App\Environment')->state('laravel')->create();
 
-        $deployment = $environment->deployHash('abc123', 'commit message', null);
+        $deployment = $environment->deployHash('abc123', null);
 
         $environment->refresh();
         $deployment->refresh();

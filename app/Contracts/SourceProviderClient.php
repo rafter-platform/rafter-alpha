@@ -33,6 +33,15 @@ interface SourceProviderClient
     public function validCommit($repository, $hash);
 
     /**
+     * Git the commit message for a given hash.
+     *
+     * @param string $repository
+     * @param string $hash
+     * @return string
+     */
+    public function messageForHash($repository, $hash): string;
+
+    /**
      * Get the latest commit hash for the given repository and branch.
      *
      * @param  string  $repository
