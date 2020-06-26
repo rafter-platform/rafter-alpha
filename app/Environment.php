@@ -506,18 +506,6 @@ class Environment extends Model
     }
 
     /**
-     * Whether this environment is set to wait for checks, and those checks are not yet finished.
-     *
-     * @param string $repository
-     * @param string $hash
-     * @return boolean
-     */
-    public function shouldWaitForChecks(string $repository, string $hash)
-    {
-        return $this->getOption('wait_for_checks') && !$this->sourceProvider()->client()->commitChecksSuccessful($repository, $hash);
-    }
-
-    /**
      * Get an optional initiator, provided an email address. It's possible another teammate on
      * a source provider will have initiated a deploy, but not be a part of this Rafter team.
      * In which case, we return null.

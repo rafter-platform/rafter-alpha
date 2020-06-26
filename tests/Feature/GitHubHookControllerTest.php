@@ -65,7 +65,7 @@ class GitHubHookControllerTest extends TestCase
         Queue::assertNotPushed(StartDeployment::class);
     }
 
-    public function test_it_does_not_deploy_if_checks_are_not_passing_and_user_has_opted_to_wait()
+    public function test_it_attempts_to_deploy_if_user_has_opted_to_wait()
     {
         Queue::fake();
 
@@ -76,23 +76,8 @@ class GitHubHookControllerTest extends TestCase
 
         $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
 
-        Http::fake(array_merge([
-            "api.github.com/repos/{$this->environment->project->repository}/commits/abc123/status" => Http::sequence()
-                ->push(['state' => 'pending', 'statuses' => [['id' => 1]]])
-                ->push(['state' => 'success']),
-        ], $this->getGitHubHttpMock()));
+        Http::fake($this->getGitHubHttpMock());
 
-        $this->postJson('/hooks/github', $payload, [
-            'X-GitHub-Event' => 'push',
-            'X-Hub-Signature' => $signature,
-        ])
-            ->assertOk();
-
-        Http::assertNotSent(function ($request) {
-            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
-        });
-
-        // But if the checks are passing instantly, it will deploy:
         $this->postJson('/hooks/github', $payload, [
             'X-GitHub-Event' => 'push',
             'X-Hub-Signature' => $signature,
@@ -100,27 +85,11 @@ class GitHubHookControllerTest extends TestCase
             ->assertOk();
 
         Http::assertSent(function ($request) {
-            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments";
+            return $request->url() == "https://api.github.com/repos/{$this->environment->project->repository}/deployments"
+                && !isset($request['required_contexts']);
         });
-    }
 
-    public function test_also_deploys_on_push_if_state_is_pending_but_status_are_empty()
-    {
-        Queue::fake();
-
-        $this->environment->setOption('wait_for_checks', true);
-        $this->environment->save();
-
-        $payload = $this->generatePushPayload();
-
-        $signature = 'sha1=' . hash_hmac('sha1', json_encode($payload), config('services.github.webhook_secret'));
-
-        Http::fake(array_merge([
-            "api.github.com/repos/{$this->environment->project->repository}/commits/abc123/status" => Http::response(
-                ['state' => 'pending', 'statuses' => []],
-            ),
-        ], $this->getGitHubHttpMock()));
-
+        // But if the checks are passing instantly, it will deploy:
         $this->postJson('/hooks/github', $payload, [
             'X-GitHub-Event' => 'push',
             'X-Hub-Signature' => $signature,

@@ -66,4 +66,9 @@ class PendingSourceProviderDeployment
     {
         return $this->environment->repository();
     }
+
+    public function shouldWaitForChecks(): bool
+    {
+        return $this->environment->getOption('wait_for_checks');
+    }
 }

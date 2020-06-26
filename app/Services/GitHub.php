@@ -325,20 +325,22 @@ class GitHub implements SourceProviderClient
 
     public function createDeployment(PendingSourceProviderDeployment $pendingDeployment)
     {
-        try {
-            $response = $this->request("repos/{$pendingDeployment->getRepository()}/deployments", 'POST', [
-                'ref' => $pendingDeployment->getHash(),
-                'environment' => $pendingDeployment->getEnvironment()->name,
-                'description' => 'Deploy request from Rafter',
-                'payload' => array_merge($pendingDeployment->getPayload(), [
-                    'environment_id' => $pendingDeployment->getEnvironment()->id,
-                    'initiator_id' => $pendingDeployment->getUserId(),
-                ]),
+        $data = [
+            'ref' => $pendingDeployment->getHash(),
+            'environment' => $pendingDeployment->getEnvironment()->name,
+            'description' => 'Deploy request from Rafter',
+            'payload' => array_merge($pendingDeployment->getPayload(), [
+                'environment_id' => $pendingDeployment->getEnvironment()->id,
+                'initiator_id' => $pendingDeployment->getUserId(),
+            ]),
+        ];
 
-                // We tell GitHub we want to start this deployment regardless of whether tests have passed.
-                // If the user wants us to wait for checks to pass, we handle that within the HookDeploymentController
-                'required_contexts' => [],
-            ]);
+        if (!$pendingDeployment->shouldWaitForChecks()) {
+            $data['required_contexts'] = [];
+        }
+
+        try {
+            $response = $this->request("repos/{$pendingDeployment->getRepository()}/deployments", 'POST', $data);
 
             // If GitHub auto-merges upstream into a topic branch, it will return this message.
             // We don't want to continue with a deployment, because we'll soon be getting another `push` webhook.
@@ -375,8 +377,6 @@ class GitHub implements SourceProviderClient
     {
         $response = $this->request("repos/$repository/commits/$hash/status");
 
-        // TODO: Ensure an empty statuses array is not possible even when e.g. GitHub Checks are
-        // waiting to be kicked off.
-        return $response['state'] == 'success' || count($response['statuses']) == 0;
+        return $response['state'] == 'success';
     }
 }

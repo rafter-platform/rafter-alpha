@@ -34,10 +34,6 @@ class GitHubHookController extends Controller
         $request = app(GitHubHookPushRequest::class);
 
         foreach ($request->environments() as $environment) {
-            if ($environment->shouldWaitForChecks($request->getRepository(), $request->hash())) {
-                continue;
-            }
-
             $pendingDeployment = PendingSourceProviderDeployment::make()
                 ->forEnvironment($environment)
                 ->forHash($request->hash())
