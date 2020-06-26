@@ -34,6 +34,10 @@
     @apply shadow-outline-blue;
 }
 
+input[type="checkbox"].toggle:focus + label {
+    @apply shadow-outline-blue;
+}
+
 input[type="checkbox"].toggle + label {
     @apply bg-gray-200;
 }
