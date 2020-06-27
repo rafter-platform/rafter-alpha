@@ -333,6 +333,9 @@ class GitHub implements SourceProviderClient
                 'environment_id' => $pendingDeployment->getEnvironment()->id,
                 'initiator_id' => $pendingDeployment->getUserId(),
             ]),
+            // We don't want the behavior for merging in the upstream branch automatically.
+            // It leads to merge conflict responses and other weirdness.
+            'auto_merge' => false,
         ];
 
         if (!$pendingDeployment->shouldWaitForChecks()) {
