@@ -51,7 +51,17 @@
                     @endif
                 </x-td>
                 <x-td last>
-                    <x-button :href="$project->productionUrl()" size="sm">Open</x-button>
+                    <div class="flex items-center justify-end">
+                        <x-text-link class="mr-3" :href="route('projects.show', [$project])">View</x-text-link>
+                        <x-dropdown-menu>
+                            <x-dropdown-menu-item :href="$project->productionUrl()" target="_blank">
+                                <x-slot name="icon">
+                                    <x-heroicon-o-external-link class="w-5 h-5 inline-block" />
+                                </x-slot>
+                                Open Production
+                            </x-dropdown-menu-item>
+                        </x-dropdown-menu>
+                    </div>
                 </x-td>
             </x-tr>
         @endforeach

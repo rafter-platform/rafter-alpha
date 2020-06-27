@@ -49,9 +49,9 @@
                     {{ $command->user->name }}
                 </x-td>
                 <x-td last>
-                    <a class="text-indigo-600 hover:text-indigo-900" href="{{ $command->url() }}">
+                    <x-text-link href="{{ $command->url() }}">
                         View
-                    </a>
+                    </x-text-link>
                 </x-td>
             </x-tr>
         @endforeach
