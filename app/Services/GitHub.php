@@ -5,11 +5,17 @@ namespace App\Services;
 use App\SourceProvider;
 use App\Contracts\SourceProviderClient;
 use App\Deployment;
+use App\Exceptions\GitHubAutoMergedException;
+use App\Exceptions\GitHubDeploymentConflictException;
+use App\PendingSourceProviderDeployment;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Mockery;
+use Mockery\MockInterface;
 
 class GitHub implements SourceProviderClient
 {
@@ -18,6 +24,107 @@ class GitHub implements SourceProviderClient
     public function __construct(SourceProvider $source)
     {
         $this->source = $source;
+    }
+
+    /**
+     * Get the URL to the installation configuration page on GitHub
+     *
+     * @return string
+     */
+    public static function installationUrl($installationId = null): string
+    {
+        return "https://github.com/apps/" . config('services.github.app_name') . "/installations/" . ($installationId ?: 'new');
+    }
+
+    /**
+     * Verify whether an incoming payload matches a SHA1 webhook secret signature
+     *
+     * @param string $payload
+     * @param string $signature
+     * @return boolean
+     */
+    public static function verifyWebhookPayload(Request $request)
+    {
+        $payload = $request->instance()->getContent();
+        $signature = $request->header('X-Hub-Signature');
+        $hash = 'sha1=' . hash_hmac('sha1', $payload, config('services.github.webhook_secret'));
+
+        return $hash === $signature;
+    }
+
+    public static function mock(): MockInterface
+    {
+        $mock = Mockery::mock(GitHub::class);
+
+        app()->bind(static::class, fn () => $mock);
+
+        return $mock;
+    }
+
+    public static function partialMock(): MockInterface
+    {
+        $mock = Mockery::mock(GitHub::class);
+
+        $mock->makePartial();
+
+        app()->bind(static::class, fn () => $mock);
+
+        return $mock;
+    }
+
+    /**
+     * Determine whether the stored installation access token is expired.
+     *
+     * @return boolean
+     */
+    protected function tokenIsExpired()
+    {
+        return now() > Carbon::parse($this->source['meta']['installation_token_expires_at']);
+    }
+
+    /**
+     * Get the access token for the given SourceProvider.
+     */
+    public function token(): string
+    {
+        if ($this->tokenIsExpired()) {
+            $this->refreshInstallation();
+        }
+
+        return $this->source->refresh()->meta['installation_token'];
+    }
+
+    /**
+     * Create a JWT to call the GitHub API.
+     *
+     * @return void
+     */
+    protected function createJwt()
+    {
+        $secret = config('services.github.private_key');
+
+        $payload = [
+            'iat' => time(),
+            'exp' => time() + 10 * 60,
+            'iss' => config('services.github.app_id'),
+        ];
+
+        return JWT::encode($payload, $secret, 'RS256');
+    }
+
+    protected function request($endpoint, $method = 'get', $data = [])
+    {
+        try {
+            return Http::withToken($this->token(), 'token')
+                ->accept("application/vnd.github.machine-man-preview+json, application/vnd.github.ant-man-preview+json, application/vnd.github.flash-preview+json")
+                ->{$method}('https://api.github.com/' . $endpoint, $data)
+                ->throw()
+                ->json();
+        } catch (RequestException $exception) {
+            logger()->error($exception->response->body());
+
+            throw $exception;
+        }
     }
 
     /**
@@ -86,16 +193,19 @@ class GitHub implements SourceProviderClient
         return $response['sha'] === $hash;
     }
 
-    /**
-     * Get the latest commit hash for the given repository and branch.
-     *
-     * @param  string  $repository
-     * @param  string  $branch
-     * @return string
-     */
-    public function latestHashFor($repository, $branch)
+    public function messageForHash($repository, $hash): string
     {
-        return $this->request("repos/{$repository}/commits?sha={$branch}&per_page=1")[0]['sha'];
+        return $this->request("repos/{$repository}/commits/{$hash}")['commit']['message'];
+    }
+
+    public function latestHashFor($repository, $branch): string
+    {
+        return $this->latestCommitFor($repository, $branch)['sha'];
+    }
+
+    public function latestCommitFor($repository, $branch): array
+    {
+        return $this->request("repos/{$repository}/commits?sha={$branch}&per_page=1")[0];
     }
 
     /**
@@ -213,32 +323,41 @@ class GitHub implements SourceProviderClient
             ->json();
     }
 
-    public function createDeployment(Deployment $deployment)
+    public function createDeployment(PendingSourceProviderDeployment $pendingDeployment)
     {
+        $data = [
+            'ref' => $pendingDeployment->getHash(),
+            'environment' => $pendingDeployment->getEnvironment()->name,
+            'description' => 'Deploy request from Rafter',
+            'payload' => array_merge($pendingDeployment->getPayload(), [
+                'environment_id' => $pendingDeployment->getEnvironment()->id,
+                'initiator_id' => $pendingDeployment->getUserId(),
+            ]),
+            // We don't want the behavior for merging in the upstream branch automatically.
+            // It leads to merge conflict responses and other weirdness.
+            'auto_merge' => false,
+        ];
+
+        if (!$pendingDeployment->shouldWaitForChecks()) {
+            $data['required_contexts'] = [];
+        }
+
         try {
-            $response = $this->request("repos/{$deployment->repository()}/deployments", 'POST', [
-                'ref' => $deployment->commit_hash,
-                'environment' => $deployment->environment->name,
-                'description' => 'Deploy request from Rafter',
+            $response = $this->request("repos/{$pendingDeployment->getRepository()}/deployments", 'POST', $data);
 
-                // We tell GitHub we want to start this deployment regardless of whether tests have passed.
-                // TODO: Implement user's preference about whether we should wait for tests.
-                'required_contexts' => [],
-            ]);
+            // If GitHub auto-merges upstream into a topic branch, it will return this message.
+            // We don't want to continue with a deployment, because we'll soon be getting another `push` webhook.
+            if (preg_match('/^auto-merged/i', $response['message'] ?? '')) {
+                throw new GitHubAutoMergedException($response['message']);
+            }
 
-            $deploymentId = $response['id'];
-            $deployment->meta['github_deployment_id'] = $deploymentId;
-            $deployment->save();
-
-            $this->updateDeploymentStatus($deployment, 'in_progress');
+            return $response;
         } catch (RequestException $e) {
-            /**
-             * TODO:
-             * 1. Inspect what error it is
-             * 2. If it's about commit statuses not being ready, bubble it up somehow?
-             * 3. If it's about the fact that a merge commit was done, bubble it up so we somehow don't deploy until the merge
-             * commit comes through.
-             */
+            if ($e->getCode() == 409) {
+                throw new GitHubDeploymentConflictException($e->getMessage());
+            }
+
+            throw $e;
         }
     }
 
@@ -257,58 +376,10 @@ class GitHub implements SourceProviderClient
         ]);
     }
 
-    /**
-     * Create a JWT to call the GitHub API.
-     *
-     * @return void
-     */
-    protected function createJwt()
+    public function commitChecksSuccessful(string $repository, string $hash): bool
     {
-        $secret = config('services.github.private_key');
+        $response = $this->request("repos/$repository/commits/$hash/status");
 
-        $payload = [
-            'iat' => time(),
-            'exp' => time() + 10 * 60,
-            'iss' => config('services.github.app_id'),
-        ];
-
-        return JWT::encode($payload, $secret, 'RS256');
-    }
-
-    protected function request($endpoint, $method = 'get', $data = [])
-    {
-        try {
-            return Http::withToken($this->token(), 'token')
-                ->accept("application/vnd.github.machine-man-preview+json, application/vnd.github.ant-man-preview+json, application/vnd.github.flash-preview+json")
-                ->{$method}('https://api.github.com/' . $endpoint, $data)
-                ->throw()
-                ->json();
-        } catch (RequestException $exception) {
-            logger()->error($exception->response->body());
-
-            throw $exception;
-        }
-    }
-
-    /**
-     * Determine whether the stored installation access token is expired.
-     *
-     * @return boolean
-     */
-    protected function tokenIsExpired()
-    {
-        return now() > Carbon::parse($this->source['meta']['installation_token_expires_at']);
-    }
-
-    /**
-     * Get the access token for the given SourceProvider.
-     */
-    public function token(): string
-    {
-        if ($this->tokenIsExpired()) {
-            $this->refreshInstallation();
-        }
-
-        return $this->source->refresh()->meta['installation_token'];
+        return $response['state'] == 'success';
     }
 }

@@ -5,22 +5,20 @@ namespace App\Rules;
 use App\SourceProvider;
 use Illuminate\Contracts\Validation\Rule;
 
-class ValidRepository implements Rule
+class ValidBranch implements Rule
 {
     protected $source;
-    protected $branch;
+    protected $repository;
 
     /**
      * Create a new rule instance.
      *
-     * @param  \App\SourceProvider  $source
-     * @param  string|null  $branch
      * @return void
      */
-    public function __construct($source, $branch = null)
+    public function __construct($source, $repository)
     {
         $this->source = $source;
-        $this->branch = $branch;
+        $this->repository = $repository;
     }
 
     /**
@@ -37,8 +35,8 @@ class ValidRepository implements Rule
         }
 
         return $this->source->client()->validRepository(
-            $value,
-            $this->branch
+            $this->repository,
+            $value
         );
     }
 
@@ -49,6 +47,6 @@ class ValidRepository implements Rule
      */
     public function message()
     {
-        return 'The given repository or branch is not valid.';
+        return 'The given branch is not valid.';
     }
 }

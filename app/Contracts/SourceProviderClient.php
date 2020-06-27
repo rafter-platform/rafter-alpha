@@ -3,6 +3,8 @@
 namespace App\Contracts;
 
 use App\Deployment;
+use App\Environment;
+use App\PendingSourceProviderDeployment;
 
 interface SourceProviderClient
 {
@@ -32,13 +34,31 @@ interface SourceProviderClient
     public function validCommit($repository, $hash);
 
     /**
+     * Get the commit message for a given hash.
+     *
+     * @param string $repository
+     * @param string $hash
+     * @return string
+     */
+    public function messageForHash($repository, $hash): string;
+
+    /**
      * Get the latest commit hash for the given repository and branch.
      *
      * @param  string  $repository
      * @param  string  $branch
      * @return string
      */
-    public function latestHashFor($repository, $branch);
+    public function latestHashFor($repository, $branch): string;
+
+    /**
+     * Get the latest commit for the given repository and branch.
+     *
+     * @param  string  $repository
+     * @param  string  $branch
+     * @return array
+     */
+    public function latestCommitFor($repository, $branch): array;
 
     /**
      * Get the tarball URL for the given deployment.
@@ -80,10 +100,19 @@ interface SourceProviderClient
     /**
      * Create a new deployment within the provider's API.
      */
-    public function createDeployment(Deployment $deployment);
+    public function createDeployment(PendingSourceProviderDeployment $pendingDeployment);
 
     /**
      * Update a deployment's status.
      */
     public function updateDeploymentStatus(Deployment $deployment, string $state);
+
+    /**
+     * Whether the checks for a given commit are successful and complete.
+     *
+     * @param string $repository
+     * @param string $hash
+     * @return boolean
+     */
+    public function commitChecksSuccessful(string $repository, string $hash): bool;
 }

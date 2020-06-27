@@ -25,6 +25,13 @@ class EnvironmentTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->mockGitHubForDeployment();
+    }
+
     public function test_create_initial_deployment_enqueues_expected_jobs()
     {
         Queue::fake();

@@ -17,6 +17,13 @@ class ProjectFormTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->mockGitHubForDeployment();
+    }
+
     public function test_it_validates_required_fields()
     {
         $this->actingAs(factory(User::class)->create());

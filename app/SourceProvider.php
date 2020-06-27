@@ -83,9 +83,19 @@ class SourceProvider extends Model
         return $this->type == static::TYPE_GITHUB;
     }
 
-    public function createDeployment(Deployment $deployment)
+    public function createDeployment(Deployment $deployment, $payload = [])
     {
-        $this->client()->createDeployment($deployment);
+        $pendingDeployment = PendingSourceProviderDeployment::make()
+            ->forHash($deployment->commit_hash)
+            ->forEnvironment($deployment->environment)
+            ->byUserId($deployment->initiator_id)
+            ->withPayload($payload);
+
+        $response = $this->client()->createDeployment($pendingDeployment);
+
+        $deploymentId = $response['id'];
+        $deployment->meta['github_deployment_id'] = $deploymentId;
+        $deployment->save();
     }
 
     public function updateDeploymentStatus(Deployment $deployment, string $state)

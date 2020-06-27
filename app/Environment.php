@@ -40,6 +40,7 @@ class Environment extends Model
         'worker_max_requests_per_container' => 80,
         'web_max_instances' => 1000,
         'worker_max_instances' => 1000,
+        'wait_for_checks' => false,
     ];
 
     public function project()
@@ -296,6 +297,10 @@ class Environment extends Model
             'initiator_id' => $this->project->team->owner->id,
         ]);
 
+        $deployment->createSourceProviderDeployment([
+            'manual' => true,
+        ]);
+
         $jobs = DeploymentSteps::for($deployment)
             ->initialDeployment()
             ->get();
@@ -307,18 +312,25 @@ class Environment extends Model
 
     /**
      * Deploy the HEAD of the current branch.
+     * Always done manually by a user.
      *
      * @param int|null $initiatorId
      * @return Deployment
      */
     public function deploy($initiatorId): Deployment
     {
-        $hash = $this->sourceProvider()->client()->latestHashFor($this->repository(), $this->branch);
+        $commit = $this->sourceProvider()->client()->latestCommitFor($this->repository(), $this->branch);
+        $sha = $commit['sha'];
+        $message = $commit['commit']['message'];
 
         $deployment = $this->deployments()->create([
-            'commit_hash' => $hash,
-            'commit_message' => 'Manual deploy',
+            'commit_hash' => $sha,
+            'commit_message' => $message,
             'initiator_id' => $initiatorId,
+        ]);
+
+        $deployment->createSourceProviderDeployment([
+            'manual' => true,
         ]);
 
         $steps = DeploymentSteps::for($deployment);
@@ -335,8 +347,9 @@ class Environment extends Model
     /**
      * Create a new deployment on Cloud Run for a specific hash.
      */
-    public function deployHash($commitHash, $commitMessage, $initiatorId): Deployment
+    public function deployHash($commitHash, $initiatorId): Deployment
     {
+        $commitMessage = $this->sourceProvider()->client()->messageForHash($this->repository(), $commitHash);
         $deployment = $this->deployments()->create([
             'commit_hash' => $commitHash,
             'commit_message' => $commitMessage,
@@ -362,6 +375,10 @@ class Environment extends Model
             'commit_message' => $deployment->commit_message,
             'image' => $deployment->image,
             'initiator_id' => $initiatorId,
+        ]);
+
+        $newDeployment->createSourceProviderDeployment([
+            'manual' => true,
         ]);
 
         $steps = DeploymentSteps::for($newDeployment);
@@ -486,6 +503,25 @@ class Environment extends Model
         });
 
         return $mapping;
+    }
+
+    /**
+     * Get an optional initiator, provided an email address. It's possible another teammate on
+     * a source provider will have initiated a deploy, but not be a part of this Rafter team.
+     * In which case, we return null.
+     *
+     * @param string $email
+     * @return User|\Illuminate\Support\Optional
+     */
+    public function getInitiator($email)
+    {
+        $user = User::where('email', $email)->first();
+
+        if ($user && $this->project->team->hasUser($user)) {
+            return $user;
+        }
+
+        return optional();
     }
 
     public function client(): GoogleApi

@@ -75,11 +75,14 @@ class DatabaseSeeder extends Seeder
 
             $environment->setInitialEnvironmentVariables();
 
-            $environment->deployments()->create([
+            $deployment = $environment->deployments()->create([
                 'initiator_id' => $user->id,
                 'commit_message' => 'Initial (seeded) deploy.',
                 'status' => 'successful',
             ]);
+
+            $environment->activeDeployment()->associate($deployment);
+            $environment->save();
 
             $environment->domainMappings()->create([
                 'domain' => 'laravel-demo.rafter.app',

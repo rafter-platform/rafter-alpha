@@ -22,7 +22,7 @@ if (app()->environment('local')) {
 Route::get('/build/{type}/{file}', 'BuildInstructionsController@show')->name('build-instructions');
 
 // Incoming GitHub webhooks
-Route::post('/hooks/{type}', 'HookDeploymentController@store');
+Route::post('/hooks/github', 'GitHubHookController');
 
 // TODO: Remove
 Route::get('/test', function () {
@@ -77,9 +77,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Database Instances
     Route::resource('database-instances', 'DatabaseInstanceController');
-
-    // Source Providers
-    Route::resource('source-providers', 'SourceProviderController');
 
     // Inbound Source Provider Authorizations
     Route::get('auth/github', function () {

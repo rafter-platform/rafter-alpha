@@ -288,9 +288,9 @@ class Deployment extends Model
         return $vars;
     }
 
-    public function createSourceProviderDeployment()
+    public function createSourceProviderDeployment($payload = [])
     {
-        $this->sourceProvider()->createDeployment($this);
+        $this->sourceProvider()->createDeployment($this, $payload);
     }
 
     public function updateSourceProviderDeploymentStatus(string $state)
