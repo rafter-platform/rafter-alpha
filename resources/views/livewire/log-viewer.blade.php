@@ -1,4 +1,4 @@
-<div wire:poll.5s>
+<div wire:poll.5s wire:init="loadLogs">
     <div class="flex md:justify-between text-sm mb-2 text-gray-600">
         <div>
             <label class="mr-1"><input type="radio" name="service" value="web" wire:model="service" wire:loading.attr="disabled"> Web</label>
