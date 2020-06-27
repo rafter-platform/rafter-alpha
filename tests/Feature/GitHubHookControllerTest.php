@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 
 class GitHubHookControllerTest extends TestCase
 {
@@ -193,7 +194,7 @@ class GitHubHookControllerTest extends TestCase
                     'environment_id' => $this->environment->id,
                     'initiator_id' => $this->sourceProvider->user->id,
                 ]
-                && $request['environment'] == $this->environment->name
+                && $request['environment'] == Str::slug($this->environment->name)
                 && $request['ref'] == $payload['sha'];
         });
     }

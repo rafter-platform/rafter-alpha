@@ -1,3 +1,5 @@
+@props(['action' => 'Save', 'title'])
+
 <div class="md:grid md:grid-cols-3 md:gap-6 mb-10 sm:mb-0" {{ $attributes }}>
     <div class="md:col-span-1">
         <div class="px-4 sm:px-0">
@@ -13,7 +15,7 @@
                 {{ $slot }}
             </div>
             <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                <x-button design="primary">Save</x-button>
+                <x-button design="primary">{{ $action }}</x-button>
             </div>
         </form>
     </div>

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Support\Str;
+
 class PendingSourceProviderDeployment
 {
     protected $environment;
@@ -45,6 +47,11 @@ class PendingSourceProviderDeployment
     public function getEnvironment(): Environment
     {
         return $this->environment;
+    }
+
+    public function getEnvironmentName(): string
+    {
+        return Str::slug($this->environment->name);
     }
 
     public function getHash(): string
