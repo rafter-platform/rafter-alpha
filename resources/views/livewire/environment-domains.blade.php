@@ -11,7 +11,7 @@
                 <input name="domain" label="Domain Name" wire:model="domain" class="form-input rounded-r-none block w-full pl-20" placeholder="www.example.com" />
             </div>
             <span class="inline-flex rounded-r-md shadow-sm">
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent leading-5 font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent leading-5 font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150">
                     Add Domain
                 </button>
             </span>
