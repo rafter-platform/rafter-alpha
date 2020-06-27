@@ -32,6 +32,8 @@ class LogViewer extends Component
      */
     protected $updatesQueryString = ['logType', 'service'];
 
+    public $ready = false;
+
     public function mount($environment)
     {
         $this->environment = $environment;
@@ -62,8 +64,13 @@ class LogViewer extends Component
     public function render()
     {
         return view('livewire.log-viewer', [
-            'logs' => $this->logs(),
+            'logs' => $this->ready ? $this->logs() : [['text' => 'Loading...']],
         ]);
+    }
+
+    public function loadLogs()
+    {
+        $this->ready = true;
     }
 
     /**
