@@ -9,7 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.4",
-        "driesvints/blade-icons": "^2.2",
+        "blade-ui-kit/blade-heroicons": "^0.1.0",
+        "blade-ui-kit/blade-icons": "^0.4.0",
         "fideloper/proxy": "^4.0",
         "firebase/php-jwt": "^5.2",
         "google/apiclient": "^2.0",
