@@ -41,7 +41,7 @@
                     {{ $deployment->initiator->name }}
                 </x-td>
                 <x-td last>
-                    <a href="{{ $deployment->getRoute() }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                    <x-text-link href="{{ $deployment->getRoute() }}">View</x-text-link>
                 </x-td>
             </x-tr>
         @endforeach
