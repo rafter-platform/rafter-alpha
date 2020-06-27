@@ -1,9 +1,9 @@
 @if ($type == 'laravel')
-    <x-icon-laravel class="{{ $class ?? '' }}" />
+    <x-icon-laravel class="{{ $class ?? '' }}" style="{{ $style ?? '' }}" />
 @elseif ($type == 'nodejs')
-    <x-icon-nodejs class="{{ $class ?? '' }}" />
+    <x-icon-nodejs class="{{ $class ?? '' }}" style="{{ $style ?? '' }}" />
 @elseif ($type == 'rails')
-    <x-icon-rails class="{{ $class ?? '' }}" />
+    <x-icon-rails class="{{ $class ?? '' }}" style="{{ $style ?? '' }}" />
 @else
-    <x-heroicon-o-desktop-computer class="{{ $class ?? '' }}" />
+    <x-heroicon-o-desktop-computer class="{{ $class ?? '' }}" style="{{ $style ?? '' }}" />
 @endif
