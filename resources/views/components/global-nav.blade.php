@@ -2,10 +2,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center">
-                <div class="flex-shrink-0 text-white">
-                    <span class="mr-2 inline-block">@include('logo', ['width' => 40, 'height' => 40])</span>
+                <a @auth href="/dashboard" @else href="/" @endauth class="flex-shrink-0 text-white">
+                    <span class="mr-2 inline-block">@include('logo', ['width' => 120, 'height' => 50])</span>
                     <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
-                </div>
+                </a>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline">
                         @foreach ($items as $label => $url)
