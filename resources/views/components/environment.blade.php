@@ -1,19 +1,15 @@
 <x-slot name="title">{{ $project->name }}</x-slot>
 <x-slot name="meta">
     <x-header-meta>
-        <x:heroicon-o-sparkles class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
+        <x-project-logo :type="$project->type" class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" style="filter: grayscale(1)" />
         {{ $project->typeLabel() }}
     </x-header-meta>
     <x-header-meta>
-        <x:heroicon-o-folder class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-        {{ $project->googleProject->project_id }}
+        <x-icon-google-cloud class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" style="filter: grayscale(1)" />
+        {{ $project->googleProject->project_id }} ({{ $project->region }})
     </x-header-meta>
     <x-header-meta>
-        <x:heroicon-o-location-marker class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-        {{ $project->region }}
-    </x-header-meta>
-    <x-header-meta>
-        <x-github-icon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
+        <x-source-provider-logo :type="$project->sourceProvider->type" class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
         {{ $project->repository }}
     </x-header-meta>
 </x-slot>
@@ -32,7 +28,7 @@
             @endif
         </div>
         <div class="text-xs mr-4">
-            <x-github-icon class="mr-1.5 h-4 w-4 inline align-middle" />
+            <x-source-provider-logo :type="$project->sourceProvider->type" class="mr-1.5 h-4 w-4 inline align-middle" style="filter: grayscale(1)" />
             <span>
                 Automatically deploys from <code>{{ $environment->branch }}</code>
             </span>
