@@ -25,6 +25,9 @@ class ProjectForm extends Component
     public $region;
     public $serviceAccountJson;
     public $variables;
+    public $withDatabase = false;
+    public $showGoogleProjectForm = false;
+    public $showDatabaseInstanceForm = false;
 
     public function updated($field)
     {
@@ -50,10 +53,11 @@ class ProjectForm extends Component
     public function render()
     {
         return view('livewire.project-form', [
-            'projects' => auth()->user()->currentTeam->googleProjects,
+            'projects' => currentTeam()->googleProjects,
             'sourceProviders' => auth()->user()->sourceProviders,
             'regions' => GoogleProject::REGIONS,
             'newGitHubInstallationUrl' => GitHub::installationUrl(),
+            'databaseInstances' => currentTeam()->databaseInstances,
         ]);
     }
 
@@ -128,7 +132,7 @@ class ProjectForm extends Component
 
         $this->reset('serviceAccountJson');
         $this->googleProjectId = $project->id;
-        $this->emit('googleProjectAdded', $project->id);
+        $this->showGoogleProjectForm = false;
     }
 
     public function create()

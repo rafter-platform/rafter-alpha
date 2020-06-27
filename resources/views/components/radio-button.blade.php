@@ -14,7 +14,7 @@ $classes .= ($disabled ?? false) ? ' opacity-50 cursor-not-allowed' : ' hover:bg
 </div>
 @else
 <div>
-    <button {{ $attributes }} class="{{ $classes }}">
+    <button type="button" {{ $attributes }} class="{{ $classes }}">
         {{ $icon ?? '' }}
         <div class="{{ empty($icon) ? '' : 'ml-2' }}">{{ $slot }}</div>
     </label>
