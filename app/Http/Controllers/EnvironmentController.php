@@ -28,9 +28,11 @@ class EnvironmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Project $project)
     {
-        //
+        return view('environments.create', [
+            'project' => $project,
+        ]);
     }
 
     /**

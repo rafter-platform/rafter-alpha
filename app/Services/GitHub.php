@@ -327,7 +327,7 @@ class GitHub implements SourceProviderClient
     {
         $data = [
             'ref' => $pendingDeployment->getHash(),
-            'environment' => $pendingDeployment->getEnvironment()->name,
+            'environment' => $pendingDeployment->getEnvironmentName(),
             'description' => 'Deploy request from Rafter',
             'payload' => array_merge($pendingDeployment->getPayload(), [
                 'environment_id' => $pendingDeployment->getEnvironment()->id,
