@@ -18,19 +18,19 @@
             </x-slot>
             GitHub
         </x-radio-button>
-        <x-radio-button wire:model="sourceType"  name="sourceType" value="gitlab">
+        <x-radio-button wire:model="sourceType"  name="sourceType" value="gitlab" disabled>
             <x-slot name="icon">
                 <x-source-provider-logo type="gitlab" class="text-current w-6 h-6" />
             </x-slot>
             Gitlab
         </x-radio-button>
-        <x-radio-button wire:model="sourceType"  name="sourceType" value="bitbucket">
+        <x-radio-button wire:model="sourceType"  name="sourceType" value="bitbucket" disabled>
             <x-slot name="icon">
                 <x-source-provider-logo type="bitbucket" class="text-current w-6 h-6" />
             </x-slot>
             Bitbucket
         </x-radio-button>
-        <x-radio-button wire:model="sourceType" name="sourceType" value="cli">
+        <x-radio-button wire:model="sourceType" name="sourceType" value="cli" disabled>
             <x-slot name="icon">
                 <x-source-provider-logo type="cli" class="text-current w-6 h-6" />
             </x-slot>
