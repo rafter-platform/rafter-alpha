@@ -49,6 +49,20 @@ class Deployment extends Model
     }
 
     /**
+     * In the case that this deployment is a redeployment, we link
+     * to the original Deployment object
+     */
+    public function redeployment()
+    {
+        return $this->belongsTo('App\Deployment', 'redeployment_id');
+    }
+
+    public function isRedeploy()
+    {
+        return $this->redeployment()->exists();
+    }
+
+    /**
      * The git repo for this deployment
      *
      * @return string

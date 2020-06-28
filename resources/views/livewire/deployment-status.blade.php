@@ -3,7 +3,7 @@
         <div class="p-4 border-b">
             <div class="flex flex-wrap items-center justify-between mb-1">
                 <div class="flex flex-wrap items-center">
-                    <h1 class="text-xl mr-4">{{ $deployment->commit_message }}</h1>
+                    <h1 class="text-xl mr-4">#{{ $deployment->id }}: {{ $deployment->commit_message }}</h1>
                     <x-status :status="$deployment->status" />
                 </div>
                 <div class="text-sm text-gray-500">

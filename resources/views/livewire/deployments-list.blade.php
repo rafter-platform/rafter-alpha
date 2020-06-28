@@ -26,7 +26,15 @@
         @foreach ($deployments as $idx => $deployment)
             <x-tr>
                 <x-td>
-                    <a class="max-w-md overflow-hidden whitespace-no-wrap block" style="text-overflow: ellipsis" href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
+                    <div class="flex items-center">
+                        <a class="max-w-md overflow-hidden whitespace-no-wrap block" style="text-overflow: ellipsis" href="{{ $deployment->getRoute() }}">{{ $deployment->commit_message }}</a>
+                        @if ($deployment->isRedeploy())
+                            <span class="inline-block ml-2 text-gray-600" title="Redeploy of Deployment #{{ $deployment->redeployment->id }}">
+                                <x-heroicon-o-refresh class="w-4 h-4 stroke-current" aria-hidden="true" />
+                                <span class="sr-only">Redeploy of Deployment #{{ $deployment->redeployment->id }}</span>
+                            </span>
+                        @endif
+                    </div>
                 </x-td>
                 <x-td>
                     <x-status :status="$deployment->status" />

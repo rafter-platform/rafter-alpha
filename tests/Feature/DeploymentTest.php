@@ -250,6 +250,9 @@ class DeploymentTest extends TestCase
             $this->assertTrue($deploymentStep->exists());
             $this->assertTrue($deploymentStep->hasFinished());
         }
+
+        $this->assertTrue($newDeployment->redeployment->is($deployment));
+        $this->assertTrue($newDeployment->isRedeploy());
     }
 
     public function test_redeploy_performs_initial_deploy_if_no_successful_deployment_exists()
