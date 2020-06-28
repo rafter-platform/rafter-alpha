@@ -375,6 +375,7 @@ class Environment extends Model
             'commit_message' => $deployment->commit_message,
             'image' => $deployment->image,
             'initiator_id' => $initiatorId,
+            'redeployment_id' => $deployment->id,
         ]);
 
         $newDeployment->createSourceProviderDeployment([
