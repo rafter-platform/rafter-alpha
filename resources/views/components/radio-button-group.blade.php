@@ -1,4 +1,8 @@
 <div class="mb-8">
+    @if ($label ?? false)
+        <x-label :for="$name">{{ $label }}</x-label>
+    @endif
+
     @if ($helper ?? false)
         <x-helper-text>{{ $helper }}</x-helper-text>
     @endif

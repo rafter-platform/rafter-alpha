@@ -243,7 +243,7 @@
 
         <div>
             @if ($withDatabase && $showDatabaseInstanceForm)
-                <p>DB Instance Form</p>
+                <livewire:database-instance-form />
             @endif
         </div>
 

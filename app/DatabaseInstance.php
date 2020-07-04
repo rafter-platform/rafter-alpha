@@ -60,6 +60,12 @@ class DatabaseInstance extends Model
         'options' => Options::class,
     ];
 
+    protected $defaultOptions = [
+        'version' => 'MYSQL_5_7',
+        'tier' => 'db-f1-micro',
+        'size' => 10,
+    ];
+
     public function googleProject()
     {
         return $this->belongsTo('App\GoogleProject');
