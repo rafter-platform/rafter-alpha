@@ -17,47 +17,49 @@
             </div>
         </form>
     </div>
-    <x-table>
-        <x-slot name="thead">
-            <x-th>
-                Command
-            </x-th>
-            <x-th>
-                Status
-            </x-th>
-            <x-th>
-                When
-            </x-th>
-            <x-th>
-                Initiated By
-            </x-th>
-            <x-th last />
-        </x-slot>
+    @if (count($commands) > 0)
+        <x-table>
+            <x-slot name="thead">
+                <x-th>
+                    Command
+                </x-th>
+                <x-th>
+                    Status
+                </x-th>
+                <x-th>
+                    When
+                </x-th>
+                <x-th>
+                    Initiated By
+                </x-th>
+                <x-th last />
+            </x-slot>
 
-        @foreach ($commands as $idx => $command)
-            <x-tr>
-                <x-td>
-                    <a href="{{ $command->url() }}"><code>{{ $command->prefix() }} {{ $command->command }}</code></a>
-                </x-td>
-                <x-td>
-                    <x-status :status="$command->status"></x-status>
-                </x-td>
-                <x-td>
-                    {{ $command->created_at->diffForHumans() }}
-                </x-td>
-                <x-td>
-                    {{ $command->user->name }}
-                </x-td>
-                <x-td last>
-                    <x-text-link href="{{ $command->url() }}">
-                        View
-                    </x-text-link>
-                </x-td>
-            </x-tr>
-        @endforeach
+            @foreach ($commands as $idx => $command)
+                <x-tr>
+                    <x-td>
+                        <a href="{{ $command->url() }}"><code>{{ $command->prefix() }} {{ $command->command }}</code></a>
+                    </x-td>
+                    <x-td>
+                        <x-status :status="$command->status"></x-status>
+                    </x-td>
+                    <x-td>
+                        {{ $command->created_at->diffForHumans() }}
+                    </x-td>
+                    <x-td>
+                        {{ $command->user->name }}
+                    </x-td>
+                    <x-td last>
+                        <x-text-link href="{{ $command->url() }}">
+                            View
+                        </x-text-link>
+                    </x-td>
+                </x-tr>
+            @endforeach
 
-        <x-slot name="pagination">
-            {{ $commands->links('pagination') }}
-        </x-slot>
-    </x-table-row>
+            <x-slot name="pagination">
+                {{ $commands->links('pagination') }}
+            </x-slot>
+        </x-table-row>
+    @endif
 </div>
