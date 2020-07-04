@@ -14,7 +14,10 @@
     </x-header-meta>
 </x-slot>
 <x-slot name="actions">
-    <x-button :href="$environment->url">View</x-button>
+    <x-button :href="$environment->url" target="_blank" rel="noopener">
+        <x-heroicon-o-external-link class="inline-block w-4 h-4 text-current mr-1" />
+        Open
+    </x-button>
 </x-slot>
 
 <div class="mb-4 sm:mb-0 sm:flex justify-between items-center ">

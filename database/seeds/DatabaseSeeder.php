@@ -78,6 +78,7 @@ class DatabaseSeeder extends Seeder
             $deployment = $environment->deployments()->create([
                 'initiator_id' => $user->id,
                 'commit_message' => 'Initial (seeded) deploy.',
+                'commit_hash' => '17bff952774306b0a346090606dce3da9007ce76',
                 'status' => 'successful',
             ]);
 

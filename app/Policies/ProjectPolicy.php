@@ -91,4 +91,9 @@ class ProjectPolicy
     {
         return $user->currentTeam->is($project->team);
     }
+
+    public function createEnvironments(User $user, Project $project)
+    {
+        return $user->currentTeam->is($project->team);
+    }
 }

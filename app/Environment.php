@@ -220,14 +220,14 @@ class Environment extends Model
 
             $vars->inject([
                 'APP_NAME' => $this->project->name,
-                'APP_ENV' => $this->name,
+                'APP_ENV' => Str::slug($this->name),
                 'APP_KEY' => $appKey,
             ]);
         }
 
         if ($this->project->isRails()) {
             $vars->inject([
-                'RAILS_ENV' => $this->name,
+                'RAILS_ENV' => Str::slug($this->name),
                 'RAILS_SERVE_STATIC_FILES' => true,
                 'RAILS_LOG_TO_STDOUT' => true,
             ]);
@@ -375,6 +375,7 @@ class Environment extends Model
             'commit_message' => $deployment->commit_message,
             'image' => $deployment->image,
             'initiator_id' => $initiatorId,
+            'redeployment_id' => $deployment->id,
         ]);
 
         $newDeployment->createSourceProviderDeployment([

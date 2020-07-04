@@ -17,6 +17,7 @@ class CreateDeploymentsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('environment_id')->index();
             $table->unsignedBigInteger('initiator_id')->nullable();
+            $table->unsignedBigInteger('redeployment_id')->nullable();
             $table->string('status')->default('queued');
             $table->string('operation_name')->nullable();
             $table->string('image')->nullable();

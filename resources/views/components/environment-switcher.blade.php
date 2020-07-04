@@ -5,7 +5,7 @@
         @endforeach
     </x-dropdown-menu-group>
     <x-dropdown-menu-divider />
-    <x-dropdown-menu-item href="#" has-icon>
+    <x-dropdown-menu-item :href="route('projects.environments.create', [$project])" has-icon>
         <x-slot name="icon">
             <x:heroicon-o-plus :class="\App\View\Components\DropdownMenu::iconClass()" />
         </x-slot>
