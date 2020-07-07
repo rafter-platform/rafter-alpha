@@ -1,12 +1,12 @@
 <div>
     <x-radio-button-group label="What type of database?" name="type">
-        <x-radio-button wire:model="type" name="type" value="mysql">MySQL</x-radio-button>
-        <x-radio-button wire:model="type" name="type" value="postgres" disabled>Postgres</x-radio-button>
+        <x-radio-button wire:model="type" name="type" value="mysql" small>MySQL</x-radio-button>
+        <x-radio-button wire:model="type" name="type" value="postgres" disabled small>Postgres</x-radio-button>
     </x-radio-button-group>
 
     <x-radio-button-group label="Which version?" name="version">
         @foreach ($versions as $key => $value)
-            <x-radio-button wire:model="version" name="version" :value="$key">{{ $value }}</x-radio-button>
+            <x-radio-button wire:model="version" name="version" :value="$key" small>{{ $value }}</x-radio-button>
         @endforeach
     </x-radio-button-group>
 
