@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\DatabaseInstance;
+use App\RandomName;
 use Livewire\Component;
 
 class DatabaseInstanceForm extends Component
@@ -20,6 +21,7 @@ class DatabaseInstanceForm extends Component
         $this->version = $instance->getOption('version');
         $this->tier = $instance->getOption('tier');
         $this->size = $instance->getOption('size');
+        $this->name = RandomName::withToken();
     }
 
     public function render()
@@ -28,5 +30,10 @@ class DatabaseInstanceForm extends Component
             'versions' => DatabaseInstance::VERSIONS,
             'tiers' => DatabaseInstance::TIERS['mysql'],
         ]);
+    }
+
+    public function create()
+    {
+        # code...
     }
 }
