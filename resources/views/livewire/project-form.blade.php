@@ -171,36 +171,35 @@
 
         <div>
             @if ($showGoogleProjectForm)
-                <div class="bg-white shadow sm:rounded-lg mb-8">
-                    <div class="px-4 py-5 sm:p-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Add Google Cloud Project</h3>
-                        <div class="mt-2 text-sm leading-5 text-gray-600 mb-8 prose">
-                            <p class="mb-2">
-                                To add a Google Cloud project to Rafter, start by creating a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">service account</a> for your project.
-                                Give it a name that makes sense to you, like <code>rafter</code>.
-                            </p>
+                <x-panel title="Add Google Cloud Project">
+                    <x-slot name="instructions">
+                        <p>
+                            To add a Google Cloud project to Rafter, start by creating a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">service account</a> for your project.
+                            Give it a name that makes sense to you, like <code>rafter</code>.
+                        </p>
 
-                            <p class="mb-2">
-                                <b>Important:</b> You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
-                                On the final step, click <b>Create Key</b> and download a JSON-formatted key. Attach the JSON file below.
-                            </p>
+                        <p>
+                            <b>Important:</b> You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
+                            On the final step, click <b>Create Key</b> and download a JSON-formatted key. Attach the JSON file below.
+                        </p>
 
-                            <p>
-                                Note: An active billing account must be attached to your Google Cloud project.
-                            </p>
-                        </div>
-                        <x-input
-                            wire:model="serviceAccountJson"
-                            x-ref="serviceAccountJson"
-                            name="serviceAccountJson"
-                            label="Attach the service account JSON file"
-                            type="file"
-                            accept="application/json" />
-                        <div class="text-right">
-                            <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
-                        </div>
-                    </div>
-                </div>
+                        <p>
+                            Note: An active billing account must be attached to your Google Cloud project.
+                        </p>
+                    </x-slot>
+
+                    <x-input
+                        wire:model="serviceAccountJson"
+                        x-ref="serviceAccountJson"
+                        name="serviceAccountJson"
+                        label="Attach the service account JSON file"
+                        type="file"
+                        accept="application/json" />
+
+                    <x-slot name="actions">
+                        <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
+                    </x-slot>
+                </x-panel>
             @endif
         </div>
 
@@ -243,7 +242,9 @@
 
         <div>
             @if ($withDatabase && $showDatabaseInstanceForm)
-                <livewire:database-instance-form />
+                <x-panel title="Add Database Instance">
+                    <livewire:database-instance-form />
+                </x-panel>
             @endif
         </div>
 

@@ -12,9 +12,9 @@
         @endforeach
     </x-radio-button-group>
 
-    <x-radio-button-group label="Which tier?" name="tier">
+    <x-radio-group label="Which tier?" name="tier">
         @foreach ($tiers as $key => $value)
-            <x-radio-button wire:model="tier" name="tier" :value="$key" small>{{ $value }}</x-radio-button>
+            <x-radio wire:model="tier" name="tier" :value="$key" small>{{ $value }}</x-radio>
         @endforeach
-    </x-radio-button-group>
+    </x-radio-group>
 </div>
