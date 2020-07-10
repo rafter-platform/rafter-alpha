@@ -42,12 +42,14 @@ class SyncDatabaseInstances implements ShouldQueue
             foreach ($instances['items'] ?? [] as $instance) {
                 $db = $this->googleProject->databaseInstances()->create([
                     'name' => $instance['name'],
-                    'version' => $instance['databaseVersion'],
                     'type' => 'mysql', // TODO: Support Postgres
-                    'tier' => $instance['settings']['tier'],
-                    'size' => $instance['settings']['dataDiskSizeGb'],
                     'status' => DatabaseInstance::STATUS_ACTIVE,
-                    'region' => $instance['region'],
+                    'options' => [
+                        'version' => $instance['databaseVersion'],
+                        'tier' => $instance['settings']['tier'],
+                        'size' => $instance['settings']['dataDiskSizeGb'],
+                        'region' => $instance['region'],
+                    ],
                     'synced' => true,
                 ]);
 

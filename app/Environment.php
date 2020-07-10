@@ -196,10 +196,10 @@ class Environment extends Model
      *
      * @return void
      */
-    public function provision($initialVariables = '')
+    public function provision($options = [])
     {
-        $this->setInitialEnvironmentVariables($initialVariables);
-        $this->createInitialDeployment();
+        $this->setInitialEnvironmentVariables($options['variables'] ?? '');
+        $this->createInitialDeployment($options);
     }
 
     /**
@@ -288,7 +288,7 @@ class Environment extends Model
     /**
      * Create an initial deployment on Cloud Run.
      */
-    public function createInitialDeployment()
+    public function createInitialDeployment($options = [])
     {
         // TODO: Make more flexible (support manual pushes, etc)
         $deployment = $this->deployments()->create([
@@ -301,11 +301,14 @@ class Environment extends Model
             'manual' => true,
         ]);
 
-        $jobs = DeploymentSteps::for($deployment)
-            ->initialDeployment()
-            ->get();
+        $steps = DeploymentSteps::for($deployment)
+            ->initialDeployment();
 
-        Bus::dispatchChain($jobs);
+        if ($options['with_database_instance_id'] ?? false) {
+            $steps->withDatabase($options['with_database_instance_id']);
+        }
+
+        Bus::dispatchChain($steps->get());
 
         return $deployment;
     }
@@ -337,6 +340,8 @@ class Environment extends Model
 
         if (!$this->hasBeenDeployedSuccessfully()) {
             $steps->initialDeployment();
+
+            // TODO: Find a way to pass along database instance preferences, too
         }
 
         Bus::dispatchChain($steps->get());

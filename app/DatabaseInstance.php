@@ -122,6 +122,11 @@ class DatabaseInstance extends Model
         $this->update(['status' => static::STATUS_ACTIVE]);
     }
 
+    public function isActive()
+    {
+        return $this->status == static::STATUS_ACTIVE;
+    }
+
     /**
      * Set the status to failed.
      */

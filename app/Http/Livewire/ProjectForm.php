@@ -190,6 +190,7 @@ class ProjectForm extends Component
 
         $project->createInitialEnvironments([
             'variables' => $data['variables'],
+            'with_database_instance_id' => $data['databaseInstanceId'],
         ]);
 
         session()->flash('notify', 'Project created!');

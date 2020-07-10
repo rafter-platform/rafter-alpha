@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\SyncDatabaseInstances;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
@@ -47,6 +48,8 @@ class DatabaseSeeder extends Seeder
                 'project_number' => $googleProjectNumber,
                 'service_account_json' => json_decode(File::get(__DIR__ . '/../../service-account.json')),
             ]);
+
+            SyncDatabaseInstances::dispatch($googleProject);
 
             $project = $team->projects()->create([
                 'name' => 'rafter-example-laravel',
