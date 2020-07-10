@@ -167,16 +167,18 @@ class ProjectForm extends Component
             ],
             'variables' => ['nullable', 'string'],
             'databaseInstanceId' => [
+                Rule::requiredIf($this->withDatabase),
+                'nullable',
                 Rule::exists('database_instances', 'id')->where(function ($query) {
                     $query->where('google_project_id', $this->googleProjectId);
                 }),
-                'required_if:withDatabase,true'
             ],
         ], [
             'type.required' => 'You must select a project type.',
             'googleProjectId.required' => 'You must select a Google Project.',
             'region.required' => 'You must select a region.',
             'name.unique' => 'This name has already been taken by a project on your team. Please choose a different name.',
+            'databaseInstanceId.required' => 'You must select a database instance.',
         ]);
 
         $project = currentTeam()->projects()->create([
