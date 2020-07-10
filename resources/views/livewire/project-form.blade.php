@@ -208,9 +208,9 @@
                 <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
 
                 <x-radio-button-group name="region">
-                    @foreach ($regions as $key => $region)
+                    @foreach ($regions as $key => $label)
                     <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
-                        {{ $region }} ({{ $key }})
+                        {{ $label }} ({{ $key }})
                     </x-radio-button>
                     @endforeach
                 </x-radio-button-group>
@@ -241,9 +241,9 @@
         </div>
 
         <div>
-            @if ($withDatabase && $showDatabaseInstanceForm)
+            @if ($withDatabase && $showDatabaseInstanceForm && !$databaseInstanceId)
                 <x-panel title="Add Database Instance">
-                    <livewire:database-instance-form />
+                    <livewire:database-instance-form :google-project-id="$googleProjectId" :region="$region" />
                 </x-panel>
             @endif
         </div>

@@ -28,6 +28,9 @@ class ProjectForm extends Component
     public $withDatabase = false;
     public $showGoogleProjectForm = false;
     public $showDatabaseInstanceForm = false;
+    public $databaseInstanceId;
+
+    protected $listeners = ['databaseInstanceCreated'];
 
     public function updated($field)
     {
@@ -163,6 +166,12 @@ class ProjectForm extends Component
                 Rule::in(array_keys(GoogleProject::REGIONS)),
             ],
             'variables' => ['nullable', 'string'],
+            'databaseInstanceId' => [
+                Rule::exists('database_instances', 'id')->where(function ($query) {
+                    $query->where('google_project_id', $this->googleProjectId);
+                }),
+                'required_if:withDatabase,true'
+            ],
         ], [
             'type.required' => 'You must select a project type.',
             'googleProjectId.required' => 'You must select a Google Project.',
@@ -191,5 +200,11 @@ class ProjectForm extends Component
     public function getSourceProviderProperty()
     {
         return optional(SourceProvider::find($this->sourceProviderId));
+    }
+
+    public function databaseInstanceCreated($databaseInstanceId)
+    {
+        $this->showDatabaseInstanceForm = false;
+        $this->databaseInstanceId = $databaseInstanceId;
     }
 }

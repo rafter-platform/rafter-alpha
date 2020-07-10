@@ -1,6 +1,6 @@
-<div class="mb-8">
+<fieldset class="mb-8">
     @if ($label ?? false)
-        <x-label :for="$name">{{ $label }}</x-label>
+        <legend class="block text-gray-700 text-sm font-medium mb-1">{{ $label }}</legend>
     @endif
 
     @if ($helper ?? false)
@@ -18,4 +18,4 @@
             </x-validation-error>
         @enderror
     @endif
-</div>
+</fieldset>

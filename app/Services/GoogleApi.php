@@ -306,6 +306,17 @@ class GoogleApi
     }
 
     /**
+     * Get a single database instance
+     *
+     * @param string $instance
+     * @return array
+     */
+    public function getDatabaseInstance(string $instance)
+    {
+        return $this->request("https://www.googleapis.com/sql/v1beta4/projects/{$this->googleProject->project_id}/instances/{$instance}");
+    }
+
+    /**
      * Get a current database operation.
      *
      * @return \App\GoogleCloud\DatabaseOperation

@@ -16,9 +16,41 @@
         @endforeach
     </x-radio-group>
 
-    <x-input wire:model="name" name="name" label="Give your database instance a name" />
+    <x-radio-button-group name="databaseGoogleProjectId" label="Which Google Cloud project?">
+        @foreach ($projects as $project)
+        <x-radio-button wire:model="databaseGoogleProjectId" name="databaseGoogleProjectId" value="{{ $project->id }}" small>
+            <x-slot name="icon">
+                <x-icon-google-cloud class="text-current w-6 h-6" />
+            </x-slot>
+            {{ $project->project_id }}
+        </x-radio-button>
+        @endforeach
+    </x-radio-button-group>
+
+    <div>
+        @if ($databaseGoogleProjectId)
+            <x-radio-button-group name="databaseRegion" label="Which Google Cloud region?">
+                @foreach ($regions as $key => $region)
+                <x-radio-button wire:model="databaseRegion" name="databaseRegion" value="{{ $key }}" small>
+                    {{ $region }} ({{ $key }})
+                </x-radio-button>
+                @endforeach
+            </x-radio-button-group>
+        @endif
+    </div>
+
+    <div>
+        @if ($databaseRegion)
+            <x-input wire:model="name" name="name" label="Give your database instance a name" />
+        @endif
+    </div>
 
     <div class="text-right">
-        <x-button type="submit" wire:click.prevent="create">Create Database Instance</x-button>
+        <x-button
+            wire:click.prevent="create"
+            wire:loading.attr="disabled"
+            wire:target="create">
+            Create Database Instance
+        </x-button>
     </div>
 </div>

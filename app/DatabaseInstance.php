@@ -48,6 +48,11 @@ class DatabaseInstance extends Model
         ]
     ];
 
+    /**
+     * The maximum SSD size for a database instance.
+     */
+    const MAX_SIZE_GB = 30720;
+
     const STATUS_PENDING = 'pending';
     const STATUS_CREATING = 'creating';
     const STATUS_ACTIVE = 'active';
