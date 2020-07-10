@@ -1,14 +1,4 @@
-<form
-    x-data="{
-        showGoogleProjectForm: false
-    }"
-    x-init="
-        window.livewire.on('googleProjectAdded', projectId => {
-            showGoogleProjectForm = false;
-            $refs.serviceAccountJson.value = '';
-        })
-    "
-    wire:submit.prevent="create">
+<form wire:submit.prevent="create">
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group name="sourceType">
@@ -171,7 +161,7 @@
                 {{ $project->project_id }}
             </x-radio-button>
             @endforeach
-            <x-radio-button @click.prevent="showGoogleProjectForm = !showGoogleProjectForm">
+            <x-radio-button wire:click.prevent="$set('showGoogleProjectForm', {{ !$showGoogleProjectForm }})">
                 <x-slot name="icon">
                     <x-heroicon-o-plus class="text-current w-6 h-6" />
                 </x-slot>
@@ -179,48 +169,84 @@
             </x-radio-button>
         </x-radio-button-group>
 
-        <div x-show="showGoogleProjectForm" class="bg-white shadow sm:rounded-lg mb-8">
-            <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Add Google Cloud Project</h3>
-                <div class="mt-2 text-sm leading-5 text-gray-600 mb-8 prose">
-                    <p class="mb-2">
-                        To add a Google Cloud project to Rafter, start by creating a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">service account</a> for your project.
-                        Give it a name that makes sense to you, like <code>rafter</code>.
-                    </p>
+        <div>
+            @if ($showGoogleProjectForm)
+                <x-panel title="Add Google Cloud Project">
+                    <x-slot name="instructions">
+                        <p>
+                            To add a Google Cloud project to Rafter, start by creating a <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">service account</a> for your project.
+                            Give it a name that makes sense to you, like <code>rafter</code>.
+                        </p>
 
-                    <p class="mb-2">
-                        <b>Important:</b> You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
-                        On the final step, click <b>Create Key</b> and download a JSON-formatted key. Attach the JSON file below.
-                    </p>
+                        <p>
+                            <b>Important:</b> You must give the service account the <b>Owner</b> role in order for Rafter to function properly.
+                            On the final step, click <b>Create Key</b> and download a JSON-formatted key. Attach the JSON file below.
+                        </p>
 
-                    <p>
-                        Note: An active billing account must be attached to your Google Cloud project.
-                    </p>
-                </div>
-                <x-input
-                    wire:model="serviceAccountJson"
-                    x-ref="serviceAccountJson"
-                    name="serviceAccountJson"
-                    label="Attach the service account JSON file"
-                    type="file"
-                    accept="application/json" />
-                <div class="text-right">
-                    <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
-                </div>
-            </div>
+                        <p>
+                            Note: An active billing account must be attached to your Google Cloud project.
+                        </p>
+                    </x-slot>
+
+                    <x-input
+                        wire:model="serviceAccountJson"
+                        x-ref="serviceAccountJson"
+                        name="serviceAccountJson"
+                        label="Attach the service account JSON file"
+                        type="file"
+                        accept="application/json" />
+
+                    <x-slot name="actions">
+                        <x-button wire:click.prevent="addGoogleProject">Add Project</x-button>
+                    </x-slot>
+                </x-panel>
+            @endif
         </div>
 
-        @if ($googleProjectId)
-            <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
+        <div>
+            @if ($googleProjectId)
+                <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
 
-            <x-radio-button-group name="region">
-                @foreach ($regions as $key => $region)
-                <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
-                    {{ $region }} ({{ $key }})
-                </x-radio-button>
-                @endforeach
-            </x-radio-button-group>
-        @endif
+                <x-radio-button-group name="region">
+                    @foreach ($regions as $key => $label)
+                    <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
+                        {{ $label }} ({{ $key }})
+                    </x-radio-button>
+                    @endforeach
+                </x-radio-button-group>
+            @endif
+        </div>
+
+        <h2 class="text-lg font-medium mb-4 mt-12">What else does your project require?</h2>
+
+        <x-toggle label="Would you like to connect this project to a database?" wire:model="withDatabase" name="withDatabase"></x-toggle>
+
+        <div>
+            @if ($withDatabase)
+                <x-radio-button-group name="databaseInstanceId">
+                    <x-slot name="helper">Select the database instance you'd like to connect to your project, or create a new one.</x-slot>
+                    @foreach ($databaseInstances as $instance)
+                        <x-radio-button wire:model="databaseInstanceId" name="databaseInstanceId" :value="$instance->id" small>
+                            {{ $instance->name }} ({{ $instance->type }})
+                        </x-radio-button>
+                    @endforeach
+                    <x-radio-button wire:click.prevent="$set('showDatabaseInstanceForm', {{ !$showDatabaseInstanceForm }})" small>
+                        <x-slot name="icon">
+                            <x-heroicon-o-plus class="text-current w-6 h-6" />
+                        </x-slot>
+                        New Database
+                    </x-radio-button>
+                </x-radio-button-group>
+            @endif
+        </div>
+
+        <div>
+            @if ($withDatabase && $showDatabaseInstanceForm && !$databaseInstanceId)
+                <x-panel title="Add Database Instance">
+                    <livewire:database-instance-form :google-project-id="$googleProjectId" :region="$region" />
+                </x-panel>
+            @endif
+        </div>
 
         <div class="text-right">
             <x-button

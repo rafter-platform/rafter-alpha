@@ -48,6 +48,11 @@ class DatabaseInstance extends Model
         ]
     ];
 
+    /**
+     * The maximum SSD size for a database instance.
+     */
+    const MAX_SIZE_GB = 30720;
+
     const STATUS_PENDING = 'pending';
     const STATUS_CREATING = 'creating';
     const STATUS_ACTIVE = 'active';
@@ -58,6 +63,12 @@ class DatabaseInstance extends Model
     protected $casts = [
         'synced' => 'boolean',
         'options' => Options::class,
+    ];
+
+    protected $defaultOptions = [
+        'version' => 'MYSQL_5_7',
+        'tier' => 'db-f1-micro',
+        'size' => 10,
     ];
 
     public function googleProject()
@@ -109,6 +120,11 @@ class DatabaseInstance extends Model
     public function setActive()
     {
         $this->update(['status' => static::STATUS_ACTIVE]);
+    }
+
+    public function isActive()
+    {
+        return $this->status == static::STATUS_ACTIVE;
     }
 
     /**

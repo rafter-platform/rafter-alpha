@@ -60,6 +60,11 @@ class Database extends Model
         $this->update(['status' => static::STATUS_ACTIVE]);
     }
 
+    public function isActive()
+    {
+        return $this->status == static::STATUS_ACTIVE;
+    }
+
     public function setFailed()
     {
         $this->update(['status' => static::STATUS_FAILED]);

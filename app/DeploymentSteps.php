@@ -4,6 +4,7 @@ namespace App;
 
 use App\Jobs\ConfigureQueues;
 use App\Jobs\CreateCloudRunService;
+use App\Jobs\CreateDatabase;
 use App\Jobs\CreateImageForDeployment;
 use App\Jobs\EnsureAppIsPublic;
 use App\Jobs\FinalizeDeployment;
@@ -13,6 +14,8 @@ use App\Jobs\StartScheduler;
 use App\Jobs\UpdateCloudRunService;
 use App\Jobs\UpdateCloudRunServiceWithUrls;
 use App\Jobs\WaitForCloudRunServiceToDeploy;
+use App\Jobs\WaitForDatabaseInstanceToProvision;
+use App\Jobs\WaitForDatabaseToProvision;
 use App\Jobs\WaitForGoogleProjectToBeProvisioned;
 use App\Jobs\WaitForImageToBeBuilt;
 
@@ -23,6 +26,8 @@ class DeploymentSteps
     protected $isInitialDeployment = false;
 
     protected $isRedeploy = false;
+
+    protected $waitsForDatabaseInstanceId;
 
     /**
      * @var \Illuminate\Support\Collection
@@ -54,6 +59,13 @@ class DeploymentSteps
         return $this;
     }
 
+    public function withDatabase(int $databaseInstanceId)
+    {
+        $this->waitsForDatabaseInstanceId = $databaseInstanceId;
+
+        return $this;
+    }
+
     protected function projectType(): string
     {
         return $this->deployment->environment->project->type;
@@ -62,6 +74,11 @@ class DeploymentSteps
     protected function shouldStartScheduler()
     {
         return $this->isInitialDeployment && $this->usesScheduler();
+    }
+
+    protected function shouldWaitForDatabase()
+    {
+        return $this->isInitialDeployment && !empty($this->waitsForDatabaseInstanceId);
     }
 
     protected function usesScheduler(): bool
@@ -82,6 +99,12 @@ class DeploymentSteps
 
         if ($this->isInitialDeployment) {
             $this->addStep(WaitForGoogleProjectToBeProvisioned::class);
+        }
+
+        if ($this->shouldWaitForDatabase()) {
+            $this->addStep([WaitForDatabaseInstanceToProvision::class, $this->waitsForDatabaseInstanceId]);
+            $this->addStep([CreateDatabase::class, $this->waitsForDatabaseInstanceId]);
+            $this->addStep(WaitForDatabaseToProvision::class);
         }
 
         if (!$this->isRedeploy) {
@@ -115,7 +138,14 @@ class DeploymentSteps
         $this->addStep(FinalizeDeployment::class);
 
         return $this->steps
-            ->map(fn ($step) => new $step($this->deployment))
+            ->map(function ($step) {
+                if (is_array($step)) {
+                    $class = array_shift($step);
+                    return new $class($this->deployment, ...$step);
+                }
+
+                return new $step($this->deployment);
+            })
             ->toArray();
     }
 }

@@ -49,14 +49,12 @@ class Project extends Model
      */
     public function createInitialEnvironments($options = [])
     {
-        $variables = $options['variables'] ?? '';
-
         collect(Environment::INITIAL_ENVIRONMENTS)
-            ->each(function ($name) use ($variables) {
+            ->each(function ($name) use ($options) {
                 tap($this->environments()->create([
                     'name' => $name
-                ]), function ($environment) use ($variables) {
-                    $environment->provision($variables);
+                ]), function ($environment) use ($options) {
+                    $environment->provision($options);
                 });
             });
     }

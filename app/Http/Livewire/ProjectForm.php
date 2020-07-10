@@ -25,6 +25,12 @@ class ProjectForm extends Component
     public $region;
     public $serviceAccountJson;
     public $variables;
+    public $withDatabase = false;
+    public $showGoogleProjectForm = false;
+    public $showDatabaseInstanceForm = false;
+    public $databaseInstanceId;
+
+    protected $listeners = ['databaseInstanceCreated'];
 
     public function updated($field)
     {
@@ -50,10 +56,11 @@ class ProjectForm extends Component
     public function render()
     {
         return view('livewire.project-form', [
-            'projects' => auth()->user()->currentTeam->googleProjects,
+            'projects' => currentTeam()->googleProjects,
             'sourceProviders' => auth()->user()->sourceProviders,
             'regions' => GoogleProject::REGIONS,
             'newGitHubInstallationUrl' => GitHub::installationUrl(),
+            'databaseInstances' => currentTeam()->databaseInstances,
         ]);
     }
 
@@ -128,7 +135,7 @@ class ProjectForm extends Component
 
         $this->reset('serviceAccountJson');
         $this->googleProjectId = $project->id;
-        $this->emit('googleProjectAdded', $project->id);
+        $this->showGoogleProjectForm = false;
     }
 
     public function create()
@@ -159,11 +166,19 @@ class ProjectForm extends Component
                 Rule::in(array_keys(GoogleProject::REGIONS)),
             ],
             'variables' => ['nullable', 'string'],
+            'databaseInstanceId' => [
+                Rule::requiredIf($this->withDatabase),
+                'nullable',
+                Rule::exists('database_instances', 'id')->where(function ($query) {
+                    $query->where('google_project_id', $this->googleProjectId);
+                }),
+            ],
         ], [
             'type.required' => 'You must select a project type.',
             'googleProjectId.required' => 'You must select a Google Project.',
             'region.required' => 'You must select a region.',
             'name.unique' => 'This name has already been taken by a project on your team. Please choose a different name.',
+            'databaseInstanceId.required' => 'You must select a database instance.',
         ]);
 
         $project = currentTeam()->projects()->create([
@@ -177,6 +192,7 @@ class ProjectForm extends Component
 
         $project->createInitialEnvironments([
             'variables' => $data['variables'],
+            'with_database_instance_id' => $data['databaseInstanceId'],
         ]);
 
         session()->flash('notify', 'Project created!');
@@ -187,5 +203,11 @@ class ProjectForm extends Component
     public function getSourceProviderProperty()
     {
         return optional(SourceProvider::find($this->sourceProviderId));
+    }
+
+    public function databaseInstanceCreated($databaseInstanceId)
+    {
+        $this->showDatabaseInstanceForm = false;
+        $this->databaseInstanceId = $databaseInstanceId;
     }
 }
