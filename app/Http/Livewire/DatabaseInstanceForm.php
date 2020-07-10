@@ -38,8 +38,11 @@ class DatabaseInstanceForm extends Component
             'name' => [
                 'required',
                 'max:78',
+                'regex:/^[a-z][a-z\d\-]*$/',
                 new ValidDatabaseInstanceName(GoogleProject::find($this->databaseGoogleProjectId))
             ],
+        ], [
+            'name.regex' => 'Use lowercase letters, numbers, or hyphens. Start with a letter.',
         ]);
     }
 
@@ -107,9 +110,11 @@ class DatabaseInstanceForm extends Component
                 $this->addError('name', 'This database name is already in use or was used too recently.');
             }
 
+            $this->addError('databaseInstance', $e->response['error']['message'] ?? $e->getMessage());
+
             $instance->delete();
 
-            throw $e;
+            return;
         }
     }
 }

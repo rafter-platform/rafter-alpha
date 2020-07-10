@@ -241,7 +241,7 @@
         </div>
 
         <div>
-            @if ($withDatabase && $showDatabaseInstanceForm && !$databaseInstanceId)
+            @if ($withDatabase && $showDatabaseInstanceForm)
                 <x-panel title="Add Database Instance">
                     <livewire:database-instance-form :google-project-id="$googleProjectId" :region="$region" />
                 </x-panel>

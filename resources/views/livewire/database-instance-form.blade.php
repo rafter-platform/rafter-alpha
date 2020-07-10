@@ -45,6 +45,12 @@
         @endif
     </div>
 
+    @error('databaseInstance')
+        <x-validation-error>
+            {{ $message }}
+        </x-validation-error>
+    @enderror
+
     <div class="text-right">
         <x-button
             wire:click.prevent="create"
