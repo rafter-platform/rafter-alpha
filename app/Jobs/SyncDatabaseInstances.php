@@ -61,6 +61,16 @@ class SyncDatabaseInstances implements ShouldQueue
                         'status' => Database::STATUS_ACTIVE,
                     ]);
                 }
+
+                $users = $this->googleProject->client()->getDatabaseUsers($db);
+
+                foreach ($users['items'] ?? [] as $user) {
+                    $db->databaseUsers()->create([
+                        'name' => $user['name'],
+                        'password' => $user['password'] ?? 'unknown',
+                        'status' => Database::STATUS_ACTIVE,
+                    ]);
+                }
             }
         } catch (Exception $e) {
             $this->fail($e);

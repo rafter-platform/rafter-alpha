@@ -73,12 +73,17 @@ class DatabaseInstance extends Model
 
     public function googleProject()
     {
-        return $this->belongsTo('App\GoogleProject');
+        return $this->belongsTo(GoogleProject::class);
     }
 
     public function databases()
     {
-        return $this->hasMany('App\Database');
+        return $this->hasMany(Database::class);
+    }
+
+    public function databaseUsers()
+    {
+        return $this->hasMany(DatabaseUser::class);
     }
 
     /**

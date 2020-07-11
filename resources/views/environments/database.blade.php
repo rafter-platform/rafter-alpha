@@ -9,7 +9,10 @@
 
         @if ($environment->database()->exists())
             <p>
-                Connected to <b>{{ $environment->database->name }}</b> on <b>{{ $environment->database->databaseInstance->name }}</b>.
+                Connected to
+                <b>{{ $environment->database->name }}</b> on
+                <b>{{ $environment->database->databaseInstance->name }}</b> with user
+                <b>{{ $environment->databaseUser->name }}</b>.
             </p>
 
             <form action="{{ route('projects.environments.database.destroy', [$project, $environment, $environment->database]) }}" method="POST">
