@@ -2,13 +2,15 @@
 
 namespace App\GoogleCloud;
 
+use App\Contracts\GoogleConfig;
 use App\Database;
 
-class DatabaseConfig
+class DatabaseConfig implements GoogleConfig
 {
     protected $database;
 
-    public function __construct(Database $database) {
+    public function __construct(Database $database)
+    {
         $this->database = $database;
     }
 
@@ -32,7 +34,7 @@ class DatabaseConfig
         return $this->database->name;
     }
 
-    public function config()
+    public function config(): array
     {
         return [
             'kind' => 'sql#database',

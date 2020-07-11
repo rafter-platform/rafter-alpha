@@ -17,7 +17,10 @@ class WaitForDatabaseToProvision implements ShouldQueue
 
     public function handle()
     {
-        if ($this->model->environment->database->isActive()) {
+        if (
+            $this->model->environment->database->isActive()
+            && $this->model->environment->databaseUser->isActive()
+        ) {
             return true;
         }
 

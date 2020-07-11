@@ -45,22 +45,27 @@ class Environment extends Model
 
     public function project()
     {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo(Project::class);
     }
 
     public function deployments()
     {
-        return $this->hasMany('App\Deployment')->latest('id');
+        return $this->hasMany(Deployment::class)->latest('id');
     }
 
     public function database()
     {
-        return $this->belongsTo('App\Database');
+        return $this->belongsTo(Database::class);
+    }
+
+    public function databaseUser()
+    {
+        return $this->belongsTo(DatabaseUser::class);
     }
 
     public function commands()
     {
-        return $this->hasMany('App\Command')->latest();
+        return $this->hasMany(Command::class)->latest();
     }
 
     public function sourceProvider()
@@ -70,7 +75,7 @@ class Environment extends Model
 
     public function domainMappings()
     {
-        return $this->hasMany('App\DomainMapping')->latest();
+        return $this->hasMany(DomainMapping::class)->latest();
     }
 
     /**
@@ -80,7 +85,7 @@ class Environment extends Model
      */
     public function activeDeployment()
     {
-        return $this->belongsTo('App\Deployment', 'active_deployment_id');
+        return $this->belongsTo(Deployment::class, 'active_deployment_id');
     }
 
     public function primaryDomain(): string
@@ -109,18 +114,27 @@ class Environment extends Model
     }
 
     /**
-     * Create a database for this environment on a given DatabaseInstance.
+     * Create a database and user for this environment on a given DatabaseInstance.
      */
     public function createDatabase(DatabaseInstance $databaseInstance)
     {
         $database = $databaseInstance->databases()->create([
-            'name' => $this->slug(),
+            'name' => $this->slug() . '-' . Str::random(4),
         ]);
 
         $this->database()->associate($database);
+
+        $user = $databaseInstance->databaseUsers()->create([
+            'name' => DatabaseUser::generateUniqueName($this->slug()),
+            'password' => Str::random(),
+        ]);
+
+        $this->databaseUser()->associate($user);
+
         $this->save();
 
         $database->provision();
+        $user->provision();
     }
 
     /**

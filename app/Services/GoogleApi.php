@@ -13,6 +13,7 @@ use App\GoogleCloud\CloudRunService;
 use App\GoogleCloud\DatabaseConfig;
 use App\GoogleCloud\DatabaseInstanceConfig;
 use App\GoogleCloud\DatabaseOperation;
+use App\GoogleCloud\DatabaseUserConfig;
 use App\GoogleCloud\DomainMappingConfig;
 use App\GoogleCloud\DomainMappingResponse;
 use App\GoogleCloud\EnableApisOperation;
@@ -353,6 +354,34 @@ class GoogleApi
     {
         return $this->request(
             "https://www.googleapis.com/sql/v1beta4/projects/{$this->googleProject->project_id}/instances/{$databaseInstance->name}/databases"
+        );
+    }
+
+    /**
+     * Create a database user
+     *
+     * @param DatabaseUserConfig $config
+     * @return array
+     */
+    public function createDatabaseUser(DatabaseUserConfig $config)
+    {
+        return $this->request(
+            "https://www.googleapis.com/sql/v1beta4/projects/{$config->projectId()}/instances/{$config->instanceName()}/users",
+            "POST",
+            $config->config()
+        );
+    }
+
+    /**
+     * Get database users in a database instance
+     *
+     * @param DatabaseInstance $databaseInstance
+     * @return array
+     */
+    public function getDatabaseUsers(DatabaseInstance $databaseInstance)
+    {
+        return $this->request(
+            "https://www.googleapis.com/sql/v1beta4/projects/{$this->googleProject->project_id}/instances/{$databaseInstance->name}/users"
         );
     }
 
