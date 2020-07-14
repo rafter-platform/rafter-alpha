@@ -1,4 +1,4 @@
-<form wire:submit.prevent="create">
+<form wire:submit.prevent="create" x-data>
     <h2 class="text-lg font-medium mb-4">Where is your project's code?</h2>
 
     <x-radio-button-group name="sourceType">
