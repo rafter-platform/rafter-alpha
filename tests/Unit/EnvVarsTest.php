@@ -30,6 +30,27 @@ EOD;
         ], $vars->all());
     }
 
+    public function test_it_extracts_vars_from_single_line_with_breaks()
+    {
+        $string = <<<EOD
+FOO=bar
+LONG="This\nIs a\nLong Name\n"
+EOD;
+
+        $vars = EnvVars::fromString($string);
+
+        $this->assertSame([
+            [
+                'name' => 'FOO',
+                'value' => 'bar',
+            ],
+            [
+                'name' => 'LONG',
+                'value' => "This\nIs a\nLong Name\n",
+            ],
+        ], $vars->all());
+    }
+
     public function test_it_sets_and_gets_variables()
     {
         $vars = new EnvVars;
@@ -64,11 +85,13 @@ EOD;
         $vars = new EnvVars([
             'HELLO' => 'world',
             'IT' => 'me',
+            'NAME' => 'Josh Larson'
         ]);
 
         $string = <<<EOD
-HELLO='world'
-IT='me'
+HELLO=world
+IT=me
+NAME="Josh Larson"
 EOD;
         $this->assertSame($string, $vars->toString());
         $this->assertSame($string, (string) $vars);
