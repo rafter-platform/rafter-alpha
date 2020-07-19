@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Environment;
-use App\Events\UserRegistered;
 use App\Project;
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -21,7 +21,7 @@ class DashboardControllerTest extends TestCase
         parent::setUp();
 
         $this->user = factory(User::class)->create();
-        event(new UserRegistered($this->user));
+        event(new Registered($this->user));
     }
 
     public function test_redirects_to_project_create_if_no_projects()

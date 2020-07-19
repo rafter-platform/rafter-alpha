@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\UserRegistered;
+use Illuminate\Auth\Events\Registered;
 
 class CreatePersonalTeamForUser
 {
@@ -22,7 +22,7 @@ class CreatePersonalTeamForUser
      * @param  object  $event
      * @return void
      */
-    public function handle(UserRegistered $event)
+    public function handle(Registered $event)
     {
         $user = $event->user;
 

@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\UserRegistered;
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,6 +20,6 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        event(new UserRegistered($user));
+        event(new Registered($user));
     }
 }
