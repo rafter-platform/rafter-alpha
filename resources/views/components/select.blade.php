@@ -1,4 +1,4 @@
-<div class="flex flex-wrap mb-6" {{ $attributes->only('x-show') }}>
+<div class="flex flex-wrap mb-6">
     <x-label for="{{ $name }}">
         {{ $label }}
     </x-label>
@@ -8,10 +8,8 @@
         class="form-select w-full @error($name) border-red-500 @enderror"
         value="{{ old($name) }}"
         @error($name) aria-invalid="true" aria-describedby="{{ $name }}-error" @enderror
-        {{ $attributes->except('options', 'x-show') }}>
-        @foreach ($options as $value => $label)
-            <option value="{{ $value }}">{{ $label }}</option>
-        @endforeach
+        {{ $attributes }}>
+        {{ $slot }}
     </select>
 
     @error($name)
