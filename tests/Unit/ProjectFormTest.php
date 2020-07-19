@@ -2,12 +2,12 @@
 
 namespace Tests\Unit;
 
-use App\Events\UserRegistered;
 use App\GoogleProject;
 use App\Http\Livewire\ProjectForm;
 use App\Jobs\StartDeployment;
 use App\SourceProvider;
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
@@ -42,7 +42,7 @@ class ProjectFormTest extends TestCase
     public function test_it_creates_a_project()
     {
         $user = factory(User::class)->create();
-        UserRegistered::dispatch($user);
+        event(new Registered($user));
         $user->refresh();
 
         Queue::fake();
@@ -82,7 +82,7 @@ class ProjectFormTest extends TestCase
     public function test_it_creates_a_project_with_no_variables()
     {
         $user = factory(User::class)->create();
-        UserRegistered::dispatch($user);
+        event(new Registered($user));
         $user->refresh();
 
         Queue::fake();

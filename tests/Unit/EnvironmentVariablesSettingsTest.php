@@ -3,10 +3,10 @@
 namespace Tests\Unit;
 
 use App\Environment;
-use App\Events\UserRegistered;
 use App\Http\Livewire\EnvironmentVariablesSettings;
 use App\Project;
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -23,7 +23,7 @@ class EnvironmentVariablesSettingsTest extends TestCase
         parent::setUp();
 
         $this->user = factory(User::class)->create();
-        UserRegistered::dispatch($this->user);
+        event(new Registered($this->user));
 
         $this->environment = factory(Environment::class)->create([
             'project_id' => factory(Project::class)->create([

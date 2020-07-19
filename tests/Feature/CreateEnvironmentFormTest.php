@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Events\UserRegistered;
 use App\Http\Livewire\CreateEnvironmentForm;
 use App\Jobs\StartDeployment;
 use App\Project;
 use App\Services\GitHub;
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
@@ -70,7 +70,7 @@ class CreateEnvironmentFormTest extends TestCase
         $project = factory(Project::class)->create();
         $project->environments()->create(['name' => 'Existing']);
         $randomUser = factory(User::class)->create();
-        UserRegistered::dispatch($randomUser);
+        event(new Registered($randomUser));
 
         Livewire::actingAs($randomUser)
             ->test(CreateEnvironmentForm::class, ['project' => $project])
