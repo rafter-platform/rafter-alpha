@@ -14,7 +14,7 @@ class ValidDatabaseInstanceName implements Rule
      *
      * @return void
      */
-    public function __construct(GoogleProject $googleProject)
+    public function __construct($googleProject)
     {
         $this->googleProject = $googleProject;
     }
