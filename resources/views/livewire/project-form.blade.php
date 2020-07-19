@@ -205,9 +205,7 @@
 
         <div>
             @if ($googleProjectId)
-                <h2 class="text-lg font-medium mb-4 mt-12">Which Google Cloud region?</h2>
-
-                <x-radio-button-group name="region">
+                <x-radio-button-group name="region" label="Which Google Cloud region?">
                     @foreach ($regions as $key => $label)
                     <x-radio-button wire:model="region" name="region" value="{{ $key }}" small>
                         {{ $label }} ({{ $key }})

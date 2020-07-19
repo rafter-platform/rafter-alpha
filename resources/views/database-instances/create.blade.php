@@ -10,12 +10,11 @@
             <x-select
                 name="google_project_id"
                 label="Google Project"
-                required
-                :options="$googleProjects->reduce(function ($memo, $p) {
-                    $memo[$p->id] = $p->name;
-                    return $memo;
-                }, [])"
-            />
+                required>
+                @foreach ($googleProjects as $project)
+                    <option :value="$project->id">{{ $project->name }}</option>
+                @endforeach
+            </x-select>
 
             <x-input
                 name="name"
@@ -30,23 +29,29 @@
             <x-select
                 name="type"
                 label="Database Type"
-                required
-                :options="$types"
-            />
+                required>
+                @foreach ($types as $type)
+                    <option :value="$type">{{ $type }}</option>
+                @endforeach
+            </x-select>
 
             <x-select
                 name="version"
                 label="Database Version"
-                required
-                :options="$versions"
-            />
+                required>
+                @foreach ($versions as $version)
+                    <option :value="$version">{{ $version }}</option>
+                @endforeach
+            </x-select>
 
             <x-select
                 name="tier"
                 label="Database Instance Tier"
-                required
-                :options="$tiers['mysql']"
-            />
+                required>
+                @foreach ($tiers['mysql'] as $tier)
+                    <option :value="$tier">{{ $tier }}</option>
+                @endforeach
+            </x-select>
 
             <x-input
                 name="size"
@@ -60,9 +65,11 @@
             <x-select
                 name="region"
                 label="Region"
-                required
-                :options="$regions"
-            />
+                required>
+                @foreach ($regions as $region)
+                    <option :value="$region">{{ $region }}</option>
+                @endforeach
+            </x-select>
 
             <div class="text-right">
                 <x-button>Create Database Instance</x-button>

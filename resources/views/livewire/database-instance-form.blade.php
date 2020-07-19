@@ -10,11 +10,11 @@
         @endforeach
     </x-radio-button-group>
 
-    <x-radio-group label="Which tier?" name="tier">
+    <x-select label="Select a tier" name="tier" wire:model="tier">
         @foreach ($tiers as $key => $value)
-            <x-radio wire:model="tier" name="tier" :value="$key" small>{{ $value }}</x-radio>
+            <option value="{{ $key }}">{{ $value }}</option>
         @endforeach
-    </x-radio-group>
+    </x-select>
 
     <x-radio-button-group name="databaseGoogleProjectId" label="Which Google Cloud project?">
         @foreach ($projects as $project)

@@ -41,22 +41,21 @@
                         </label>
                     </div>
 
-                    <x-select
-                        x-show="method === 'new'"
-                        name="database_instance_id"
-                        label="Database Instance"
-                        :options="$databaseInstances->mapWithKeys(function ($item) {
-                            return [$item->id => $item->name];
-                        })"
-                    />
+                    <div x-show="method === 'new'">
+                        <x-select name="database_instance_id" label="Database Instance">
+                            @foreach ($databaseInstances as $item)
+                                <option :value="$item->id">{{ $item->name }}</option>
+                            @endforeach
+                        </x-select>
+                    </div>
 
-                    <x-select
-                        x-show="method === 'existing'"
-                        name="database_id"
-                        label="Database"
-                        :options="$databases->mapWithKeys(function ($item) {
-                            return [$item->id => $item->name . ' ('. $item->databaseInstance->name . ')'];
-                        })" />
+                    <div x-show="method === 'existing'">
+                        <x-select name="database_id" label="Database">
+                            @foreach ($databases as $database)
+                                <option :value="$item->id">{{ $item->name . ' ('. $item->databaseInstance->name . ')' }}</option>
+                            @endforeach
+                        </x-select>
+                    </div>
 
                     <div class="text-right">
                         <x-button type="submit" x-text="method === 'new' ? 'Create and Assign Database' : 'Assign Database'" />
