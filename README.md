@@ -1,5 +1,7 @@
 # Rafter 🏡
 
+**Update: Rafter is pivoting to a hosted model. This open-source code remains as a fun reference. Enjoy!**
+
 Rafter is a serverless deployment platform powered by [Google Cloud](https://cloud.google.com). It leverages Google Cloud Run (and many other tools) to transform your Git repository into a fully-scalable serverless application running in the cloud - with **zero configuration**.
 
 💰 Scales to zero when not in use, saving you money — perfect for hobby projects<br>
